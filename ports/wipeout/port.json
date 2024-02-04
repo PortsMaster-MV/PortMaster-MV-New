@@ -1,0 +1,24 @@
+{
+    "version": "2",
+    "name": "Wipeout.zip",
+    "items": [
+        "wipeout.sh",
+        "Wip"
+    ],
+    "items_opt": null,
+    "attr": {
+        "title": "Wipeout",
+        "porter": [
+            "Tekkenfede"
+        ],
+        "desc": "Wipeout is a racing game that is set in 2052, where players compete in the F3600 anti-gravity racing league. The game allows the player to pilot one of a selection of craft in races on several different tracks.",
+        "inst": "Copy the game data inside the wipeout folder. A prepackaged zip is avaiable on phoboslab site",
+        "genres": [
+            "racing"
+        ],
+        "image": null,
+        "rtr": false,
+        "runtime": null,
+        "reqs": []
+    }
+}

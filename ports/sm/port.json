@@ -1,0 +1,25 @@
+{
+    "version": "2",
+    "name": "sm.zip",
+    "items": [
+        "sm.sh",
+        "sm"
+    ],
+    "items_opt": null,
+    "attr": {
+        "title": "Super Metroid (Redux Included)",
+        "porter": [
+            "Tekkenfede"
+        ],
+        "desc": "Super Metroid (スーパーメトロイド Sūpā Metoroido?), also known as Metroid 3, is a video game developed by Nintendo R&D1 and published by Nintendo for the Super Nintendo Entertainment System. Super Metroid is the third installment in the Metroid series. With its 24-megabit (3 megabyte) cartridge size, it was the largest video game on the Super Nintendo at the time of its release\n",
+        "inst": "To make it work just copy the Super Metroid US rom renamed as sm.smc in the root folder.\nFor redux same thing, but use the redux Rom",
+        "genres": [
+            "action",
+            "adventure"
+        ],
+        "image": null,
+        "rtr": false,
+        "runtime": null,
+        "reqs": []
+    }
+}

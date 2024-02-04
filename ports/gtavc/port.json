@@ -1,0 +1,39 @@
+{
+    "version": 2,
+    "name": "gtavc.zip",
+    "items": [
+        "Grand Theft Auto Vice City.sh",
+        "gtavc/"
+    ],
+    "items_opt": null,
+    "attr": {
+        "title": "Grand Theft Auto Vice City",
+        "porter": [
+            "Orson"
+        ],
+        "desc": "Welcome to the 1980s. From the decade of big hair, excess, and pastel suits comes a story of one man's rise to the top of the criminal pile as Grand Theft Auto returns.",
+        "inst": "Copy all files from the original game to roms/ports/gtavc. The game requires assets from the classic version released in 2002 (not the Definitive Edition, 2021). Versions from Steam and Rockstar Store are confirmed to work fine.\n\nIf needed, readjust analog sticks sensitivity by changing LeftStickSens/RightStickSens values in reVC.ini.",
+        "genres": [
+            "action"
+        ],
+        "image": {
+            "screenshot": "gtavc.screenshot.jpg",
+            "cover": null,
+            "thumbnail": null,
+            "video": null
+        },
+        "rtr": false,
+        "runtime": null,
+        "reqs": []
+    },
+    "status": {
+        "source": "nosro",
+        "md5": "e0031a1a7e2ba8ed02a50789a18cf602",
+        "status": "Installed"
+    },
+    "files": {
+        "port.json": "gtavc/gtavc.port.json",
+        "Grand Theft Auto Vice City.sh": "Grand Theft Auto Vice City.sh",
+        "gtavc/": "gtavc/"
+    }
+}

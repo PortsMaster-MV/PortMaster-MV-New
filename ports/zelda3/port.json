@@ -1,0 +1,25 @@
+{
+    "version": "2",
+    "name": "zelda3.zip",
+    "items": [
+        "zelda3.sh",
+        "zelda"
+    ],
+    "items_opt": null,
+    "attr": {
+        "title": "Zelda A Link to The Past",
+        "porter": [
+            "Tekkenfede"
+        ],
+        "desc": "*For devices with lower resolution of 640x480 or weird low res aspect ratio you need to modify the zelda3.ini file* The game begins with series protagonist Link, the last descendant of the Knights of Hyrule, and his uncle, being awakened by a telepathic message from Zelda, who says that she has been locked in Hyrule Castle's dungeon by Agahnim and requires rescue. Link's uncle goes to rescue her first, and Link follows despite his uncle's orders to remain home. His uncle is slain, though beforehand, Link receives a sword and shield from him. Link infiltrates Hyrule Castle and successfully hides Zelda in the Sanctuary as his uncle's last wish.",
+        "inst": "Copy  the zelda3_assets.dat file in the root of the zelda folder. The file can be obtained from the snes rom.",
+        "genres": [
+            "action",
+            "adventure"
+        ],
+        "image": null,
+        "rtr": false,
+        "runtime": null,
+        "reqs": []
+    }
+}
