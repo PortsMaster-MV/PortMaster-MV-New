@@ -24,45 +24,51 @@ from util import *
 
 #############################################################################
 ## Constants
-README_FILE, SCREENSHOT_FILE, COVER_FILE, SPEC_FILE, PORT_JSON, PORT_SCRIPT, PORT_DIR, GITIGNORE_FILE, UNKNOWN_FILE = range(9)
+README_FILE, SCREENSHOT_FILE, COVER_FILE, GAMEINFO_XML, PORT_JSON, PORT_SCRIPT, PORT_DIR, GITIGNORE_FILE, UNKNOWN_FILE = range(9)
 REQUIRED_FILES = (
     (1<<README_FILE)     |
     (1<<SCREENSHOT_FILE) |
+    (1<<GAMEINFO_XML)    |
     (1<<PORT_JSON)       |
     (1<<PORT_SCRIPT)     |
     (1<<PORT_DIR)        )
 
 FILE_TYPE_DESC = {
-    README_FILE: "README.md",
+    README_FILE:     "README.md",
     SCREENSHOT_FILE: "screenshot.{png|jpg}",
-    COVER_FILE:  "cover.{png|jpg}",
-    SPEC_FILE:   "port.spec",
-    PORT_JSON:   "port.json",
-    PORT_SCRIPT: "Port Script",
-    PORT_DIR:    "Port Directory",
-    GITIGNORE_FILE: ".gitginore",
-    UNKNOWN_FILE: "Unknown file",
+    COVER_FILE:      "cover.{png|jpg}",
+    GAMEINFO_XML:    "gameinfo.xml",
+    PORT_JSON:       "port.json",
+    PORT_SCRIPT:     "Port Script",
+    PORT_DIR:        "Port Directory",
+    GITIGNORE_FILE:  ".gitginore",
+    UNKNOWN_FILE:    "Unknown file",
     }
 
 FILE_TYPE_RE = {
     r"^\.gitignore$": GITIGNORE_FILE,
     r"^readme\.md$": README_FILE,
     r"^screenshot\.(png|jpg)$": SCREENSHOT_FILE,
-    r"^cover\.(png|jpg)$": COVER_FILE,
+    r"^cover\.(?:[a-z0-9]+\.)?(png|jpg)$": COVER_FILE,
     r"^port\.json$": PORT_JSON,
-    # r"^port\.spec$": SPEC_FILE,
+    r"^gameinfo\.xml$": GAMEINFO_XML,
     }
 
 TODAY = str(datetime.datetime.today().date())
 
 ROOT_DIR = Path('.')
 
+CACHE_FILE = ROOT_DIR / '.hash_cache'
 RELEASE_DIR = ROOT_DIR / 'releases'
+RUNTIMES_DIR = ROOT_DIR / 'runtimes'
 MANIFEST_FILE = RELEASE_DIR / 'manifest.json'
 STATUS_FILE = RELEASE_DIR / 'ports_status.json'
 PORTS_DIR = ROOT_DIR / 'ports'
 
+GITHUB_RUN = (ROOT_DIR / '.github_check').is_file()
+
 LARGEST_FILE = (1024 * 1024 * 90)
+
 
 #############################################################################
 ## Read CONFIG file.
@@ -111,19 +117,6 @@ def current_release_url(release_id):
     return f"https://github.com/{REPO_CONFIG['RELEASE_ORG']}/{REPO_CONFIG['RELEASE_REPO']}/releases/download/{release_id}/"
 
 
-def runtime_nicename(runtime):
-    if runtime.startswith("frt"):
-        return ("Godot/FRT {version}").format(version=runtime.split('_', 1)[1].rsplit('.', 1)[0])
-
-    if runtime.startswith("mono"):
-        return ("Mono {version}").format(version=runtime.split('-', 1)[1].rsplit('-', 1)[0])
-
-    if "jdk" in runtime and runtime.startswith("zulu11"):
-        return ("JDK {version}").format(version=runtime.split('-')[2][3:])
-
-    return runtime
-
-
 def file_type(port_file):
     if port_file.is_dir():
         return PORT_DIR
@@ -138,10 +131,17 @@ def file_type(port_file):
     return UNKNOWN_FILE
 
 
-def load_port(port_dir, manifest, registered, port_status, quick_build=False):
+def load_port(port_dir, manifest, registered, port_status, quick_build=False, hash_cache=None):
+    if hash_cache is not None:
+        hash_func = hash_cache.get_file_hash
+
+    else:
+        hash_func = hash_file
+
     port_data = {
         'name': None,
         'port_json': None,
+        'port_json_file': None,
 
         'files': {},
 
@@ -200,6 +200,10 @@ def load_port(port_dir, manifest, registered, port_status, quick_build=False):
 
         elif port_file_type == PORT_JSON:
             port_data['port_json'] = port_info_load(port_file)
+            if port_data['port_json'] is None:
+                return None
+
+            port_data['port_json_file'] = port_file
             port_data['name'] = name_cleaner(port_data['port_json']['name'])
 
             if not port_data['name'].endswith('.zip'):
@@ -217,6 +221,8 @@ def load_port(port_dir, manifest, registered, port_status, quick_build=False):
     ## Check if the port is an older port, newer ports have stricter name requirements.
     if port_date > '2024-01-26':
         ## Check for weird names.
+
+        port_data['name'] = name_cleaner(port_dir.name) + '.zip'
         if port_data['port_json'] is not None:
             if port_data['name'] != port_data['port_json']['name']:
                 error(port_dir.name, f"Bad port name {port_data['port_json']['name']!r}, recommended name is {port_data['name']!r}")
@@ -230,6 +236,10 @@ def load_port(port_dir, manifest, registered, port_status, quick_build=False):
             if name_cleaner(dir_name[:-1]) != dir_name[:-1]:
                 error(port_dir.name, f"Bad port directory {dir_name[:-1]!r}, recommended name is {name_cleaner(dir_name[:-1])!r}")
                 broken = True
+
+    else:
+        # Another bug :D
+        port_data['port_json']['name'] = name_cleaner(port_data['port_json']['name'])
 
     # This is an abomination. :D
     if (port_check_bf & (1<<PORT_JSON)) == 0:
@@ -289,7 +299,7 @@ def load_port(port_dir, manifest, registered, port_status, quick_build=False):
         path = paths.popleft()
 
         for file_name in path.iterdir():
-            if file_name.name in ('.', '..', '.git', '.DS_Store', '.gitignore', '.gitkeep'):
+            if file_name.name in ('.', '..', '.git', '.DS_Store', '.gitignore'):
                 continue
 
             if file_name.name.startswith('._'):
@@ -312,9 +322,10 @@ def load_port(port_dir, manifest, registered, port_status, quick_build=False):
             large_files[str(file_name)] = True
 
             if not quick_build:
-                temp = hash_file(file_name)
-                manifest[port_file_name] = temp
-                port_manifest.append((port_file_name, temp))
+                file_hash = hash_func(file_name)
+
+                manifest[port_file_name] = file_hash
+                port_manifest.append((port_file_name, file_hash))
 
     for large_file, large_file_status in large_files.items():
         if not large_file_status:
@@ -371,15 +382,18 @@ def build_port_zip(root_dir, port_dir, port_data, new_manifest, port_status):
                 file_name_type = file_type(file_name)
 
                 if file_name_type in (SCREENSHOT_FILE, COVER_FILE):
-                    new_name = port_data['dirs'][0] + f"{port_name}.{new_name}"
+                    new_name = port_data['dirs'][0] + f"{new_name}"
 
                 elif file_name_type == README_FILE:
                     new_name = port_data['dirs'][0] + f"{port_name}.md"
 
                 elif file_name_type == PORT_JSON:
-                    new_name = port_data['dirs'][0] + f"{port_name}.port.json"
+                    new_name = port_data['dirs'][0] + "port.json"
 
-                elif file_name_type in (SPEC_FILE, UNKNOWN_FILE):
+                elif file_name_type == GAMEINFO_XML:
+                    new_name = port_data['dirs'][0] + "gameinfo.xml"
+
+                elif file_name_type == UNKNOWN_FILE:
                     continue
 
             else:
@@ -389,7 +403,11 @@ def build_port_zip(root_dir, port_dir, port_data, new_manifest, port_status):
             if file_name.name[-9:-3] == '.part.' and file_name.name[-3:].isdigit():
                 continue
 
-            zip_files.append((file_name, new_name))
+            if file_name == port_data['port_json_file']:
+                zip_files.append((file_name, new_name, json.dumps(port_data['port_json'], indent=4)))
+
+            else:
+                zip_files.append((file_name, new_name, None))
 
     zip_files.sort(key=lambda x: x[1].lower())
 
@@ -397,8 +415,12 @@ def build_port_zip(root_dir, port_dir, port_data, new_manifest, port_status):
     # pprint(zip_files)
 
     with zipfile.ZipFile(zip_name, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
-        for file_pair in zip_files:
-            zf.write(file_pair[0], file_pair[1])
+        for file_triplet in zip_files:
+            if file_triplet[2] == None:
+                zf.write(file_triplet[0], file_triplet[1])
+
+            else:
+                zf.writestr(file_triplet[1], file_triplet[2])
 
     # port_name = port_data['name']
     # port_hash = hash_file(zip_name)
@@ -563,14 +585,41 @@ def port_info(file_name, ports_json, ports_status):
         ports_json[clean_name]['source']['url'] = current_release_url(ports_status[clean_name]['release_id']) + (file_name.name.replace(" ", ".").replace("..", "."))
 
 
-def util_info(file_name, util_json):
+def util_info(file_name, util_json, ports_status, runtimes_json):
     clean_name = name_cleaner(file_name.name)
 
     file_md5 = hash_file(file_name)
+    file_size = file_name.stat().st_size
 
     if file_name.name.lower().endswith('.squashfs'):
-        name = runtime_nicename(file_name.name)
-        url = "https://github.com/PortsMaster/PortMaster-Runtime/releases/download/runtimes/" + (file_name.name.replace(" ", ".").replace("..", "."))
+
+        default_status = {
+            'date_added': TODAY,
+            'date_updated': TODAY,
+            'md5': file_md5,
+            'size': file_size,
+            'release_id': CURRENT_RELEASE_ID,
+            }
+
+        if clean_name not in ports_status:
+            ports_status[clean_name] = default_status
+
+            if GITHUB_RUN:
+                file_name.rename(RELEASE_DIR / file_name.name)
+                file_name = RELEASE_DIR / file_name.name
+
+        elif ports_status[clean_name]['md5'] != file_md5:
+            ports_status[clean_name]['md5'] = file_md5
+            ports_status[clean_name]['size'] = file_size
+            ports_status[clean_name]['release_id'] = CURRENT_RELEASE_ID
+            ports_status[clean_name]['date_updated'] = TODAY
+
+            if GITHUB_RUN:
+                file_name.rename(RELEASE_DIR / file_name.name)
+                file_name = RELEASE_DIR / file_name.name
+
+        name = runtimes_json.get(clean_name, clean_name)
+        url = current_release_url(ports_status[clean_name]['release_id']) + (file_name.name.replace(" ", ".").replace("..", "."))
 
     else:
         name = file_name.name
@@ -579,7 +628,7 @@ def util_info(file_name, util_json):
     util_json[clean_name] = {
         "name": name,
         'md5': file_md5,
-        'size': file_name.stat().st_size,
+        'size': file_size,
         'url': url,
         }
 
@@ -652,12 +701,25 @@ def generate_ports_json(all_ports, port_status):
         utils.append(RELEASE_DIR / 'PortMaster.zip')
 
     utils.append(RELEASE_DIR / 'images.zip')
-    utils.extend(RELEASE_DIR.glob('*.squashfs'))
+    runtimes_json = {}
+
+    if RUNTIMES_DIR.is_dir():
+        if (RUNTIMES_DIR / 'runtimes.json').is_file():
+            # print(f"Loading runtimes.json")
+
+            with open((RUNTIMES_DIR / 'runtimes.json'), 'r') as fh:
+                runtimes_json = json.load(fh)
+
+            # print(json.dumps(runtimes_json, indent=4))
+
+        utils.extend(RUNTIMES_DIR.glob('*.squashfs'))
 
     for file_name in sorted(utils, key=lambda x: str(x).casefold()):
         util_info(
             file_name,
-            ports_json_output['utils']
+            ports_json_output['utils'],
+            port_status,
+            runtimes_json
             )
 
     with open(RELEASE_DIR / 'ports.json', 'w') as fh:
@@ -708,6 +770,10 @@ def main(argv):
     old_manifest = {}
 
     port_status = {}
+    file_cache = None
+
+    if not GITHUB_RUN:
+        file_cache = HashCache(CACHE_FILE)
 
     registered = {
         'dirs': {},
@@ -771,12 +837,11 @@ def main(argv):
 
         return 0
 
-
     for port_dir in sorted(PORTS_DIR.iterdir(), key=lambda x: str(x).casefold()):
         if not port_dir.is_dir():
             continue
 
-        port_data = load_port(port_dir, new_manifest, registered, port_status)
+        port_data = load_port(port_dir, new_manifest, registered, port_status, hash_cache=file_cache)
 
         if port_data is None:
             status['broken'] += 1
@@ -825,7 +890,7 @@ def main(argv):
                 (PORTS_DIR / port_name) not in bad_ports):
             continue
 
-        if Path('.github_check').is_file():
+        if GITHUB_RUN:
             for warning in messages['warnings']:
                 print(f"::warning file=ports/{port_name}::{warning}")
                 warnings += 1
@@ -854,6 +919,9 @@ def main(argv):
     print(f"  Unchanged: {status['unchanged']}")
     print("")
     print(f"Total Ports: {status['total']}")
+
+    if file_cache is not None:
+        file_cache.save_cache()
 
     if '--do-check' in argv:
         if errors > 0:

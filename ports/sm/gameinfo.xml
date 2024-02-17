@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gameList>
+  <game>
+    <path>./sm.sh</path>
+    <name>Super Metroid</name>
+    <desc>Join forces with the power of Samus for a Super Metroid clash! 
+Take on the legion of space pirates and take on a new Metroid force as you progress through the underworld of the planet Zebes! It's up to you and Samus to find the larval Metroid before evil forces misuse its energy. 
+Every vicious corner, every hidden passageway on the planet Zebes holds menacing creatures ready for battle... including the horrible Ridley and the giant lizard, Kraid. Use your lethal somersault to make enemies bite the dust. Use an electric beam through the gaps. No one will stop you or Samus. But beware! It seems that Mother Brain is back...</desc>
+    <releasedate>19940418T000000</releasedate>
+    <developer>Nintendo</developer>
+    <publisher>Nintendo</publisher>
+    <genre>Adventure-Action</genre>
+    <players>1</players>
+    <image>./sm/cover.sm.png</image>
+  </game>
+  <game>
+    <path>./smredux.sh</path>
+    <name>Super Metroid Redux</name>
+    <desc>This hack aims to give Super Metroid a whole lot of improvements, being it graphical or in mechanics/gameplay, and address some of the annoyances from the original.</desc>
+    <releasedate>19940418T000000</releasedate>
+    <developer>Nintendo</developer>
+    <publisher>Nintendo</publisher>
+    <genre>Adventure-Action</genre>
+    <players>1</players>
+    <image>./sm/cover.smredux.png</image>
+  </game>
+</gameList>

@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gameList>
+  <game>
+    <path>./zelda3.sh</path>
+    <name>The Legend of Zelda - A Link To The Past</name>
+    <desc>Venture back to Hyrule and an age of magic and heroes. The predecessors of Link and Zelda face monsters on the march when a menacing magician takes over the kingdom. Only you can prevent his evil plot from shattering the land of Hyrule. In your quest, you'll venture into twisting mazes, dungeons, palaces and shadowy forests. Test your mettle with mighty swords and magical weapons. Or heft a boulder and hurl it at your enemies. If the going gets tough, dive into a river - you can swim to escape! Learn the powerful spells, locate magical artifacts and solve the mysteries of the evil magician and the hidden realm of Hyrule.</desc>
+    <image>./zelda/cover.png</image>
+    <releasedate>19911121T000000</releasedate>
+    <developer>Nintendo</developer>
+    <publisher>Nintendo</publisher>
+    <genre>Action-Role playing games-Action / Adventure-Adventure</genre>
+  </game>
+</gameList>

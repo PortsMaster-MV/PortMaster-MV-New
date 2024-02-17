@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gameList>
+  <game>
+    <path>./smb1.sh</path>
+    <name>Super Mario All-Stars - Super Mario Bros.</name>
+    <desc>Super Mario All-Stars is a compilation on Super Nintendo of all the platform games featuring Mario released for Nintendo. It includes : Super Mario Bros. 1, 2 and 3 as well as Super Mario Bros.: The Lost Levels, which was never released in Europe before. More than a simple compilation, the game brings improved graphics and the possibility to save your progress. Nostalgic fans of the first Nintendo console will be pleased.</desc>
+    <image>./smworld/cover.smb1.png</image>
+    <releasedate>19930801T000000</releasedate>
+    <developer>Nintendo</developer>
+    <publisher>Nintendo</publisher>
+    <genre>Action-Compilation-Platform</genre>
+    <players>2</players>
+  </game>
+  <game>
+    <path>./smbll.sh</path>
+    <name>Super Mario All-Stars - Super Mario Bros.: The Lost Levels</name>
+    <desc>Super Mario All-Stars is a compilation on Super Nintendo of all the platform games featuring Mario released for Nintendo. It includes : Super Mario Bros. 1, 2 and 3 as well as Super Mario Bros.: The Lost Levels, which was never released in Europe before. More than a simple compilation, the game brings improved graphics and the possibility to save your progress. Nostalgic fans of the first Nintendo console will be pleased.</desc>
+    <image>./smworld/cover.smbll.png</image>
+    <releasedate>19930801T000000</releasedate>
+    <developer>Nintendo</developer>
+    <publisher>Nintendo</publisher>
+    <genre>Action-Compilation-Platform</genre>
+    <players>2</players>
+  </game>
+</gameList>
