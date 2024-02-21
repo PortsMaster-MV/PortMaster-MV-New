@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "loderunneronline",
+  "items": [
+    "Lode Runner Online.sh",
+    "loadrunneronline"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Lode Runner Online",
+    "porter": [
+      "tabreturn",
+      "Slayer366"
+    ],
+    "desc": "This project is a fan-made cross-platform clone of Lode Runner Online: The Mad Monks' Revenge.",
+    "inst": "You can download Load Runner Online free at: https://mmr.quarkrobot.com/ . Download the Linux version and extract it, and place the game files in the gamedata directory. This has been tested with the LODERUNN-LINUX-2402.tar.gz release.",
+    "genres": [
+      "platformer",
+      "puzzle"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": "mono-6.12.0.122-aarch64.squashfs",
+    "reqs": []
+  }
+}

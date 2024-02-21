@@ -1,0 +1,47 @@
+===== Lode Runner Original And Championship Puzzle Files =====
+
+
+The original personal computer versions of Lode Runner that Broderbund
+published included 150 levels. There was also a sequel called
+Championship Lode Runner, which was the same game with 50 more levels,
+all quite difficult, that players had sent to Broderbund.
+
+All 200 of those levels are included here. Because the new Lode Runner
+is not quite exactly the same as the original, not all the levels
+are solveable. I haven't played them all to check them, but
+rather than do so I decided to release them in their exact original form
+so players may see them as they were and change them as they wish.
+(The Championship levels are particularly tough - don't assume they're
+unsolvable before you give up. Differences in play will generally be
+related to timing. There are minor differences in Bungeling behavior as
+well).
+The only change I've made to the original levels is to add exits to
+each of them. For the most part, I tried to do this in as unintrusive
+a manner as possible, so that levels would play as close to the
+original as possible.
+
+
+Copyright & Distribution Information--------- - ------------ -----------
+
+The level groups "Original Levels" and "Championship Levels" are
+copyright ©1994 Presage Software Development Co.; all rights reserved.
+This software may be redistributed under the following conditions:
+-	This document and the two level	group files must be distributed together, 
+	in the same compressed-file archive.
+-	The "Lode Runner Original And Championship Puzzle Files" package may 
+	be freely posted to any BBS or information service which charges its 
+	users for general connect and downloading time; the package may 
+	-not- be posted to any BBS or information service which will charge 
+	for the specific right to download "Lode Runner Original And Championship Puzzle Files".
+-	Commercial publishers and distributors of CD-ROM software collections
+	may not include the "Lode Runner Original And Championship Puzzle Files" 
+	package without the express written permission of Presage Software 
+	Development Co.
+
+For additional information, contact us at one of these addresses:-------
+Internet: Presage@applelink.apple.com
+AppleLink: Presage
+Mail: Jake Hoelter	  
+Presage Software Development Co.
+901 E. Street, Box 300	  San Rafael, CA 94901-2850
+Fax: (415) 454-6992

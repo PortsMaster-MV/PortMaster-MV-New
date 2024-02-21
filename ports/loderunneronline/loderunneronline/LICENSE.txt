@@ -1,0 +1,26 @@
+[Recieved: Wednesday, February 21, 2024 19h04]
+
+Hello, Tristan,
+
+Lode Runner trademark is owned by Tozai and the Presage Lode Runner game by Microsoft.
+
+With the above in mind, go for it, just make sure you don’t mention myself as the owner anywhere.
+
+Bram.
+
+
+[Sent: Tuesday, February 20, 2024 19:55]
+
+Hi --
+
+My name is Tristan, and I'm part of a group of developers working on porting games to handheld Linux devices. Our project is named PortMaster http://portmaster.games
+
+Recently, we've started adding various FNA games to these systems and would love to include your game as well. We've observed various homebrew sites simply distributing files without permission. We firmly believe in contacting creators like you to ask for consent.
+
+Would you permit us to include the Mad Monk's Revenge game files in our packages? Users must manually download the files for our ports without your consent.
+
+We do not want to profit or take credit for your games. Our primary goal is to introduce more games to our beloved handheld devices, and we're also branching out to other ARM platforms.
+
+Thank you for considering our request!
+
+Tristan
