@@ -20,6 +20,7 @@
         "image": null,
         "rtr": false,
         "runtime": null,
-        "reqs": []
+        "reqs": [],
+        "arch": ["aarch64"]
     }
 }

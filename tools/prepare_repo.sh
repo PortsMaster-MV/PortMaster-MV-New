@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ ! -f "SOURCE_SETUP.txt" ]; then
+    echo "run in root directory as tools/prepare_repo.sh"
+    exit 255
+fi
+
 source SOURCE_SETUP.txt
 
 cd releases/

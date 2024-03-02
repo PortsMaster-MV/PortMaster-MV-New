@@ -24,16 +24,7 @@
         },
         "rtr": false,
         "runtime": null,
-        "reqs": []
-    },
-    "status": {
-        "source": "nosro",
-        "md5": "e0031a1a7e2ba8ed02a50789a18cf602",
-        "status": "Installed"
-    },
-    "files": {
-        "port.json": "gtavc/gtavc.port.json",
-        "Grand Theft Auto Vice City.sh": "Grand Theft Auto Vice City.sh",
-        "gtavc/": "gtavc/"
+        "reqs": [],
+        "arch": ["aarch64"]
     }
 }
