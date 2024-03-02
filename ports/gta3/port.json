@@ -19,16 +19,7 @@
         "image": null,
         "rtr": false,
         "runtime": null,
-        "reqs": []
-    },
-    "status": {
-        "source": "Unknown",
-        "md5": null,
-        "status": "Installed"
-    },
-    "files": {
-        "port.json": "gta3/gta3.port.json",
-        "Grand Theft Auto 3.sh": "Grand Theft Auto 3.sh",
-        "gta3": "gta3"
+        "reqs": [],
+        "arch": ["aarch64"]
     }
 }
