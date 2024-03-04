@@ -2,6 +2,8 @@
 
 Thanks to Quark Robot (https://mmr.quarkrobot.com/) for this fan-made cross-platform clone. Note: Lode Runner is a trademark of Tozai; Presage LR titles owned by Activision/Sierra; this project has no association with either company.
 
+For the CD soundtrack, download the DLC here: https://mmr.quarkrobot.com/manual/get-started#soundtrack, and place the LR_AUDIO.PRS file in the port's *savadata* folder.
+
 
 ## Controls
 
