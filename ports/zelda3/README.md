@@ -1,3 +1,7 @@
+## Notes
+
+Thanks to the [SNESREV project](https://github.com/snesrev/zelda3).
+
 ## Extract Assets
 
 Rom Checksum 66871d66be19ad2c34c927d6b14cd8eb6fc3181965b6e517cb361f7316009cfb
@@ -23,4 +27,4 @@ For Mac OSX/Linux
 7. Compile
      make (suggested make -j$(nproc) )
 
-Then we will have our .dat file into the zelda3 folder 
+Then we will have our .dat file into the zelda3 folder
