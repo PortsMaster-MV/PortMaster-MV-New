@@ -1,5 +1,8 @@
+## Notes
 
-###Extract Assets
+Thanks to the [SNESREV project](https://github.com/snesrev/smw).
+
+## Extract Assets
 
 For Windows 
 
@@ -28,9 +31,7 @@ Place your US ROM file named smw.sfc in smw
 Compile
 make (suggested make -j$(nproc) )
 
-
 Then we will have our .dat file  
-
 
 Pack with smb1 and smbll boot script included. 
 To extract the 2 rom file called smbll.sfc and smb1.sfc you need to place the us rom of super mario all star renamed smas.sfc inside the "other" folder and do this
