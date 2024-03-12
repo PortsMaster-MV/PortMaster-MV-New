@@ -7,7 +7,7 @@ For the CD soundtrack, download the DLC here: https://mmr.quarkrobot.com/manual/
 
 ## Controls
 
-**NOTE:** you can change controls in the options (cog) menu.
+**NOTE:** you can change controls in the options (cog) menu, but you must **plug in a mouse to assign the gamepad inputs.**
 
 | Button     | Action                         |
 |------------|--------------------------------|
