@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+LANGUAGE FILE FOR LODE RUNNER ONLINE
+LANGUAGE: English (en)
+AUTHOR: Quark Robot
+
+You can create your own language file if you wish. The name of the file *MUST* be the two-letter
+ISO 639-1 country code of the language. https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
+The "Lode Runner" stylized font does not support Unicode characters. The current solution is to
+leave any text that won't display in English.
+
+Any characters not in the game fonts will display as a question mark (?).
+
+Language files support a few basic text formatting functions:
+\n == represents a new line
+##hexText == colour change (must use 6 character colour code!)
+**word == underlines a word
+  
+Only tooltips wrap text automatically. Text for dialogs/prompts will need line spacing manually
+added. If you don't, you'll end up with a long line of text.
+  
+-->
+
+<Strings>
+  <Table name="GAMEPLAY" id="200">
+    <Text id="1">Would you like to save your game\nbefore exiting?</Text>
+    <Text id="2">Save your game before returning to the main menu</Text>
+    <Text id="3">Abandon your game and return to the main menu</Text>
+    <Text id="4">Return to your game</Text>
+    <Text id="5">You cannot advance any\nfurther, you have reached the last\npuzzle in this group.</Text>
+    <Text id="6">You cannot go to a\nprevious puzzle, as you have\nreached the beginning of this group.</Text>
+    <Text id="7">If you cheat you will miss out on\ngetting a high score!\n\nDo you want to enable cheating?</Text>
+    <Text id="8">Bring shame to your family and return to your game a cheater</Text>
+    <Text id="9">Prevent bringing shame to your family by returning to the game</Text>
+    <Text id="10">Are you sure you want to\nrestore the game back to\nwhen you started playing?</Text>
+    <Text id="11">Return to your game</Text>
+    <Text id="12">Abandon game and restore</Text>
+    <Text id="13">Return to your game</Text>
+    <Text id="14">Time's up!\nGo and stretch your legs!\nYour game has been saved for later.</Text>
+    <Text id="15">Return to the main menu</Text>
+    <Text id="16">You've got {0} minutes to go!</Text>
+    <Text id="17">Load game</Text>
+    <Text id="18">Save game as</Text>
+    <Text id="19">Are you sure you want to\nabandon your current game?</Text>
+    <Text id="20">Cool!</Text>
+    <Text id="21">No, thanks!</Text>
+    <Text id="22">Jake Peril</Text>
+    <Text id="23">Wes Reckless</Text>
+    <Text id="24">Jane Peril</Text>
+    <Text id="25">Digmo</Text>
+    <Text id="26">Congrats, ##F5F5F5Jake ##F5F5F5Peril\nYou've got a top score!\n\nThe hall-of-fame needs your name!</Text>
+    <Text id="27">Congrats, ##373FDBWes ##373FDBReckless\nYou've got a top score!\n\nThe hall-of-fame needs your name!</Text>
+    <Text id="28">Congrats, ##EA58E5Jane ##EA58E5Peril\nYou've got a top score!\n\nThe hall-of-fame needs your name!</Text>
+    <Text id="29">Congrats, ##1FC71FDigmo\nYou've got a top score!\n\nThe hall-of-fame needs your name!</Text>
+    <Text id="30">Saves your game</Text>
+    <Text id="31">Cancel and return to the menu</Text>
+    <Text id="32">The game has desynchronized!\n Aborting play...\n\nYour game has been saved.</Text>
+    <Text id="33">A network synchronization\nerror has occurred!\n\nRestarting puzzle...</Text>
+    <Text id="34">Unexpected network error!\nAborting play...\n\nYour game has been saved.</Text>
+    <Text id="35">Another player no longer seems\nto be connected. Aborting play...\n\nYour game has been saved.</Text>
+    <Text id="36">Game becoming unstable!</Text>
+    <Text id="37">Game paused</Text>
+    <Text id="38">Game resumed</Text>
+    <Text id="39">Restart the puzzle please!</Text>
+  </Table>
+
+  <Table name="MAIN MENU" id="940">
+    <Text id="1">Start a single player game</Text>
+    <Text id="2">Start a two-player game on the same machine</Text>
+    <Text id="3">Start a multiplayer game</Text>
+    <Text id="4">Edit or create puzzles</Text>
+    <Text id="5">Change game options</Text>
+    <Text id="6">Exit the game</Text>
+    <Text id="7">Player</Text>
+    <Text id="8">Puzzles</Text>
+    <Text id="9">Score</Text>
+    <Text id="10">Single Player High Scores</Text>
+    <Text id="11">Head-to-head High Scores</Text>
+    <Text id="12">Single Player High Scores - Custom Puzzles</Text>
+    <Text id="13">Head-to-head High Scores - Custom Puzzles</Text>
+    <Text id="14">\n\nConnecting to game server...</Text>
+    <Text id="15">Cancel and return to the main menu</Text>
+    <Text id="16">\n\nOnline gaming is currently\nunavailable. Try again later.</Text>
+    <Text id="17">Return to the main menu</Text>
+    <Text id="18">\n\nUnexpected network error!\nTry again later.</Text>
+  </Table>
+
+  <Table name="GAMEPLAY MENU" id="942">
+    <Text id="1">Resume</Text>
+    <Text id="2">Restart</Text>
+    <Text id="3">Restore game</Text>
+    <Text id="4">Save Game</Text>
+    <Text id="5">Options</Text>
+    <Text id="6">Quit</Text>  
+    <Text id="7">Return to your game</Text>
+    <Text id="8">Restart the current puzzle</Text>
+    <Text id="9">Restore the current game</Text>
+    <Text id="10">Save your current game</Text>  
+    <Text id="11">Change the game options</Text>
+    <Text id="12">Exit the game and return to the menu</Text>
+  </Table>
+
+  <Table name="CHOOSE PUZZLE" id="910">
+    <Text id="1">Donkey</Text>
+    <Text id="2">Skip to the selected puzzle</Text>
+    <Text id="3">Return to your game</Text>
+    <Text id="4">Move this puzzle backward in the puzzle group</Text>
+    <Text id="5">Move this puzzle forward in the puzzle group</Text>
+    <Text id="6">The title of this puzzle</Text>
+    <Text id="7">This is a schematic of this puzzle</Text>
+    <Text id="8">Go to the selected puzzle for editing</Text>
+    <Text id="9">Return to the editor</Text>
+    <Text id="10">Show the previous puzzle in the group</Text>
+    <Text id="11">Show the next puzzle in the group</Text>
+    <Text id="12">This is the last puzzle</Text>
+    <Text id="13">This puzzle exits to {0}</Text>
+  </Table>
+
+  <Table name="OPTIONS" id="920">
+    <Text id="1">Accept any changes</Text>
+    <Text id="2">Cancel any changes</Text>
+    <Text id="3">Revert all options back to their default settings</Text>
+    <Text id="4">Toggle general settings</Text>
+    <Text id="5">Toggle display settings</Text>
+    <Text id="6">Toggle audio settings</Text>
+    <Text id="7">Toggle keyboard and gamepad settings</Text>
+    <Text id="8">Are you sure you want to change\nthe game options back to their\ndefault settings?</Text>
+    <Text id="9">Restore all the game options to their defaults</Text>
+    <Text id="10">Cancels and returns to the game options</Text>   
+    <Text id="11">balloon help</Text>
+    <Text id="12">Turn balloon help on/off (these message balloons)</Text>
+    <Text id="13">Change game language</Text>
+    <Text id="14">game speed</Text>
+    <Text id="15">Toggle game speed options</Text>
+    <Text id="16">Custom shortcut key to slow the game down</Text>
+    <Text id="17">Slow down - click to change</Text>
+    <Text id="18">Custom shortcut key to speed the game up</Text>
+    <Text id="19">Speed up - click to change</Text>     
+    <Text id="20">Blasting Style</Text>
+    <Text id="21">Toggle blasting/digging style</Text>
+    <Text id="22">Use "Mad Monks' Revenge" style (default)</Text>
+    <Text id="23">Use "The Legend Returns" style</Text>
+    <Text id="24">fullscreen</Text>
+    <Text id="25">Toggle fullscreen mode</Text>
+    <Text id="26">stretch to fit</Text>
+    <Text id="27">Stretch the game in fullscreen to fit your display size</Text>
+    <Text id="28">window size</Text>
+    <Text id="29">Change the size of the game window when not in fullscreen mode</Text>
+    <Text id="30">filtering</Text>
+    <Text id="31">Toggle game filtering options</Text>
+    <Text id="32">Filtering off (default)</Text>
+    <Text id="33">Bilinear filtering</Text>
+    <Text id="34">music</Text>
+    <Text id="35">Toggle music options</Text>
+    <Text id="36">enabled</Text>
+    <Text id="37">Turn the music on/off</Text>
+    <Text id="38">tlr midi</Text>
+    <Text id="39">Play the MIDI music from "The Legend Returns"</Text> 
+    <Text id="40">The audio DLC is required to play the CD soundtrack</Text>
+    <Text id="41">sound fx</Text>
+    <Text id="42">Toggle sound fx options</Text>
+    <Text id="43">enabled</Text>
+    <Text id="44">Turn the sound effects on/off</Text>
+    <Text id="45">force feedback</Text>
+    <Text id="46">Turn gamepad force feedback on/off</Text>
+    <Text id="47">function-key</Text>
+    <Text id="48">Turn fn-key support on/off</Text>
+    <Text id="49">Configure gamepad bindings</Text>
+    <Text id="50">Configure keyboard bindings</Text>
+    <Text id="51">Adjust bindings for player 1</Text>
+    <Text id="52">Adjust bindings for player 2</Text>
+    <Text id="53">Adjust bindings for player 3</Text>
+    <Text id="54">Adjust bindings for player 4</Text>
+    <Text id="55">Player uses the keyboard - click to toggle</Text>
+    <Text id="56">Player uses a gamepad - click to toggle</Text>
+    <Text id="57">No gamepads connected</Text>
+    <Text id="58">Cast player into oblivion</Text>
+    <Text id="59">Pick up/drop tool</Text>
+    <Text id="60">Use tool</Text>
+    <Text id="61">Use bomb</Text>
+    <Text id="62">Move left</Text>
+    <Text id="63">Move down</Text>
+    <Text id="64">Move right</Text>
+    <Text id="65">Blast left</Text>
+    <Text id="66">Move up</Text>
+    <Text id="67">Blast right</Text>
+    <Text id="68">Cast player into oblivion - click to change</Text>
+    <Text id="69">Pick up/drop tool - click to change</Text>
+    <Text id="70">Use tool - click to change</Text>
+    <Text id="71">Use bomb - click to change</Text>
+    <Text id="72">Move left - click to change</Text>
+    <Text id="73">Move down - click to change</Text>
+    <Text id="74">Move right - click to change</Text>
+    <Text id="75">Blast left - click to change</Text>
+    <Text id="76">Move up - click to change</Text>
+    <Text id="77">Blast right - click to change</Text>
+    <Text id="78">This size will require bilinear filtering to be enabled</Text>
+  </Table>
+  
+  <Table name="WORLD" id="930">
+    <Text id="1">Change the world theme</Text>
+    <Text id="2">Cancel changes</Text>
+    <Text id="3">This region shows your selected background</Text>
+    <Text id="4">Scroll the background position</Text>
+    <Text id="5">Skeleton's Keep (Fossil World)</Text>
+    <Text id="6">Moss Caverns (Moss World)</Text>
+    <Text id="7">Shimmering Caverns (Phosphorus World)</Text>
+    <Text id="8">Inferno's Playground (Lava World)</Text>
+    <Text id="9">The Shadowlands (Dark World)</Text>
+    <Text id="10">Fungus Delvings (Fungus World)</Text>
+    <Text id="11">Winter's Dungeon (Ice World)</Text>
+    <Text id="12">Crystal Hoard (Crystal World)</Text>
+    <Text id="13">Meltdown Metropolis (Industrial World)</Text>
+    <Text id="14">Lost City Of Ur (Ancient World)</Text>
+    <Text id="15">Reef World</Text>
+    <Text id="16">Astral World</Text>
+  </Table>
+  
+  <Table name="EDITOR" id="950">
+    <Text id="1">Return to the main menu</Text>
+    <Text id="2">Load a puzzle group</Text>
+    <Text id="3">Save any changes made to this puzzle group</Text>
+    <Text id="4">Start a new puzzle group</Text>
+    <Text id="5">Add a new puzzle to this group</Text>
+    <Text id="6">Delete the current puzzle from the group</Text>
+    <Text id="7">View the previous puzzle</Text>
+    <Text id="8">View the next puzzle</Text>
+    <Text id="9">Toggle darkness on or off</Text>
+    <Text id="10">Change the background</Text>
+    <Text id="11">Rename the current puzzle title</Text>
+    <Text id="12">Test this puzzle</Text>
+    <Text id="13">Browse all of the puzzles in this group</Text>
+    <Text id="14">Return to the editor</Text>
+    <Text id="15">Whoa!\n\nYou can't try puzzles without runners.\nAdd in a runner before testing.</Text>
+    <Text id="16">You've made changes to this puzzle group.\nWould you like to save the changes?</Text>
+    <Text id="17">Save the changes made to this puzzle group</Text>
+    <Text id="18">Discard any changes made to this puzzle group</Text>
+    <Text id="19">Cancel and return to your puzzle</Text>
+    <Text id="20">Whoa!\n\nAre you sure you want to remove\nthis puzzle from the group?</Text>
+    <Text id="21">Delete this puzzle</Text>
+    <Text id="22">You've made changes to this puzzle group.\nWould you like to save the changes?</Text>
+    <Text id="23">Combine another puzzle group to the end of this group</Text>
+    <Text id="24">Save a new copy of this puzzles group (Save As)</Text>
+    <Text id="25">Insert a new puzzle to this group</Text>
+    <Text id="26">Test this puzzle</Text>
+    <Text id="27">Restore this puzzle group to the last saved copy</Text>
+    <Text id="28">COMBINE WITH...</Text>
+    <Text id="29">Load puzzle group</Text>
+    <Text id="30">Save puzzle group as</Text>
+    <Text id="31">Turn darkness mode on</Text>
+    <Text id="32">Turn darkness mode off</Text>
+    <Text id="33">That "Lode Runner:Legacy" puzzle\ndoesn't appear to be valid...</Text>
+    <Text id="34">That puzzle group is corrupt\nor not a valid puzzle group!</Text>
+    <Text id="35">Lodes the selected puzzle group for editing</Text>
+    <Text id="36">Cancel and return to the editor</Text>
+    <Text id="37">Saves the puzzle group</Text>
+    <Text id="38">Change the name of this puzzle</Text>
+    <Text id="39">Cancel changes and return to the editor</Text>
+    <Text id="40">Type here to change the name of this puzzle</Text>
+    <Text id="41">Change the settings of this puzzle group</Text>
+	<Text id="42">Sorry, you are not allowed to\nedit this puzzle group</Text>
+  </Table>
+  
+  <Table name="TOOLBOX" id="960">
+    <Text id="1">Fill the enclosed area with the active tile</Text>
+    <Text id="2">Paint the active tile</Text>
+    <Text id="3">Paint a hollow rectangle with the active tile</Text>
+    <Text id="4">Paint a line of the active tile</Text>
+    <Text id="5">Erase</Text>
+    <Text id="6">Pick a tile to use for painting</Text>
+    <Text id="7">Change the settings for certain tiles</Text>
+    <Text id="8">Undo the last change</Text>
+    <Text id="9">Highlight a region to be cut or copied</Text>
+    <Text id="10">Remove the selected region</Text>
+    <Text id="11">Copy the selected region</Text>
+    <Text id="12">Paste the previously copied region</Text>
+    <Text id="13">Flip the selected region horizontally</Text>
+    <Text id="14">Flip the selected region vertically</Text>
+    <Text id="15">Show the tile palette, allowing selection of the available tiles</Text>
+  </Table>
+
+  <Table name="PARTS BIN" id="990">
+    <Text id="1">Turf</Text>
+    <Text id="2">Bedrock</Text>
+    <Text id="3">Slime Turf</Text>
+    <Text id="4">Trap Door Turf</Text>
+    <Text id="5">Phaze Brick</Text>
+    <Text id="6">Exit Phaze Brick</Text>
+    <Text id="7">Liquid Terrain</Text>
+    <Text id="8">Hideout</Text>
+    <Text id="9">Ladder</Text>
+    <Text id="10">Exit Ladder</Text>
+    <Text id="11">Hand-Over-Hand Bar</Text>
+    <Text id="12">Exit Door</Text>
+    <Text id="13">Orange Exit Door</Text>
+    <Text id="14">Green Exit Door</Text>
+    <Text id="15">Red Exit Door</Text>
+    <Text id="16">Secret Exit</Text>
+    <Text id="17">Gold Coin</Text>
+    <Text id="18">Gold Ore</Text>
+    <Text id="19">Gold Skull</Text>
+    <Text id="20">Gold Ingots</Text>
+    <Text id="21">Orange Key</Text>
+    <Text id="22">Green Key</Text>
+    <Text id="23">Red Key</Text>
+    <Text id="24">Mad Monk Entrance</Text>
+    <Text id="25">Jackhammer</Text>
+    <Text id="26">Pick Axe</Text>
+    <Text id="27">Snare</Text>
+    <Text id="28">Big Bomb</Text>
+    <Text id="29">Small Bomb</Text>
+    <Text id="30">Slime Bucket</Text>
+    <Text id="31">Befuddlement Gas</Text>
+    <Text id="32">Exit Door - All</Text>
+    <Text id="33">Jake Peril</Text>
+    <Text id="34">Wes Reckless</Text>
+    <Text id="35">Digmo</Text>
+    <Text id="36">Jane Peril</Text>
+    <Text id="37">Mad Monk</Text>
+    <Text id="38">Transporter Entrance</Text>
+    <Text id="39">Transporter Exit</Text>
+    <Text id="40">Mad Monk Transporter Entrance</Text>
+    <Text id="41">Gold Coin - Jake</Text>
+    <Text id="42">Gold Ore - Jake</Text>
+    <Text id="43">Gold Skull - Jake</Text>
+    <Text id="44">Gold Ignots - Jake</Text>
+    <Text id="45">Gold Coin - Wes</Text>
+    <Text id="46">Gold Ore - Wes</Text>
+    <Text id="47">Gold Skull - Wes</Text>
+    <Text id="48">Gold Ignots - Wes</Text>
+    <Text id="49">Gold Coin - Digmo</Text>
+    <Text id="50">Gold Ore - Digmo</Text>
+    <Text id="51">Gold Skull - Digmo</Text>
+    <Text id="52">Gold Ignots - Digmo</Text>
+    <Text id="53">Gold Coin - Jane</Text>
+    <Text id="54">Gold Ore - Jane</Text>
+    <Text id="55">Gold Skull - Jane</Text>
+    <Text id="56">Gold Ignots - Jane</Text>
+    <Text id="57">Jackhammer - Jake</Text>
+    <Text id="58">Pick Axe - Jake</Text>
+    <Text id="59">Snare - Jake</Text>
+    <Text id="60">Big Bomb - Jake</Text>
+    <Text id="61">Small Bomb - Jake</Text>
+    <Text id="62">Slime Bucket - Jake</Text>
+    <Text id="63">Befuddlement Gas - Jake</Text>
+    <Text id="64">Transporter Entrance - Jake</Text>
+    <Text id="65">Jackhammer - Wes</Text>
+    <Text id="66">Pick Axe - Wes</Text>
+    <Text id="67">Snare - Wes</Text>
+    <Text id="68">Big Bomb - Wes</Text>
+    <Text id="69">Small Bomb - Wes</Text>
+    <Text id="70">Slime Bucket - Wes</Text>
+    <Text id="71">Befuddlement Gas - Wes</Text>
+    <Text id="72">Transporter Entrance - Wes</Text>
+    <Text id="73">Jackhammer - Digmo</Text>
+    <Text id="74">Pick Axe - Digmo</Text>
+    <Text id="75">Snare - Digmo</Text>
+    <Text id="76">Big Bomb - Digmo</Text>
+    <Text id="77">Small Bomb - Digmo</Text>
+    <Text id="78">Slime Bucket - Digmo</Text>
+    <Text id="79">Befuddlement Gas - Digmo</Text>
+    <Text id="80">Transporter Entrance - Digmo</Text>
+    <Text id="81">Jackhammer - Jane</Text>
+    <Text id="82">Pick Axe - Jane</Text>
+    <Text id="83">Snare - Jane</Text>
+    <Text id="84">Big Bomb - Jane</Text>
+    <Text id="85">Small Bomb - Jane</Text>
+    <Text id="86">Goo Bucket - Jane</Text>
+    <Text id="87">Befuddlement Gas - Jane</Text>
+    <Text id="88">Transporter Entrance - Jane</Text>
+    <Text id="89">Key - Jake</Text>
+    <Text id="90">Exit Door - Jake</Text>
+    <Text id="91">Key - Wes</Text>
+    <Text id="92">Exit Door - Wes</Text>
+    <Text id="93">Key - Digmo</Text>
+    <Text id="94">Exit Door - Digmo</Text>
+    <Text id="95">Key - Jane</Text>
+    <Text id="96">Exit Door - Jane</Text>
+    <Text id="97">Regenerating Bomb - Jake</Text>
+    <Text id="98">Regenerating Bomb - Wes</Text>
+    <Text id="99">Regenerating Bomb - Digmo</Text>
+    <Text id="100">Regenerating Bomb - Jane</Text>
+    <Text id="101">Regenerating Bomb</Text>
+    <Text id="102">Regenerating Bomb - Limited Supply</Text>
+    <Text id="103">Regenerating Pre-Lit Bomb</Text>
+    <Text id="104">Pre-Lit Bomb</Text>
+    <Text id="105">Limited Supply Regenerating Bomb - Jake</Text>
+    <Text id="106">Limited Supply Regenerating Bomb - Wes</Text>
+    <Text id="107">Limited Supply Regenerating Bomb - Digmo</Text>
+    <Text id="108">Limited Supply Regenerating Bomb - Jane</Text>
+  </Table>
+
+  <Table name="EDITOR OPTIONS" id="951">
+    <Text id="1">Cancel and return to the editor</Text>
+    <Text id="2">Accept the current settings</Text>
+    <Text id="3">Allows you to play with all the quirks and foibles of the original "Lode Runner Online: The Mad Monks' Revenge"</Text>
+    <Text id="4">Game rules and monk behaviour will match that of the 1983 original Lode Runner</Text>
+    <Text id="5">QUIRKS MODE</Text>
+    <Text id="6">CLASSIC MODE</Text>
+  </Table>
+
+  <Table name="PRELOBBY" id="985">
+    <Text id="1">Multiplayer mode</Text>
+    <Text id="2">Cancel and return to the main menu</Text>
+    <Text id="3">PLAYER</Text>
+    <Text id="4">Your player nickname</Text>  
+    <Text id="5">Change your player nickname</Text>
+    <Text id="6">REGION</Text>
+    <Text id="7">The server region the game is currently connected to</Text>
+    <Text id="8">Change the region the game connects to</Text>
+    <Text id="9">Join a random game</Text>
+    <Text id="10">Join a private invite-only game</Text>
+    <Text id="11">Host a new game</Text>
+    <Text id="12">Host a game from an existing saved game</Text>
+    <Text id="13">The number of players ready to play (in your server region)</Text>
+    <Text id="14">The number of games being played or ready to join (in your server region)</Text>
+    <Text id="15">The number of players currently gaming (in your server region)</Text>
+    <Text id="16">Change your player nickname</Text>
+    <Text id="17">Cancel changes and return to the lobby</Text>
+    <Text id="18">Type here to change your nickname</Text>
+    <Text id="19">Paste or type the name of the\ngame you wish to join</Text>
+    <Text id="20">Join the game</Text>
+    <Text id="21">Cancel and return to the lobby</Text>
+    <Text id="22">Return to the lobby</Text>
+    <Text id="23">No games available.\nWait a moment and try again.</Text>
+    <Text id="24">Game doesn't exist or\nis no longer available to join.</Text>
+    <Text id="25">You need to pick a region\n to play in before you can\njoin or create a game!</Text>
+    <Text id="26">Return to pick a region</Text>
+    <Text id="27">Cannot create your game,\ntry again later.</Text>
+    <Text id="28">That game is corrupt or\nnot a valid saved game!</Text>
+    <Text id="29">Only the host can restore this game!\n'{0}' needs to\nrestore this game.</Text>
+    <Text id="30">Only online games can be restored!</Text>
+    <Text id="31">Creating game...</Text>
+    <Text id="32">Finding games...</Text>
+    <Text id="33">Joining game...</Text>
+    <Text id="34">Paste an invite from the clipboard</Text>
+    <Text id="35">\n\nConnecting to game server...</Text>
+    <Text id="36">Cancel and return to the main menu</Text>
+  </Table>
+
+  <Table name="LOBBY" id="993"> 
+    <Text id="1">You need to wait for more\nplayers before starting!</Text>  
+    <Text id="2">This game is no longer available.</Text>
+    <Text id="3">Return to the lobby</Text>
+    <Text id="4">Return and find another game to join or create</Text>
+    <Text id="6">{0}'S GAME</Text>
+    <Text id="7">Choose a custom puzzle group to play or load a saved game</Text>
+    <Text id="8">Get the game ready to play</Text>
+    <Text id="9">Public game?</Text>
+    <Text id="10">Indicates if the game is open to everyone (public) or invite only</Text>
+    <Text id="11">NO EXTRA LIVES</Text>
+    <Text id="12">No more lives will be granted on completing a puzzle</Text>
+    <Text id="13">QUIRKS MODE</Text>
+    <Text id="14">Play with all the quirks and foibles of the original "Lode Runner Online: The Mad Monks' Revenge"</Text>
+    <Text id="15">ALLOW CHEATS</Text>
+    <Text id="16">The host is allowed to use cheats during the game</Text>
+    <Text id="17">CLASSIC MODE</Text>
+    <Text id="18">Game rules and monk behaviour will match that of the 1983 original Lode Runner</Text>
+    <Text id="19">2 players can join this game</Text>
+    <Text id="20">3 players can join this game</Text>
+    <Text id="21">4 players can join this game</Text>
+    <Text id="22"></Text>
+    <Text id="23">Welcome!</Text>
+    <Text id="24">{0} has joined the game</Text>
+    <Text id="25">{0} has left the game</Text>
+    <Text id="26">Preparing game...</Text>
+    <Text id="27">Game transfer cancelled</Text>
+    <Text id="28">Downloading game...</Text>
+    <Text id="29">Share '{0}' with your friends (copied to clipboard)</Text>
+    <Text id="30">-- open --</Text>
+    <Text id="31">-- closed --</Text>
+    <Text id="32">-- reserved for {0} --</Text>    
+    <Text id="33">You are about to reduce the number\nof players that can join your game!\nKick extra players?</Text>
+    <Text id="34">Continue and kick players</Text>
+    <Text id="35">Cancel and return to the lobby</Text>
+    <Text id="36">You need one more player\nbefore you can start the game!</Text>
+    <Text id="37">You need to wait for all\nplayers to join before starting the game!</Text>
+    <Text id="38">Preparing upload...</Text>
+    <Text id="39">Preparing download...</Text>
+    <Text id="40">Error uploading game data...trying one more time...</Text>
+    <Text id="41">Error downloading game data...trying one more time...</Text>
+    <Text id="42">There appears to be a problem\nuploading the game...\nTry hosting a game again later.</Text>
+    <Text id="43">There appears to be a problem\ndownloading the game...\nTry joining a game again later.</Text>
+  </Table>
+  
+  <Table name="REGION" id="987">
+    <Text id="1">Change your game region to the selected</Text>
+    <Text id="2">Cancel changes and return to the lobby</Text>
+    <Text id="3">Choose a game server</Text>
+    <Text id="4">Scanning...</Text>
+    <Text id="5">Singapore</Text>
+    <Text id="6">Melbourne</Text>
+    <Text id="7">Montreal</Text>
+    <Text id="8">Amsterdam</Text>
+    <Text id="9">Chennai</Text>
+    <Text id="10">Tokyo</Text>
+    <Text id="11">Moscow</Text>
+    <Text id="12">Khabarovsk</Text>
+    <Text id="13">Sao Paulo</Text>
+    <Text id="14">Seoul</Text>
+    <Text id="15">Washington</Text>
+    <Text id="16">San José</Text>
+    <Text id="17">Johannesburg</Text>
+    <Text id="18"></Text>
+    <Text id="19"></Text>
+    <Text id="20"></Text>
+    <Text id="21">Asia</Text>
+    <Text id="22">Australia</Text>
+    <Text id="23">Canada, East</Text>
+    <Text id="24">Europe</Text>
+    <Text id="25">India</Text>
+    <Text id="26">Japan</Text>
+    <Text id="27">Russia</Text>
+    <Text id="28">Russia, East</Text>
+    <Text id="29">South America</Text>
+    <Text id="30">South Korea</Text>
+    <Text id="31">USA, East</Text>
+    <Text id="32">USA, West</Text>
+    <Text id="33">South Africa</Text>
+  </Table>
+
+  <Table name="CHOOSE GAME" id="991">
+    <Text id="1">Single Player</Text>
+    <Text id="2">Two Player</Text>
+    <Text id="3">Multiplayer</Text>
+    <Text id="4">Choose a custom puzzle group to play or load a saved game</Text>
+    <Text id="5">Reset play to the built-in puzzle group</Text>
+    <Text id="6">Start the game. Good luck!</Text>
+    <Text id="7">Cancel and return to the menu</Text>
+    <Text id="8">The title of this puzzle</Text>
+    <Text id="9">This is a schematic of the puzzle</Text>
+    <Text id="10">Customize your game</Text>
+    <Text id="11">SUPER 1 PLAYER GROUP</Text>
+    <Text id="12">SUPER 2 PLAYER GROUP</Text>
+    <Text id="13">Load game</Text>
+    <Text id="14">Select the game to play</Text>
+    <Text id="15">That game is corrupt or\nnot a valid saved game!</Text>
+    <Text id="16">That puzzle group is corrupt\nor not a valid puzzle group!</Text>
+    <Text id="17">That replay is corrupt or\nnot a valid game replay!</Text>
+    <Text id="18">That replay requires version\n{0} to play correctly!</Text>
+    <Text id="19">Lodes the selected game</Text>
+  </Table>
+
+  <Table name="GAMEPLAY OPTIONS" id="992">
+    <Text id="1">Accept the current settings</Text>
+    <Text id="2">Cancel changes and uses previously selected settings</Text>
+    <Text id="3">Allows you to play with all the quirks and foibles of the original "Lode Runner Online: The Mad Monks' Revenge"</Text>
+    <Text id="4">Game rules and monk behaviour will match that of the 1983 original Lode Runner</Text>
+    <Text id="5">No more lives will be granted on completing a puzzle</Text>
+    <Text id="6">Play the game for a limited amount of time before it will automatically save &amp; exit</Text>
+    <Text id="7">QUIRKS MODE</Text>
+    <Text id="8">CLASSIC MODE</Text>
+    <Text id="9">NO EXTRA LIVES</Text>
+    <Text id="10">TIME LIMIT</Text>
+    <Text id="11">Starting lives</Text>
+    <Text id="12">Choose how many lives to start the game with</Text>
+    <Text id="13">UNLIMITED</Text>
+    <Text id="14">LIVES</Text>
+    <Text id="15">MINUTES</Text>
+  </Table>
+    
+  <Table name="FILE DIALOG" id="750">
+    <Text id="1">Load file</Text>
+    <Text id="2">Save file as</Text>
+    <Text id="3">Up one level</Text>
+    <Text id="4">Lodes the selected game</Text>
+    <Text id="5">Return to the file dialog</Text>
+    <Text id="6">Cancel and return to the file dialog</Text>
+    <Text id="7">Cancel changes and return to the file dialog</Text>
+    <Text id="8">That file already exists!\nDo you want to replace it?</Text>
+    <Text id="9">Overwrite the file</Text>
+    <Text id="10">That file does not exist!</Text>
+    <Text id="11">That file is read-only or you do\nnot have write permission!</Text>
+    <Text id="12">That folder is read-only or you do\nnot have write permission!</Text>      
+    <Text id="13">Allows you to copy, rename or delete this file</Text>
+    <Text id="14">Make a copy of this file</Text>
+    <Text id="15">Give this file a different name</Text>
+    <Text id="16">Changes the name of this file</Text>
+    <Text id="17">Delete this file</Text>
+    <Text id="18">Beware of deleters remorse!\n\nAre you sure you want to\n**permanently delete this file?</Text>
+    <Text id="19">Delete the file</Text>
+    <Text id="20">Allows you to copy, rename or delete this folder</Text>
+    <Text id="21">Make a copy of this folder</Text>
+    <Text id="22">Give this folder a different name</Text>
+    <Text id="23">Changes the name of this folder</Text>
+    <Text id="24">Delete this folder</Text>
+    <Text id="25">Beware of deleters remorse!\n\nAre you sure you want to\n**permanently delete this folder?</Text>
+    <Text id="26">Delete the folder</Text>
+    <Text id="27">Create a new folder</Text>
+    <Text id="28">Creates this folder</Text>
+    <Text id="29">   [Create a new folder...]</Text>  
+  </Table>
+
+  <Table name="HUDs" id="850">
+    <Text id="1">Current puzzle number</Text>
+    <Text id="2">Cast player one into oblivion</Text>
+    <Text id="3">Cast player two into oblivion</Text>
+    <Text id="4">Amount of lives player one has remaining</Text>
+    <Text id="5">Amount of lives player two has remaining</Text>
+    <Text id="6">Player one's score</Text>
+    <Text id="7">Player two's score</Text>
+    <Text id="8">Tool player one is currently carrying</Text>
+    <Text id="9">Tool player two is currently carrying</Text>
+    <Text id="10">Amount of bombs player one is currently carrying</Text>
+    <Text id="11">Amount of bombs player two is currently carrying</Text>
+  </Table>
+
+</Strings>

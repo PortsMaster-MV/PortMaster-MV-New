@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+
+LANGUAGE FILE FOR LODE RUNNER ONLINE
+LANGUAGE: Spanish (es)
+AUTHOR: Luis Travieso
+
+You can create your own language file if you wish. The name of the file *MUST* be the two-letter
+ISO 639-1 country code of the language. https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+
+The "Lode Runner" stylized font does not support Unicode characters. The current solution is to
+leave any text that won't display in English.
+
+Any characters not in the game fonts will display as a question mark (?).
+
+Language files support a few basic text formatting functions:
+\n == represents a new line
+##hexText == colour change (must use 6 character colour code!)
+**word == underlines a word
+  
+Only tooltips wrap text automatically. Text for dialogs/prompts will need line spacing manually
+added. If you don't, you'll end up with a long line of text.
+  
+-->
+
+<Strings>
+  <Table name="GAMEPLAY" id="200">
+    <Text id="1">¿Desea guardar su juego\nantes de salir?</Text>
+    <Text id="2">Guarda tu juego antes de volver al menú principal</Text>
+    <Text id="3">Abandona el juego y vuelve al menú principal</Text>
+    <Text id="4">Volver al juego</Text>
+    <Text id="5">No puedes avanzar\nmas, haz alcanzado el ultimo\nnivel en este set.</Text>
+    <Text id="6">No puedes regresar mas en\nanteriores niveles, has alcanzado el comienzo\nde este set.</Text>
+    <Text id="7">¡Si activas los trucos quedaras fuera\nde las mejores puntuaciones!\n\n¿Quieres activar los trucos?</Text>
+    <Text id="8">Llene de vergüenza a su familia y juegue como un tramposo</Text>
+    <Text id="9">Evite la vergüenza a su familia y vuelva al juego</Text>
+    <Text id="10">¿Desea guardar su juego\nantes de cargar otro?</Text>
+    <Text id="11">Vuelve a tu juego</Text>
+    <Text id="12">Abandonar el juego y restaurar</Text>
+    <Text id="13">Volver al juego</Text>
+    <Text id="14">¡Tiempo fuera!\n¡Vaya y estire sus piernas!\nTu juego se a guardado para después.</Text>
+    <Text id="15">Volver al menú principal</Text>
+    <Text id="16">¡Tienes {0} minutos!</Text>
+    <Text id="17">Cargar juego</Text>
+    <Text id="18">Guardar juego como</Text>
+    <Text id="19">¿Está seguro que desea abandonar\nsu actual juego?</Text>
+    <Text id="20">¡Bien!</Text>
+    <Text id="21">No, ¡gracias!</Text>
+    <Text id="22">Jake Peril</Text>
+    <Text id="23">Wes Reckless</Text>
+    <Text id="24">Jane Peril</Text>
+    <Text id="25">Digmo</Text>
+    <Text id="26">Felicidades, ##F5F5F5Jake ##F5F5F5Peril\n¡Tienes una puntuación superior!\n\n¡El salón de la fama necesita tu nombre!</Text>
+    <Text id="27">Felicidades, ##373FDBWes ##373FDBReckless\n¡Tienes una puntuación superior!\n\n¡El salón de la fama necesita tu nombre!</Text>
+    <Text id="28">Felicidades, ##EA58E5Jane ##EA58E5Peril\n¡Tienes una puntuación superior!\n\n¡El salón de la fama necesita tu nombre!</Text>
+    <Text id="29">Felicidades, ##1FC71FDigmo\n¡Tienes una puntuación superior!\n\n¡El salón de la fama necesita tu nombre!</Text>
+    <Text id="30">Guarda tu juego</Text>
+    <Text id="31">Cancelar y volver al menusd</Text>
+    <Text id="32">¡El juego se ha desincronizado!\n Abortando...\n\nTu juego se ha guardado.</Text>
+    <Text id="33">Se ha producido un\nerror de sincronización de red.\n\nReiniciando nivel...</Text>
+    <Text id="34">¡Error de red inesperado!\nAbortando...\n\nTu juego se ha guardado.</Text>
+    <Text id="35">Otro jugador ya no \nparece estar conectado. Abortando...\n\nTu juego se ha guardado.</Text>
+    <Text id="36">El juego se vuelve inestable.</Text>
+    <Text id="37">Juego pausado</Text>
+    <Text id="38">El juego se reanudó</Text>
+    <Text id="39">¡Reinicie el rompecabezas, por favor!</Text>
+  </Table>
+  
+  <Table name="MAIN MENU" id="940">
+    <Text id="1">Comenzar juego de un jugador</Text>
+    <Text id="2">Comenzar juego de dos jugadores en la misma maquina</Text>
+    <Text id="3">Comenzar juego multijugador</Text>
+    <Text id="4">Crea y edita niveles</Text>
+    <Text id="5">Cambiar opciones del juego</Text>
+    <Text id="6">Salir del juego</Text>
+    <Text id="7">Jugador</Text>
+    <Text id="8">Niveles</Text>
+    <Text id="9">Puntos</Text>
+    <Text id="10">Un Jugador Mejores Puntuaciones</Text>
+    <Text id="11">Multijugador Mejores Puntuaciones</Text>
+    <Text id="12">Un Jugador Mejores Puntuaciones - Niveles Personalizados</Text>
+    <Text id="13">Multijugador Mejores Puntuaciones - Niveles Personalizados</Text>
+    <Text id="14">\nConectando al servidor de juego...</Text>
+    <Text id="15">Cancelar y volver al menu principal</Text>
+    <Text id="16">\n\nEl juego en línea no está disponible\nactualmente. Inténtalo de nuevo más tarde.</Text>
+    <Text id="17">Volver al menu principal</Text>
+    <Text id="18">\n\n¡Error de red inesperado!\nInténtalo de nuevo más tarde.</Text>
+  </Table>
+
+  <Table name="GAMEPLAY MENU" id="942">
+    <Text id="1">Continuar</Text>
+    <Text id="2">Reiniciar Puzzle</Text>
+    <Text id="3">Cargar juego</Text>
+    <Text id="4">Guardar</Text>
+    <Text id="5">Opciones</Text>
+    <Text id="6">Salir</Text>
+    <Text id="7">Volver al juego</Text>
+    <Text id="8">Reiniciar el nivel actual</Text>
+    <Text id="9">Restaurar el juego actual</Text>
+    <Text id="10">Guarda tu juego actual</Text>
+    <Text id="11">Cambiar las opciones del juego</Text>
+    <Text id="12">Salir del juego y volver al menu</Text>
+  </Table>
+  
+  <Table name="CHOOSE PUZZLE" id="910">
+    <Text id="1">Burro</Text>
+    <Text id="2">Saltar al rompecabezas seleccionado</Text>
+    <Text id="3">Vuelve a tu juego</Text>
+    <Text id="4">Mover este nivel hacia atrás en el set</Text>
+    <Text id="5">Mover este nivel hacia adelante en el set</Text>
+    <Text id="6">Titulo del nivel</Text>
+    <Text id="7">La temática del nivel</Text>
+    <Text id="8">Ir al nivel seleccionado para su edición</Text>
+    <Text id="9">Volver al editor</Text>
+    <Text id="10">Mostrar el nivel anterior en el set</Text>
+    <Text id="11">Mostrar el siguiente nivel en el set</Text>
+    <Text id="12">Este es el último nivel</Text>
+    <Text id="13">Este nivel lleva a {0}</Text>
+  </Table>
+
+  <Table name="OPTIONS" id="920">
+    <Text id="1">Aceptar cualquier cambio</Text>
+    <Text id="2">Cancelar cualquier cambio</Text>
+    <Text id="3">Revertir todas las opciones a los valores predeterminados</Text>
+    <Text id="4">Alternar ajustes generales</Text>
+    <Text id="5">Cambiar la configuración de pantalla</Text>
+    <Text id="6">Alternar ajustes de audio</Text>
+    <Text id="7">Cambiar configuración de teclado y gamepad</Text>
+    <Text id="8">¿Estás seguro de que deseas cambiar\nlas opciones del juego a sus\nconfiguraciones predeterminadas?</Text>
+    <Text id="9">Restaura todas las opciones del juego a sus valores predeterminados</Text>
+    <Text id="10">Cancela y vuelve a las opciones del juego.</Text>
+    <Text id="11">Globos de ayuda</Text>
+    <Text id="12">Activar/desactivar ayuda de globos (estos globos de mensaje)</Text>
+    <Text id="13">Cambiar lenguaje del juego</Text>
+    <Text id="14">Velocidad de juego</Text>
+    <Text id="15">Alternar opciones de velocidad del juego</Text>
+    <Text id="16">Tecla de acceso directo para ralentizar el juego</Text>
+    <Text id="17">Reducir velocidad - haga clic para cambiar</Text>
+    <Text id="18">Tecla de acceso directo para acelerar el juego</Text>
+    <Text id="19">Aumentar velocidad - haga clic para cambiar</Text>
+    <Text id="20">Estilo de voladura</Text>
+    <Text id="21">Alternar estilo de voladura/excavación</Text>
+    <Text id="22">Usar estilo "Mad Monks' Revenge" (default)</Text>
+    <Text id="23">Usar estilo "The Legend Returns"</Text>
+    <Text id="24">Fullscreen</Text>
+    <Text id="25">Alternar pantalla completa</Text>
+    <Text id="26">Ajustar</Text>
+    <Text id="27">Estira el juego en pantalla completa para ajustarlo al tamaño de tu pantalla</Text>
+    <Text id="28">Tamaño de ventana</Text>
+    <Text id="29">Cambia el tamaño de la ventana del juego cuando no está en modo de pantalla completa</Text>
+    <Text id="30">Filtrado</Text>
+    <Text id="31">Alternar opciones de filtrado de juegos</Text>
+    <Text id="32">Filtrado desactivado (predeterminado)</Text>
+    <Text id="33">Filtrado bilinial</Text>
+    <Text id="34">Musica</Text>
+    <Text id="35">Alternar opciones de musica</Text>
+    <Text id="36">Activado</Text>
+    <Text id="37">Encender/apagar la música</Text>
+    <Text id="38">TLR midi</Text>
+    <Text id="39">Reproduce la música MIDI de "The Legend Returns"</Text>
+    <Text id="40">Se requiere el DLC de audio para reproducir la pista de sonido del CD.</Text>
+    <Text id="41">Sonido FX</Text>
+    <Text id="42">Opciones de sonido FX</Text>
+    <Text id="43">Activado</Text>
+    <Text id="44">Activar/desactivar los efectos de sonido</Text>
+    <Text id="45">Vibración</Text>
+    <Text id="46">Activar/desactivar la vibracion del gamepad</Text>
+    <Text id="47">Tecla de función</Text>
+    <Text id="48">Activar/desactivar el soporte fn-key</Text>
+    <Text id="49">Configurar enlaces de gamepad</Text>
+    <Text id="50">Configurar enlaces de teclado</Text>
+    <Text id="51">Ajustar enlaces para jugador 1</Text>
+    <Text id="52">Ajustar enlaces para jugador 2</Text>
+    <Text id="53">Ajustar enlaces para jugador 3</Text>
+    <Text id="54">Ajustar enlaces para jugador 4</Text>
+    <Text id="55">El jugador usara el teclado - haga clic para alternar</Text>
+    <Text id="56">El jugador usara el gamepad - haga clic para alternar</Text>
+    <Text id="57">No hay gamepads conectados</Text>
+    <Text id="58">Matar al jugador</Text>
+    <Text id="59">Recoger/soltar herramienta</Text>
+    <Text id="60">Usar herramienta</Text>
+    <Text id="61">Usar bomba</Text>
+    <Text id="62">Izquierda</Text>
+    <Text id="63">Abajo</Text>
+    <Text id="64">Derecha</Text>
+    <Text id="65">Ataque a la izquierda</Text>
+    <Text id="66">Arriba</Text>
+    <Text id="67">Ataque a la derecha</Text>
+    <Text id="68">Lanzar jugador en el olvido - haga clic para cambiar</Text>
+    <Text id="69">Matar al jugador - haga clic para cambiar</Text>
+    <Text id="70">Usar herramienta - haga clic para cambiar</Text>
+    <Text id="71">Usar bomba - haga clic para cambiar</Text>
+    <Text id="72">Izquierda - haga clic para cambiar</Text>
+    <Text id="73">Abajo - haga clic para cambiar</Text>
+    <Text id="74">Derecha - haga clic para cambiar</Text>
+    <Text id="75">Ataque a la izquierda - haga clic para cambiar</Text>
+    <Text id="76">Arriba - haga clic para cambiar</Text>
+    <Text id="77">Ataque a la derecha - haga clic para cambiar</Text>
+    <Text id="78">Este tamaño requerirá que el filtrado bilineal esté habilitado</Text>
+  </Table>
+  
+  <Table name="WORLD" id="930">
+    <Text id="1">Cambiar el tema de mundo</Text>
+    <Text id="2">Cancelar cambios</Text>
+    <Text id="3">Esta región muestra tus fondos seleccionados</Text>
+    <Text id="4">Desplazar la posición del fondo</Text>
+    <Text id="5">Skeleton's Keep (Mundo fósil)</Text>
+    <Text id="6">Moss Caverns (Mundo Jungla)</Text>
+    <Text id="7">Shimmering Caverns (Mundo fosfórico)</Text>
+    <Text id="8">Inferno's Playground (Mundo lava)</Text>
+    <Text id="9">The Shadowlands (Mundo oscuro)</Text>
+    <Text id="10">Fungus Delvings (Mundo hongo)</Text>
+    <Text id="11">Winter's Dungeon (Mundo hielo)</Text>
+    <Text id="12">Crystal Hoard (Mundo cristal)</Text>
+    <Text id="13">Meltdown Metropolis (Mundo industrial)</Text>
+    <Text id="14">Lost City Of Ur (Mundo antiguo)</Text>
+    <Text id="15">Mundo arrecife</Text>
+    <Text id="16">Mundo astral</Text>
+  </Table>
+
+  <Table name="EDITOR" id="950">
+    <Text id="1">Volver al menú principal</Text>
+    <Text id="2">Cargar un archivo de niveles</Text>
+    <Text id="3">Guardar cualquier cambio en este set de niveles</Text>
+    <Text id="4">Comenzar un nuevo set de niveles</Text>
+    <Text id="5">Añadir un nuevo nivel a este set</Text>
+    <Text id="6">Borrar el nivel actual de este set</Text>
+    <Text id="7">Ver el nivel anterior</Text>
+    <Text id="8">Ver el nivel siguiente</Text>
+    <Text id="9">Activar o desactivar la oscuridad del mapa</Text>
+    <Text id="10">Cambiar el fondo</Text>
+    <Text id="11">Renombrar el titulo del nivel actual</Text>
+    <Text id="12">Probar este nivel)</Text>
+    <Text id="13">Ver todos los niveles en este set</Text>
+    <Text id="14">Volver al editor</Text>
+    <Text id="15">¡Hey!\n\nNo puedes probar un nivel sin jugadores.\nAgrega un jugador antes de probarlo.</Text>
+    <Text id="16">Realizaste cambios en este set de niveles.\n¿Deseas guardar los cambios?</Text>
+    <Text id="17">Guardar los cambios hechos en este set</Text>
+    <Text id="18">Descartar todos los cambios hechos en este set</Text>
+    <Text id="19">Cancelar y volver al nivel</Text>
+    <Text id="20">¡Hey!\n\n¿Estas seguro de querer borrar\neste nivel del set?</Text>
+    <Text id="21">Borrar este nivel</Text>
+    <Text id="22">Realizaste cambios en este set de niveles.\n¿Deseas guardar los cambios?</Text>
+    <Text id="23">Combinar otro set niveles al final de este set</Text>
+    <Text id="24">Guardar una nueva copia de este set de niveles (Guardar como)</Text>
+    <Text id="25">Insertar un nuevo nivel en este set</Text>
+    <Text id="26">Probar el nivel</Text>
+    <Text id="27">Restaura este set de niveles con la ultima copia guardada</Text>
+    <Text id="28">COMBINAR CON...</Text>
+    <Text id="29">Cargar set de niveles</Text>
+    <Text id="30">Guardar set de niveles como</Text>
+    <Text id="31">Activar el modo oscuridad</Text>
+    <Text id="32">Desactivar modo de oscuridad</Text>
+    <Text id="33">Que "Lode Runner: Legacy" puzzle\nno parece ser válido...</Text>
+    <Text id="34">¡Este set de niveles esta corrupto \no no es valido!</Text>
+    <Text id="35">Lodes el conjunto de rompecabezas seleccionado para la edición</Text>
+    <Text id="36">Cancelar y volver al editor</Text>
+    <Text id="37">Guarda el conjunto de rompecabezas</Text>
+    <Text id="38">Cambia el nombre de este nivel</Text>
+    <Text id="39">Volver al editor</Text>
+    <Text id="40">Escribe aquí el nuevo nombre del nivel</Text>
+    <Text id="41">Cambia la configuración de este grupo de niveles</Text>
+	<Text id="42">Lo sentimos, no puedes editar este\nconjunto de rompecabezas</Text>
+  </Table>
+  
+  <Table name="TOOLBOX" id="960">
+    <Text id="1">Llene el área cerrada con el elemento elegido</Text>
+    <Text id="2">Pinta el elemento elegido</Text>
+    <Text id="3">Pinta un rectángulo hueco con el elemento elegido</Text>
+    <Text id="4">Pinta una línea del elemento elegido</Text>
+    <Text id="5">Borrar</Text>
+    <Text id="6">Copia un elemento y úsalo para pintar</Text>
+    <Text id="7">Cambia los parámetros de ciertos elementos</Text>
+    <Text id="8">Deshacer el ultimo cambio</Text>
+    <Text id="9">Selecciona una región para mover o copiar</Text>
+    <Text id="10">Corta la región seleccionada</Text>
+    <Text id="11">Copia la región seleccionada</Text>
+    <Text id="12">Pega la región anteriormente copiada</Text>
+    <Text id="13">Invertir la región seleccionada horizontalmente</Text>
+    <Text id="14">Invertir la región seleccionada verticalmente</Text>
+    <Text id="15">Muestra el tipo de elemento seleccionado y permite elegir otros</Text>
+  </Table>
+
+  <Table name="PARTS BIN" id="990">
+    <Text id="1">Césped</Text>
+    <Text id="2">Roca Base</Text>
+    <Text id="3">Césped de limo</Text>
+    <Text id="4">Trampa de césped</Text>
+    <Text id="5">Ladrillo fase</Text>
+    <Text id="6">Ladrillo fase de salida</Text>
+    <Text id="7">Liquido</Text>
+    <Text id="8">Escondite</Text>
+    <Text id="9">Escalera</Text>
+    <Text id="10">Escalera de salida</Text>
+    <Text id="11">Barra</Text>
+    <Text id="12">Salida</Text>
+    <Text id="13">Puerta de salida naranja</Text>
+    <Text id="14">Puerta de salida verde</Text>
+    <Text id="15">Puerta de salida roja</Text>
+    <Text id="16">Salida secreta</Text>
+    <Text id="17">Moneda de oro</Text>
+    <Text id="18">Cofre de oro</Text>
+    <Text id="19">Calavera de oro</Text>
+    <Text id="20">Lingotes de oro</Text>
+    <Text id="21">Llave naranja</Text>
+    <Text id="22">Llave verde</Text>
+    <Text id="23">Llave roja</Text>
+    <Text id="24">Entrada de monjes</Text>
+    <Text id="25">Taladro</Text>
+    <Text id="26">Pico</Text>
+    <Text id="27">Trampa</Text>
+    <Text id="28">Mega Bomba</Text>
+    <Text id="29">Bomba</Text>
+    <Text id="30">Balde de limo</Text>
+    <Text id="31">Gas estupefaciente</Text>
+    <Text id="32">Puerta de salida</Text>
+    <Text id="33">Jake Peril</Text>
+    <Text id="34">Wes Reckless</Text>
+    <Text id="35">Digmo</Text>
+    <Text id="36">Jane Peril</Text>
+    <Text id="37">Monje loco</Text>
+    <Text id="38">Transportador</Text>
+    <Text id="39">Transportador (receptor)</Text>
+    <Text id="40">Transportador - Monjes</Text>
+    <Text id="41">Moneda de oro - Jake</Text>
+    <Text id="42">Cofre de oro - Jake</Text>
+    <Text id="43">Calavera de oro - Jake</Text>
+    <Text id="44">Lingotes de oro - Jake</Text>
+    <Text id="45">Moneda de oro - Wes</Text>
+    <Text id="46">Cofre de oro - Wes</Text>
+    <Text id="47">Calavera de oro - Wes</Text>
+    <Text id="48">Lingotes de oro - Wes</Text>
+    <Text id="49">Moneda de oro - Digmo</Text>
+    <Text id="50">Cofre de oro - Digmo</Text>
+    <Text id="51">Calavera de oro - Digmo</Text>
+    <Text id="52">Lingotes de oro - Digmo</Text>
+    <Text id="53">Moneda de oro - Jane</Text>
+    <Text id="54">Cofre de oro - Jane</Text>
+    <Text id="55">Calavera de oro - Jane</Text>
+    <Text id="56">Lingotes de oro - Jane</Text>
+    <Text id="57">Taladro - Jake</Text>
+    <Text id="58">Pico - Jake</Text>
+    <Text id="59">Trampa - Jake</Text>
+    <Text id="60">Mega Bomba - Jake</Text>
+    <Text id="61">Bomba - Jake</Text>
+    <Text id="62">Balde de limo - Jake</Text>
+    <Text id="63">Gas estupefaciente - Jake</Text>
+    <Text id="64">Transportador - Jake</Text>
+    <Text id="65">Taladro - Wes</Text>
+    <Text id="66">Pico - Wes</Text>
+    <Text id="67">Trampa - Wes</Text>
+    <Text id="68">Mega Bomba - Wes</Text>
+    <Text id="69">Bomba - Wes</Text>
+    <Text id="70">Balde de limo - Wes</Text>
+    <Text id="71">Gas estupefaciente - Wes</Text>
+    <Text id="72">Transportador - Wes</Text>
+    <Text id="73">Taladro - Digmo</Text>
+    <Text id="74">Pico - Digmo</Text>
+    <Text id="75">Trampa - Digmo</Text>
+    <Text id="76">Mega Bomba - Digmo</Text>
+    <Text id="77">Bomba - Digmo</Text>
+    <Text id="78">Balde de limo - Digmo</Text>
+    <Text id="79">Gas estupefaciente - Digmo</Text>
+    <Text id="80">Transportador - Digmo</Text>
+    <Text id="81">Taladro - Jane</Text>
+    <Text id="82">Pico - Jane</Text>
+    <Text id="83">Trampa - Jane</Text>
+    <Text id="84">Mega Bomba - Jane</Text>
+    <Text id="85">Bomba - Jane</Text>
+    <Text id="86">Balde de limo - Jane</Text>
+    <Text id="87">Gas estupefaciente - Jane</Text>
+    <Text id="88">Transportador - Jane</Text>
+    <Text id="89">Llave - Jake</Text>
+    <Text id="90">Puerta de salida - Jake</Text>
+    <Text id="91">Llave - Wes</Text>
+    <Text id="92">Puerta de salida - Wes</Text>
+    <Text id="93">Llave - Digmo</Text>
+    <Text id="94">Puerta de salida - Digmo</Text>
+    <Text id="95">Llave - Jane</Text>
+    <Text id="96">Puerta de salida - Jane</Text>
+    <Text id="97">Regeneración de bomba - Jake</Text>
+    <Text id="98">Regeneración de bomba - Wes</Text>
+    <Text id="99">Regeneración de bomba - Digmo</Text>
+    <Text id="100">Regeneración de bomba - Jane</Text>
+    <Text id="101">Regeneración de bomba</Text>
+    <Text id="102">Regenerating Bomb - Limited Supply</Text>  
+    <Text id="103">Regeneración de bomba encendida</Text>
+    <Text id="104">Bomba encendida</Text>
+    <Text id="105">Limited Supply Regenerating Bomb - Jake</Text>
+    <Text id="106">Limited Supply Regenerating Bomb - Wes</Text>
+    <Text id="107">Limited Supply Regenerating Bomb - Digmo</Text>
+    <Text id="108">Limited Supply Regenerating Bomb - Jane</Text>
+  </Table>
+
+  <Table name="EDITOR OPTIONS" id="951">
+    <Text id="1">Cancelar y volver al editor</Text>
+    <Text id="2">Aceptar la configuración actual</Text>
+    <Text id="3">Permite jugar con todas las peculiaridades y debilidades del original "Lode Runner on-line: The Mad Monks' Revenge"</Text>
+    <Text id="4">Las reglas del juego y el comportamiento de los monjes coincidirán con los del Lode Runner original de 1983</Text>
+    <Text id="5">MODO PECULIAR</Text>
+    <Text id="6">MODO clásico</Text>
+  </Table>
+  
+  <Table name="PRELOBBY" id="985">
+    <Text id="1">Modo multijugador</Text>
+    <Text id="2">Cancelar y volver al menú principal.</Text>
+    <Text id="3">JUGADOR</Text>
+    <Text id="4">Tu apodo de jugador</Text>
+    <Text id="5">Cambia tu apodo de jugador</Text>
+    <Text id="6">REGIÓN</Text>
+    <Text id="7">La región del servidor al que el juego está conectado actualmente</Text>
+    <Text id="8">Cambia la región a la que se conecta el juego.</Text>
+    <Text id="9">Unise a un juego al azar</Text>
+    <Text id="10">Únete a un juego privado solo por invitación</Text>
+    <Text id="11">Crear un nuevo juego</Text>
+    <Text id="12">Crea un juego de un juego guardado existente</Text>
+    <Text id="13">Número de jugadores listos para jugar (en la región de su servidor)</Text>
+    <Text id="14">Cantidad de juegos que se juegan o están listos para unirse (en la región de su servidor)</Text>
+    <Text id="15">Cantidad de jugadores que actualmente juegan (en la región de su servidor)</Text>
+    <Text id="16">Cambia tu apodo de jugador</Text>
+    <Text id="17">Cancelar cambios y regresar al lobby.</Text>
+    <Text id="18">Escriba aquí para cambiar su apodo</Text>
+    <Text id="19">Pegue o escriba el nombre del\njuego al que desea unirse</Text>
+    <Text id="20">Unirse al juego</Text>
+    <Text id="21">Cancelar y volver al lobby.</Text>
+    <Text id="22">Volver al lobby</Text>
+    <Text id="23">No hay juegos disponibles.\nIntentalo de nuevo mas tarde.</Text>
+    <Text id="24">El juego ya no existe o\nya no es valido para unirse.</Text>
+    <Text id="25">¡Necesitas escoger una región\n para jugar antes de\nunirte o crear un juego!</Text>
+    <Text id="26">Volver a elegir una región</Text>
+    <Text id="27">No se a podido crear tu juego,\nintentalo de nuevo mas tarde.</Text>
+    <Text id="28">¡Este juego esta corrupto o\n no es un juego guardado valido!</Text>
+    <Text id="29">¡Solo el anfitrión puede restaurar este juego!\n'{0}' necesita\nrestaurar este juego.</Text>
+    <Text id="30">¡Sólo los juegos en línea pueden ser restaurados!</Text>
+    <Text id="31">Creando juego...</Text>
+    <Text id="32">Buscando juegos...</Text>
+    <Text id="33">Uniendose...</Text>
+    <Text id="34">Pegar una invitación desde el portapapeles</Text>
+    <Text id="35">\nConectando al servidor de juego...</Text>
+    <Text id="36">Cancelar y volver al menu principal</Text>
+  </Table>
+
+  <Table name="LOBBY" id="993">
+    <Text id="1">¡Necesitas esperar más jugadores\nantes de comenzar!</Text>
+    <Text id="2">Este juego ya no esta disponible</Text>
+    <Text id="3">Volver al lobby</Text>
+    <Text id="4">Volver y encontrar otro juego para unir o crear</Text>
+    <Text id="6">JUEGO DE {0}</Text>
+    <Text id="7">Elige un nivel personalizado para jugar o carga una partida guardada</Text>
+    <Text id="8">Prepara el juego para jugar</Text>
+    <Text id="9">¿Juego publico?</Text>
+    <Text id="10">Indica si el juego está abierto a todos (público) o solo por invitación</Text>
+    <Text id="11">SIN VIDAS EXTRA</Text>
+    <Text id="12">No se otorgarán más vidas al completar un nivel.</Text>
+    <Text id="13">MODO CAPRICHO</Text>
+    <Text id="14">Juega con todas las peculiaridades y debilidades del original "Lode Runner Online: The Mad Monks' Revenge"</Text>
+    <Text id="15">PERMITIR TRUCOS</Text>
+    <Text id="16">El anfitrión puede usar trucos durante el juego.</Text>
+    <Text id="17">MODO CLASICO</Text>
+    <Text id="18">Las reglas del juego y el comportamiento de los monjes coincidirán con los del Lode Runner original de 1983</Text>
+    <Text id="19">2 jugadores pueden unirse a este juego</Text>
+    <Text id="20">3 jugadores pueden unirse a este juego</Text>
+    <Text id="21">4 jugadores pueden unirse a este juego</Text>
+    <Text id="22"></Text>
+    <Text id="23">Bienvenido!</Text>
+    <Text id="24">{0} se ha unido al juego</Text>
+    <Text id="25">{0} ha dejado el juego</Text>
+    <Text id="26">Preparando juego...</Text>
+    <Text id="27">Transferencia de juego cancelada</Text>
+    <Text id="28">Descargando juego...</Text>
+    <Text id="29">Comparte '{0}' con tus amigos (copiado al portapapeles)</Text>
+    <Text id="30">-- abierto --</Text>
+    <Text id="31">-- cerrado --</Text>
+    <Text id="32">-- reservado para {0} --</Text>
+    <Text id="33">¡Estás a punto de reducir el número\nde jugadores que pueden unirse a tu juego!\n¿Expulsar jugadores restantes?</Text>
+    <Text id="34">Continuar y expulsar jugadores.</Text>
+    <Text id="35">Cancelar y volver al lobby.</Text>
+    <Text id="36">¡Necesitas un jugador mas\nantes de que puedas comenzar el juego!</Text>
+    <Text id="37">¡Debes esperar a que todos los \njugadores se unan antes de comenzar el juego!</Text>
+    <Text id="38">Preparando carga...</Text>
+    <Text id="39">Preparando descarga...</Text>
+    <Text id="40">Error al cargar los datos del juego ... intentando una vez más ...</Text>
+    <Text id="41">Error al descargar los datos del juego ... intentando una vez más ...</Text>
+    <Text id="42">Parece que hay un problema\nsubiendo el juego...\nIntenta alojar un juego de nuevo más tarde.</Text>
+    <Text id="43">Parece que hay un problema\ndescargando el juego...\nIntenta unirte a un juego de nuevo más tarde.</Text>
+  </Table>
+
+  <Table name="REGION" id="987">
+    <Text id="1">Cambia tu región de juego al seleccionado</Text>
+    <Text id="2">Cancelar cambios y regresar al lobby.</Text>
+    <Text id="3">Elige un servidor de juego</Text>
+    <Text id="4">Escaneando...</Text>
+    <Text id="5">Singapore</Text>
+    <Text id="6">Melbourne</Text>
+    <Text id="7">Montreal</Text>
+    <Text id="8">Amsterdam</Text>
+    <Text id="9">Chennai</Text>
+    <Text id="10">Tokyo</Text>
+    <Text id="11">Moscow</Text>
+    <Text id="12">Khabarovsk</Text>
+    <Text id="13">Sao Paulo</Text>
+    <Text id="14">Seoul</Text>
+    <Text id="15">Washington</Text>
+    <Text id="16">San José</Text>
+    <Text id="17">Johannesburg</Text>
+    <Text id="18"></Text>
+    <Text id="19"></Text>
+    <Text id="20"></Text>
+    <Text id="21">Asia</Text>
+    <Text id="22">Australia</Text>
+    <Text id="23">Canada, East</Text>
+    <Text id="24">Europe</Text>
+    <Text id="25">India</Text>
+    <Text id="26">Japan</Text>
+    <Text id="27">Russia</Text>
+    <Text id="28">Russia, East</Text>
+    <Text id="29">South America</Text>
+    <Text id="30">South Korea</Text>
+    <Text id="31">USA, East</Text>
+    <Text id="32">USA, West</Text>
+    <Text id="33">South Africa</Text>
+  </Table>
+
+  <Table name="CHOOSE GAME" id="991">
+    <Text id="1">Un jugador</Text>
+    <Text id="2">Dos jugadores</Text>
+    <Text id="3">Multijugador</Text>
+    <Text id="4">Elige un set de niveles para jugar o carga un juego guardado</Text>
+    <Text id="5">Restablecer juego al set de niveles incorporado</Text>
+    <Text id="6">Comienza el juego. Buena suerte!</Text>
+    <Text id="7">Cancelar y volver al menú</Text>
+    <Text id="8">El titulo del nivel</Text>
+    <Text id="9">Esta es la representación del nivel</Text>
+    <Text id="10">Personaliza tu juego</Text>
+    <Text id="11">SUPER GRUPO 1 JUGADOR</Text>
+    <Text id="12">SUPER GRUPO 2 JUGADORES</Text>
+    <Text id="13">Cargar juego</Text>
+    <Text id="14">Seleccione el juego para jugar</Text>
+    <Text id="15">¡Este juego guardado esta corrupto\n o es invalido!</Text>
+    <Text id="16">¡Este set de niveles esta corrupto\no no es valido!</Text>
+    <Text id="17">¡Esa repetición está dañada o no es\nuna repetición de juego válida!</Text>
+    <Text id="18">¡Esa repetición requiere la versión\n{0} para jugar correctamente!</Text>
+    <Text id="19">El juego seleccionado</Text>
+  </Table>
+
+  <Table name="GAMEPLAY OPTIONS" id="992">
+    <Text id="1">Aceptar la configuración actual</Text>
+    <Text id="2">Cancelar los cambios y volver a la configuración previa</Text>
+    <Text id="3">Permite jugar con todas las peculiaridades y debilidades del original "Lode Runner on-line: The Mad Monks' Revenge"</Text>
+    <Text id="4">Las reglas del juego y el comportamiento de los monjes coincidirán con los del Lode Runner original de 1983</Text>
+    <Text id="5">No se darán mas vidas al completar un nivel</Text>
+    <Text id="6">Juega el juego con un determinado tiempo antes de que se guarde automáticamente y salga</Text>
+    <Text id="7">MODO PECULIAR</Text>
+    <Text id="8">MODO clásico</Text>
+    <Text id="9">SIN EXTRA VIDAS</Text>
+    <Text id="10">LIMITE DE TIEMPO</Text>
+    <Text id="11">VIDAS INICIALES</Text>
+    <Text id="12">Elige el número de vidas con las que se empezara el juego</Text>
+    <Text id="13">ILIMITADO</Text>
+    <Text id="14">VIDAS</Text>
+    <Text id="15">MINUTOS</Text>
+  </Table>
+
+  <Table name="FILE DIALOG" id="750">
+    <Text id="1">Cargar archivo</Text>
+    <Text id="2">Guardar archivo como</Text>
+    <Text id="3">Subir un nivel</Text>
+    <Text id="4">El juego seleccionado</Text>
+    <Text id="5">Volver al diálogo de archivos</Text>
+    <Text id="6">Cancelar y volver al diálogo de archivos</Text>
+    <Text id="7">Cancelar cambios y volver al diálogo de archivos</Text>
+    <Text id="8">¡Ese archivo ya existe!\n¿Desea reemplazarlo?</Text>
+    <Text id="9">Sobrescribir el archivo</Text>
+    <Text id="10">¡Ese archivo no existe!</Text>
+    <Text id="11">¡Ese archivo es de solo lectura o no\ntienes permisos de escritura!</Text>
+    <Text id="12">¡Esa carpeta es de solo lectura o no\ntienes permisos de escritura!</Text>
+    <Text id="13">Le permite copiar, renombrar o eliminar este archivo</Text>
+    <Text id="14">Hacer una copia de este archivo</Text>
+    <Text id="15">Dar a este archivo un nombre diferente</Text>
+    <Text id="16">Cambia el nombre de este archivo</Text>
+    <Text id="17">Eliminar este archivo</Text>
+    <Text id="18">¡Sin remordimientos!\n\n¿Está seguro de que desea\n**permanentemente eliminar este archivo?</Text>
+    <Text id="19">Eliminar el archivo</Text>
+    <Text id="20">Le permite copiar, renombrar o eliminar esta carpeta</Text>
+    <Text id="21">Hacer una copia de esta carpeta</Text>
+    <Text id="22">Dar a esta carpeta un nombre diferente</Text>
+    <Text id="23">Cambia el nombre de esta carpeta</Text>
+    <Text id="24">Eliminar esta carpeta</Text>
+    <Text id="25">¡Sin remordimientos!\n\n¿Está seguro de que desea\n**permanentemente borrar esta carpeta?</Text>
+    <Text id="26">Eliminar la carpeta</Text>
+    <Text id="27">Crear una nueva carpeta</Text>
+    <Text id="28">Crea esta carpeta</Text>
+    <Text id="29">   [Crear una nueva carpeta...]</Text>
+  </Table>
+
+  <Table name="HUDs" id="850">  
+    <Text id="1">Numero actual de nivel</Text>
+    <Text id="2">Matar al jugador 1</Text>
+    <Text id="3">Matar al jugador 2</Text>
+    <Text id="4">Número de vidas del jugador 1</Text>
+    <Text id="5">Número de vidas del jugador 2</Text>
+    <Text id="6">Puntaje del Jugador 1</Text>
+    <Text id="7">Puntaje del Jugador 2</Text>
+    <Text id="8">Herramienta que el jugador 1 lleva actualmente</Text>
+    <Text id="9">Herramienta que el jugador 2 lleva actualmente</Text>
+    <Text id="10">Cantidad de bombas que carga el jugador 1</Text>
+    <Text id="11">Cantidad de bombas que carga el jugador 2</Text>
+  </Table>
+  
+</Strings>

@@ -1,0 +1,131 @@
+
+------------------------------------------------------
+											   
+	Lode Runner Online
+                                          
+	Version 1.50
+	11 / 29 / 95
+
+											  
+Lode Runner is a registered trademark. 
+(C) 1983, Douglas E. Smith
+(C) 1994,1995 Presage Software Development Company
+
+------------------------------------------------------
+
+This file contains up-to-the-minute version information
+about this installation of Lode Runner for Windows.
+
+Installation Notes listed in this file include topics on:
+	
+	REDBOOK CD AUDIO
+	MODEM PLAY ISSUES
+	UNINSTALLING LODE RUNNER ONLINE
+	LEGAL NOTICE
+
+
+-----------------------------------------------------------
+INSTALLATION NOTES:
+-----------------------------------------------------------
+
+
+REDBOOK CD AUDIO
+
+Lode Runner contains digitally master redbook CD audio tracks
+on the CD.  These are the same type of tracks you would have
+on any audio CD, and the Lode Runner music can be played just
+like any other music you would put in a CD player.  The Lode 
+Runner audio tracks begin at track #2, so you must skip over 
+track #1 (the data track) when you want to hear the music on
+a regular CD player.
+
+If you have music enabled and the CD is in your computer CD
+drive and your hardware and software are correctly configured, 
+Lode Runner will play these audio tracks during the course of 
+the game.  You may experience pauses during game play while the
+CD seeks to play different music tracks.  If you find these pauses
+unacceptable, you simply have to disable music from the game
+configuration panel.
+
+
+MODEM PLAY ISSUES
+
+For adequate modem play, you must have a clear connection at
+9600+ baud.  Also, it necessary to configure your modem NOT to
+use Error Correction.  Error Correction may be disabled by 
+unchecking the appropriate option in the dialog found by selecting
+"Properties/Connection/Advanced" within the Modems Applet of
+the Win95 Control Panel.	
+
+Also, note that once you are finished with a game and the modem
+has hung up, it is necessary to exit Lode Runner and then 
+restart the game prior to playing another modem game. This is 
+a known issue using the present versions of DirectX and Win95. 
+Future revisions of either DirectX, Windows, or Lode Runner may 
+alleviate this problem.
+
+
+UNINSTALLING LODE RUNNER ONLINE
+
+To properly uninstall Lode Runner Online, you should select
+the "Lode Runner Uninstaller" icon that was created in your Sierra
+program group during installation.  If you uninstall by using the
+Sierra Setup program, not all information will be removed from the
+Win95 registry.  If this happens, you may clean up the Win95
+registry by selecting the "Add/Remove Programs" Applet on the 
+Win95 Control Panel. You will then need to select "Lode Runner 
+Online" from the list of installed applications and press the 
+"Add/Remove" button. This action will completely purge Lode Runner
+from your system.
+
+
+
+-----------------------------------------------------------
+LEGAL NOTICE:
+-----------------------------------------------------------
+
+
+	BY USING THIS SOFTWARE, YOU ARE AGREEING TO BE BOUND
+		BY THE TERMS OF THIS LICENSE
+
+	Sierra On-Line End User License Agreement
+
+This software is copyrighted.  This software and documentation
+is licensed to you by Sierra On-Line.  You may copy it onto a 
+computer for your own personal use and you may make back up copies
+of the software to protect your software against loss.  This
+software may be used by more than one person, and may be freely 
+moved from one computer location to another PROVIDED THAT THERE IS
+NO POSSIBILITY OF THE SOFTWARE BEGIN USED AT ONE LOCATION OR ON ONE
+COMPUTER WHILE IT IS BEGIN USED AT ANOTHER.  The software can not 
+legally be used by two different people in different places at the
+same time.  You may not modify, network, rent, lease, loan, distribute
+the software or create derivative works based upon the software in 
+whole or in part, and you may not electronically transmit the software
+from one computer to another or over a network.
+
+This End User License Agreement grants you a limited license to use
+the Redistributable Code licensed to Sierra On-Line, Inc. by 
+Microsoft Corporation, Inc. together with Microsoft operating system
+products.  All intellectual property rights in Microsoft's 
+Redistributable Code contained in this product belong exclusively to
+Microsoft Corporation, Inc.
+
+			LIMITED WARRANTY
+
+Sierra warrants the diskette(s) to be free of defects in materials
+and workmanship for a period of 90 days from the date of purchase.
+Sierra On-Line's entire liability and your exclusive remedy will be
+replacement of the disk.
+
+SIERRA ON-LINE SPECIFICALLY DISCLAIMS ALL OTHER WARRANTIES, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY IMPLIED WARRANTY OF
+MERCHANTIBILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+This limited warranty gives you specific legal rights; you may have
+others which may vary from state to state.  Some states do not allow 
+the exclusion of incidental or consequential damages, or the 
+limitation on how long an implied warranty lasts, so some of the
+above may not apply to you.
+
+
