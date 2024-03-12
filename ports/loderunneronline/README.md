@@ -9,16 +9,14 @@ For the CD soundtrack, download the DLC here: https://mmr.quarkrobot.com/manual/
 
 **NOTE:** you can change controls in the options (cog) menu, but you must **plug in a mouse to assign the gamepad inputs.**
 
-| Button     | Action                         |
-|------------|--------------------------------|
-| D-PAD      | Menu navigation                |
-| LEFT STICK | Directional movement and mouse |
-| R2         | Mouse click & Zapper right     |
-| L2         | Zapper left                    |
-| L1         | Lose a life and restart        |
-| A          | Pick up/drop tool              |
-| B          | Use tool                       |
-| Y          | Use bomb                       |
-| SELECT     | Menu                           |
-
+| Button | Action                                 |
+|--------|----------------------------------------|
+| D-PAD  | Directional movement / menu navigation |
+| Y      | Zapper left                            |
+| A      | Zapper right                           |
+| B      | Pick up/drop tool                      |
+| X      | Use tool                               |
+| R1     | Use bomb                               |
+| L2     | Lose a life and restart                |
+| SELECT | In-game menu                           |
 
