@@ -35,12 +35,23 @@ if [[ -d "$GAMEDIR/reVC-data" ]]; then
   cp -rf "$GAMEDIR/reVC-data"/* "$GAMEDIR" && rm -rf "$GAMEDIR/reVC-data"
 fi
 
+OPENGL=$(glxinfo | grep "OpenGL version string")
+if [ ! -z "${OPENGL}" ]; then
+  LIBS=""
+  REVC="reVC_gl"
+  GAMEPAD=$(cat /sys/class/input/js0/device/name)
+  sed -i "/JoystickName/c\JoystickName = ${GAMEPAD}" ${GAMEDIR}/reVC.ini
+else
+  LIBS="libs"
+  REVC="reVC"
+fi
+
 cd "$GAMEDIR"
 $ESUDO chmod 666 /dev/uinput
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
-export LD_LIBRARY_PATH="$GAMEDIR/libs":$LD_LIBRARY_PATH
-$GPTOKEYB "reVC" &
-./reVC 2>&1 | tee log.txt
+export LD_LIBRARY_PATH="$GAMEDIR/${LIBS}":$LD_LIBRARY_PATH
+$GPTOKEYB "${REVC}" &
+./${REVC} 2>&1 | tee log.txt
 
 $ESUDO kill -9 $(pidof gptokeyb)
 $ESUDO systemctl restart oga_events &

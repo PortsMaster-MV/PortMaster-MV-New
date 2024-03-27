@@ -35,12 +35,23 @@ if [[ -d "$GAMEDIR/re3-data" ]]; then
   cp -rf "$GAMEDIR/re3-data"/* "$GAMEDIR" && rm -rf "$GAMEDIR/re3-data"
 fi
 
+OPENGL=$(glxinfo | grep "OpenGL version string")
+if [ ! -z "${OPENGL}" ]; then
+  LIBS=""
+  RE3="re3_gl"
+  GAMEPAD=$(cat /sys/class/input/js0/device/name)
+  sed -i "/JoystickName/c\JoystickName = ${GAMEPAD}" ${GAMEDIR}/re3.ini
+else
+  LIBS="libs"
+  RE3="re3"
+fi
+
 cd "$GAMEDIR"
 $ESUDO chmod 666 /dev/uinput
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
-export LD_LIBRARY_PATH="$GAMEDIR/libs":$LD_LIBRARY_PATH
-$GPTOKEYB "re3" &
-./re3 2>&1 | tee log.txt
+export LD_LIBRARY_PATH="$GAMEDIR/${LIBS}":$LD_LIBRARY_PATH
+$GPTOKEYB "${RE3}" &
+./${RE3} 2>&1 | tee log.txt
 
 $ESUDO kill -9 $(pidof gptokeyb)
 $ESUDO systemctl restart oga_events &
