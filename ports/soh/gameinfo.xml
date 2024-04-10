@@ -1,0 +1,10 @@
+	<game>
+		<path>./Ship of Harkinian.sh</path>
+		<name>Ship of Harkinian</name>
+		<desc>A source port of Ocarina of Time &amp; Master Quest. Ship of Harkinian features extensive and significant enhancements over the original game, such as improved performance, increased frame-rate, native ultra-widescreen support, and extensive mod support (especially compared to emulated versions of the original), among other features.</desc>
+		<image>./soh/cover.jpg</image>
+		<releasedate>20220322</releasedate>
+		<developer>Nintendo</developer>
+		<publisher>Harbour Masters</publisher>
+		<genre>Adventure</genre>
+	</game>

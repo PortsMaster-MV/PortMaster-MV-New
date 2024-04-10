@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "name": "soh.zip",
+  "items": [
+    "Ship of Harkinian.sh",
+    "soh"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Ship of Harkinian",
+    "porter": [
+      "Jeod"
+    ],
+    "desc": "A source port of Ocarina of Time &amp; Master Quest. Ship of Harkinian features extensive and significant enhancements over the original game, such as improved performance, increased frame-rate, native ultra-widescreen support, and extensive mod support (especially compared to emulated versions of the original), among other features.",
+    "inst": "Follow the guide at https://www.shipofharkinian.com/setup-guide for your desired platform to create your oot.otr and/or oot-mq.otr files. Once created put in the ports/soh folder.",
+    "genres": [
+      "action",
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": null,
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ]
+  }
+}
