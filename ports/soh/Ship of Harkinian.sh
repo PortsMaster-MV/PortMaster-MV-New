@@ -23,6 +23,9 @@ GAMEDIR="/$directory/ports/soh"
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib"
 
+# Permissions
+$ESUDO chmod 0777 /dev/tty0
+
 cd $GAMEDIR
 
 # Apply config.ini settings
@@ -86,10 +89,13 @@ else
 	cp -f bin/performance.otr soh.otr
 fi
 
+# Remove soh generated logs and substitute our own
+rm -rf $GAMEDIR/logs/*
+
 # Run the game
 echo "Loading, please wait... (might take a while!)" > /dev/tty0
 $GPTOKEYB "soh.elf" -c "soh.gptk" & 
-./soh.elf
+./soh.elf 2>&1 | tee $GAMEDIR/logs/log.txt
 $ESUDO systemctl restart oga_events & 
 printf "\033c" >> /dev/tty1
 printf "\033c" > /dev/tty0
