@@ -32,7 +32,7 @@ cd $GAMEDIR
 rm -rf "$GAMEDIR/logs/2 Ship 2 Harkinian.log"
 
 # Copy the right build to the main folder
-if [ $CFW_NAME == "ArkOS" ] || [ "$CFW_NAME" == 'ArkOS wuMMLe' ]; then
+if [ $CFW_NAME == "ArkOS" ] || [ "$CFW_NAME" == 'ArkOS wuMMLe' ]  || [ "$CFW_NAME" == "knulli" ]; then
 	cp -f bin/compatibility.elf 2s2h.elf
 	if [ "$(find "./mods" -name '*.o2r')" ]; then
 		echo "WARNING: .OTR MODS FOUND! PERFORMANCE WILL BE LOW IF ENABLED!!" > /dev/tty0
