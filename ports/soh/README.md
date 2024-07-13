@@ -3,7 +3,7 @@ CAREFULLY follow the guide at the [Ship of Harkinian website](https://www.shipof
 Logs are recorded automatically and kept in `/ports/soh/logs`. Please provide a log if you report an issue. PortMaster does not mantain the Ship of Harkinian repository and is not responsible for bugs or issues outside of our control.
 
 ## Menu Navigation
-There is a `soh.gptk` file you can use to change which button emulates F1 (default is L3). Once you do so, make the menu bar appear, hold the north button (X or Y), press R, then press the north button again to access the menu bar navigation.
+There is a `soh.gptk` file you can use to change which button emulates F1 (default is L3). Some devices have a special button called `guide` that makes for a good F1 mapping. Once you do so, make the menu bar appear, hold the north button (X or Y), press R, then press the north button again to access the menu bar navigation.
 
 ![menubar](https://github.com/JeodC/PortMaster-ShipOfHarkinian/assets/47716344/82b1de1d-11a9-49da-8500-61bc26902cbe)
 
