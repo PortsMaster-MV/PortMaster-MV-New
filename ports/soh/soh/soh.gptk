@@ -14,6 +14,7 @@
 # C-BUTTONS = UP/DOWN/LEFT/RIGHT
 # START = SPACE
 
+guide = \"
 back = \"
 start = \"
 up = \"
