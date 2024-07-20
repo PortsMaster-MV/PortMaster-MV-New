@@ -1,0 +1,70 @@
+#!/bin/sh
+
+# Function to handle a single ROM file
+process_rom() {
+    local romfile=$1
+
+    # Compute SHA-1 hash of the file
+    ROMHASH=$(sha1sum -b "$romfile" | awk '{ print $1 }') || { echo "Error: Failed to compute SHA-1 hash" | tee -a log.txt; return 1; }
+
+    # Remap v64 and n64 hashes to their z64 hash equivalent
+    case "$ROMHASH" in
+    ef6d7273a7bc1cbf778f9021753db5efddfe495e) ROMHASH=7f5630dbc4d5d61d6276213210c4d5cdd83a47d6 ;; # v64
+    991460c32f53c7bb0bc650baf5a40ffde6165840) ROMHASH=7f5630dbc4d5d61d6276213210c4d5cdd83a47d6 ;; # n64
+    22f8bfa1ab6c763013a3c2a568bb014395b12499) ROMHASH=d6133ace5afaa0882cf214cf88daba39e266c078 ;; # v64
+    1a26735c63cb3bdf5eb32d21acf774ee6724f227) ROMHASH=d6133ace5afaa0882cf214cf88daba39e266c078 ;; # n64
+    8c378b87c83b3f4de20b14accf91e7590399f5dc) ROMHASH=9743aa026e9269b339eb0e3044cd5830a440c1fd ;; # v64
+    8b0436e540b95a5353969d4ee360273cf33fb659) ROMHASH=9743aa026e9269b339eb0e3044cd5830a440c1fd ;; # n64
+    esac
+
+    case "$ROMHASH" in
+    7f5630dbc4d5d61d6276213210c4d5cdd83a47d6) ROM=N64_US;;
+    d6133ace5afaa0882cf214cf88daba39e266c078) ROM=N64_US;;
+    9743aa026e9269b339eb0e3044cd5830a440c1fd) ROM=GC_US;;
+    *)
+        echo "$ROMHASH rom hash does not match" | tee -a log.txt
+        return 1
+        ;;
+    esac
+
+    OTRNAME="mm.o2r"
+    if [ ! -e "$GAMEDIR/$OTRNAME" ]; then
+        echo "Generating $OTRNAME from $romfile..." | tee -a log.txt
+        ./assets/extractor/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b ./$romfile -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "1.0.2" > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            echo "Successfully generated $OTRNAME" > ${CUR_TTY}
+        else
+            echo "Error: Failed to generate $OTRNAME" > ${CUR_TTY}
+            return 1
+        fi
+    fi
+}
+
+# Count the number of ROM files
+rom_count=0
+for romfile in *.*64; do
+    if [ -f "$romfile" ]; then
+        rom_count=$((rom_count + 1))
+    fi
+done
+
+sleep 1
+echo "Found $rom_count ROM files!" > ${CUR_TTY}
+
+# Process them all
+counter=1
+for romfile in *.*64; do
+    if [ -f "$romfile" ]; then
+        echo "Processing ${romfile}..." > ${CUR_TTY}
+        mv "$romfile" "rom${counter}.z64"
+        if [ $? -eq 0 ]; then
+            process_rom "rom${counter}.z64"
+            counter=$((counter + 1))
+        fi
+    fi
+done
+
+# Cleanup
+echo "Finished processing all ROM files." > ${CUR_TTY}
+rm -rf ./placeholder
+rm -rf *.*64

@@ -23,6 +23,12 @@ GAMEDIR="/$directory/ports/soh2"
 source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
+CUR_TTY="/dev/tty0"
+# Set current virtual screen
+if [ "$CFW_NAME" == "muOS" ]; then
+  /opt/muos/extra/muxlog & CUR_TTY="/tmp/muxlog_info"
+fi
+
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib"
 
@@ -50,19 +56,27 @@ contains() {
 if contains "$CFW_NAME" "${CFW_NAMES[@]}"; then
     cp -f "$GAMEDIR/bin/compatibility.elf" 2s2h.elf
     if [ "$(find "./mods" -name '*.o2r')" ]; then
-        echo "WARNING: .OTR MODS FOUND! PERFORMANCE WILL BE LOW IF ENABLED!!" > /dev/tty0
+        echo "WARNING: .OTR MODS FOUND! PERFORMANCE WILL BE LOW IF ENABLED!!" > $CUR_TTY
     fi
 else
     cp -f "$GAMEDIR/bin/performance.elf" 2s2h.elf
 fi
 
+# Check if we need to generate any o2r files
+if [ ! -f "mm.o2r" ]; then
+    if ls *.*64 1> /dev/null 2>&1; then
+        echo "We need to generate O2R files! Stand by..." > $CUR_TTY
+        ./assets/extractor/otrgen.txt
+    fi
+fi
+
 # Run the game
-echo "Loading, please wait... (might take a while!)" > /dev/tty0
+echo "Loading, please wait... (might take a while!)" > $CUR_TTY
 $GPTOKEYB "2s2h.elf" -c "soh2.gptk" & 
 ./2s2h.elf
 
 # Cleanup
-rm -rf "$GAMEDIR/logs/2 Ship 2 Harkinian.log"
+rm -rf "$GAMEDIR/logs/"
 $ESUDO systemctl restart oga_events & 
 printf "\033c" >> /dev/tty1
 printf "\033c" > /dev/tty0
