@@ -1,5 +1,5 @@
 ## Information
-Ship of Harkinian binaries were built from the develop branch (bleeding edge) on 07/18/2024. You can build your own by following the [BUILDING.md guide](BUILDING.md).
+Ship of Harkinian binaries were built from the develop branch (bleeding edge) on 07/18/2024. You can build your own by following the [BUILDING.md guide](https://github.com/JeodC/PortMaster-ShipOfHarkinian/blob/main/BUILDING.md).
 
 ## Installation
 You need to provide your own roms. See the [Shipwright](https://github.com/HarbourMasters/Shipwright/blob/8.0.5/docs/supportedHashes.json) repository for a list of supported rom hashes. Gather your roms and put them in the `ports/soh` folder. Start the port, and on first run, your .otr files will be generated from the roms you provide. Note that only one `oot.otr` and `oot-mq.otr` will be made--if you provide more than one rom per game, strange things may occur. You *can* use pregenerated `.otr` files from elsewhere, but you may experience crashes.
