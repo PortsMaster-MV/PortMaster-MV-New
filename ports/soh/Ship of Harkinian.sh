@@ -38,25 +38,25 @@ $ESUDO chmod 666 /dev/tty1
 
 cd $GAMEDIR
 
-# Array of compatibility firmwares
-CFW_NAMES=("ArkOS" "ArkOS wuMMLe" "ArkOS AeUX" "knulli")
+# List of compatibility firmwares
+CFW_NAMES="ArkOS ArkOS wuMMLe ArkOS AeUX knulli TrimUI"
 
-# Function to check if a value is in an array
+# Check if the current CFW name is in the list
 contains() {
     local value="$1"
     shift
-    for item; do
-        if [ "$item" == "$value" ]; then
+    for item in "$@"; do
+        if [ "$item" = "$value" ]; then
             return 0
         fi
     done
     return 1
 }
 
-# Check if the current CFW name is in the array
-if contains "$CFW_NAME" "${CFW_NAMES[@]}"; then
+# If it's in the list use the compatibility binary
+if contains "$CFW_NAME" $CFW_NAMES; then
     cp -f "$GAMEDIR/bin/compatibility.elf" soh.elf
-    if [ "$(find "./mods" -name '*.otr')" ]; then
+    if [ "$(find ./mods -name '*.otr')" ]; then
         echo "WARNING: .OTR MODS FOUND! PERFORMANCE WILL BE LOW IF ENABLED!!" > $CUR_TTY
     fi
 else
