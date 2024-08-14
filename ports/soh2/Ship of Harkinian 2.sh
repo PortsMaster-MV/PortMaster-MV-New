@@ -54,23 +54,15 @@ contains() {
 
 # If it's in the list use the compatibility binary
 if contains "$CFW_NAME" $CFW_NAMES; then
-    cp -f "$GAMEDIR/bin/compatibility.elf" soh.elf
+    cp -f "$GAMEDIR/bin/compatibility.elf" 2s2h.elf
     if [ "$(find ./mods -name '*.otr')" ]; then
         echo "WARNING: .OTR MODS FOUND! PERFORMANCE WILL BE LOW IF ENABLED!!" > $CUR_TTY
     fi
 else
-    cp -f "$GAMEDIR/bin/performance.elf" soh.elf
+    cp -f "$GAMEDIR/bin/performance.elf" 2s2h.elf
 fi
 
 # Check if we need to generate any otr files
-if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
-    if ls *.*64 1> /dev/null 2>&1; then
-        echo "We need to generate OTR files! Stand by..." > $CUR_TTY
-        ./assets/extractor/otrgen.txt
-    fi
-fi
-
-# Check if we need to generate any o2r files
 if [ ! -f "mm.o2r" ]; then
     if ls *.*64 1> /dev/null 2>&1; then
         echo "We need to generate O2R files! Stand by..." > $CUR_TTY
