@@ -34,6 +34,9 @@ export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib"
 
 # Permissions
 $ESUDO chmod 0777 /dev/tty0
+$ESUDO chmod 666 /dev/tty1
+$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen.txt
+$ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
 
 cd $GAMEDIR
 
@@ -71,8 +74,10 @@ if [ ! -f "mm.o2r" ]; then
 fi
 
 # Run the game
+$ESUDO chmod 777 $GAMEDIR/2s2h.elf
 echo "Loading, please wait... (might take a while!)" > $CUR_TTY
 $GPTOKEYB "2s2h.elf" -c "soh2.gptk" & 
+SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
 ./2s2h.elf
 
 # Cleanup
