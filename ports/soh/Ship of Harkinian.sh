@@ -35,6 +35,8 @@ export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib"
 # Permissions
 $ESUDO chmod 666 /dev/tty0
 $ESUDO chmod 666 /dev/tty1
+$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen.txt
+$ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
 
 cd $GAMEDIR
 
@@ -72,9 +74,10 @@ if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
 fi
 
 # Run the game
+$ESUDO chmod 777 $GAMEDIR/soh.elf
 echo "Loading, please wait... (might take a while!)" > $CUR_TTY
-
 $GPTOKEYB "soh.elf" -c "soh.gptk" & 
+SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
 ./soh.elf
 
 # Cleanup

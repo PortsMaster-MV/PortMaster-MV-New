@@ -1,5 +1,5 @@
 ## Information
-2Ship2Harkinian v1.0.2 binaries built on 07/18/2024. You can build your own binaries by following the [BUILDING.md guide](https://github.com/JeodC/PortMaster-2Ship2Harkinian/blob/main/BUILDING.md).
+2Ship2Harkinian binaries were built from the develop branch (bleeding edge) on 08/14/2024. You can build your own binaries by following the [BUILDING.md guide](https://github.com/JeodC/PortMaster-2Ship2Harkinian/blob/main/BUILDING.md).
 
 ## Installation
 You must generate your `mm.o2r` file with a rom that has one of the following SHAs:
