@@ -65,7 +65,7 @@ fi
 # Check if we need to generate any otr files
 if [ ! -f "mm.o2r" ]; then
     if ls *.*64 1> /dev/null 2>&1; then
-        echo "We need to generate OTR files! Stand by..." > $CUR_TTY
+        echo "We need to generate O2R files! Stand by..." > $CUR_TTY
         ./assets/extractor/otrgen.txt
     fi
 fi
