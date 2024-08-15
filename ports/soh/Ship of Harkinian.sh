@@ -23,10 +23,13 @@ GAMEDIR="/$directory/ports/soh"
 source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
-CUR_TTY="/dev/tty0"
 # Set current virtual screen
 if [ "$CFW_NAME" == "muOS" ]; then
   /opt/muos/extra/muxlog & CUR_TTY="/tmp/muxlog_info"
+else if [ "$CFW_NAME" == "TrimUI" ]; then
+  CUR_TTY="/dev/fd/1"
+else
+  CUR_TTY="/dev/tty0"
 fi
 
 # Exports
@@ -41,13 +44,14 @@ $ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
 cd $GAMEDIR
 
 # List of compatibility firmwares
-CFW_NAMES="ArkOS ArkOS wuMMLe ArkOS AeUX knulli TrimUI"
+CFW_NAMES="ArkOS|ArkOS wuMMLe|ArkOS AeUX|knulli|TrimUI"
 
 # Check if the current CFW name is in the list
 contains() {
     local value="$1"
-    shift
-    for item in "$@"; do
+    local item
+    IFS="|" # Use | as the delimiter
+    for item in $CFW_NAMES; do
         if [ "$item" = "$value" ]; then
             return 0
         fi
@@ -70,6 +74,13 @@ if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
     if ls *.*64 1> /dev/null 2>&1; then
         echo "We need to generate OTR files! Stand by..." > $CUR_TTY
         ./assets/extractor/otrgen.txt
+        # Check if OTR files were generated
+        if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
+            echo "Error: Failed to generate OTR files." > $CUR_TTY
+            exit 1
+        fi
+    else
+        echo "Missing ROM files!" > $CUR_TTY
     fi
 fi
 

@@ -23,11 +23,15 @@ GAMEDIR="/$directory/ports/soh2"
 source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
-CUR_TTY="/dev/tty0"
 # Set current virtual screen
 if [ "$CFW_NAME" == "muOS" ]; then
   /opt/muos/extra/muxlog & CUR_TTY="/tmp/muxlog_info"
+else if [ "$CFW_NAME" == "TrimUI" ]; then
+  CUR_TTY="/dev/fd/1"
+else
+  CUR_TTY="/dev/tty0"
 fi
+
 
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib"
@@ -41,13 +45,14 @@ $ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
 cd $GAMEDIR
 
 # List of compatibility firmwares
-CFW_NAMES="ArkOS ArkOS wuMMLe ArkOS AeUX knulli TrimUI"
+CFW_NAMES="ArkOS|ArkOS wuMMLe|ArkOS AeUX|knulli|TrimUI"
 
 # Check if the current CFW name is in the list
 contains() {
     local value="$1"
-    shift
-    for item in "$@"; do
+    local item
+    IFS="|" # Use | as the delimiter
+    for item in $CFW_NAMES; do
         if [ "$item" = "$value" ]; then
             return 0
         fi
@@ -70,6 +75,13 @@ if [ ! -f "mm.o2r" ]; then
     if ls *.*64 1> /dev/null 2>&1; then
         echo "We need to generate O2R files! Stand by..." > $CUR_TTY
         ./assets/extractor/otrgen.txt
+        # Check if O2R files were generated
+        if [ ! -f "mm.o2r" ]; then
+            echo "Error: Failed to generate O2R files." > $CUR_TTY
+            exit 1
+        fi
+    else
+        echo "Missing ROM files!" > $CUR_TTY
     fi
 fi
 
