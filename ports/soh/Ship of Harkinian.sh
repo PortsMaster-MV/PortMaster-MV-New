@@ -26,7 +26,7 @@ source $controlfolder/device_info.txt
 # Set current virtual screen
 if [ "$CFW_NAME" == "muOS" ]; then
   /opt/muos/extra/muxlog & CUR_TTY="/tmp/muxlog_info"
-else if [ "$CFW_NAME" == "TrimUI" ]; then
+elif [ "$CFW_NAME" == "TrimUI" ]; then
   CUR_TTY="/dev/fd/1"
 else
   CUR_TTY="/dev/tty0"
