@@ -1,5 +1,5 @@
 ## Installation
-Download the game from [itch.io](https://moodytail.itch.io/pocket-crystal-league) and add the `data.win` file to `ports/pocketcrystalleague`.
+Ready to run! No installation needed!
 
 ## Default Gameplay Controls
 | Button | Action |
