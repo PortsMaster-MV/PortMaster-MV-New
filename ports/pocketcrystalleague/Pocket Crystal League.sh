@@ -24,6 +24,10 @@ echo "Loading, please wait... (might take a while!)" > /dev/tty0
 
 # Variables
 GAMEDIR="/$directory/ports/pocketcrystalleague"
+BIG_SCALE=4000
+BIG_DELAY=8
+SMALL_SCALE=6000
+SMALL_DELAY=16
 
 # Set current virtual screen
 if [ "$CFW_NAME" == "muOS" ]; then
@@ -42,6 +46,15 @@ export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
 
 if [ -f "data.win" ]; then
     mv data.win game.droid
+fi
+
+# Apply mouse scaling according to screen size
+if [ $DISPLAY_WIDTH -gt 480 ]; then
+    sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $BIG_SCALE/" "$GAMEDIR/control.gptk"
+    sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $BIG_DELAY/" "$GAMEDIR/control.gptk"
+else
+    sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $SMALL_SCALE/" "$GAMEDIR/control.gptk"
+    sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $SMALL_DELAY/" "$GAMEDIR/control.gptk"
 fi
 
 # Assign gptokeyb and load the game
