@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./TheXtech.sh</path>
+    <name>TheXTech</name>
+    <desc>This is a direct continuation of the SMBX 1.3 engine. Add assets, worlds and play Mario-style games with built-in world editor and many other features!</desc>
+    <releasedate>20200314T000000</releasedate>
+    <developer>WohlSoft team</developer>
+    <genre>platformer</genre>
+  </game>
+</gameList>
