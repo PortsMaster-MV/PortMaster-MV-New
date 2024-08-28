@@ -9,6 +9,8 @@ Ready to run! Download from the PortMaster GUI on your handheld.
 |B|Right click (cancel button)|
 |X|Sort cards during battle|
 |Y|End turn / Open all cards|
+|L2|Scroll left in deck builder|
+|R2|Scroll right in deck builder|
 
 ## Building
 This game is [open source](https://gitlab.com/moodytail/pokecards) and can be compiled with Game Maker. This port uses Game Maker Version 2023.8.0.98 with alternate music tracks. Music is externalized for more seamless streaming audio.
