@@ -20,14 +20,14 @@ source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
 # Set variables
-GAMEDIR="$directory/ports/soh"
+GAMEDIR="/$directory/ports/soh"
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
 cd $GAMEDIR
 
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib":$LD_LIBRARY_PATH
-export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
+export SDL_GAMECONTROLLERCONFIG_FILE=$sdl_controllerconfig
 
 # Permissions
 $ESUDO chmod 666 /dev/tty0
