@@ -27,7 +27,7 @@ cd $GAMEDIR
 
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib":$LD_LIBRARY_PATH
-[-z "$sdl_controllerconfig" ] && export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
+export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
 
 # Permissions
 $ESUDO chmod 666 /dev/tty0
