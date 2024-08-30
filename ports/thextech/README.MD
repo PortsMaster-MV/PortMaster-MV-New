@@ -28,16 +28,18 @@ make
 
 ## HOW TO RUN
 
-Package contains only open source engine, for gaming you need assets (sprites, music and etc.), you can find them at the original github project https://github.com/TheXTech/TheXTech
-add assets into
+Package contains only open source engine. For gaming you need assets (sprites, music and etc.), you can find them at the original github project https://github.com/TheXTech/TheXTech  
+Engine can use different asset packs, each of them should be placed in separate folders, example:
 ```
-./thextech/assets/assets_name_folder
+./thextech/assets/<asset_pack_1>
+./thextech/assets/<asset_pack_2>
 ```
-after first launch game will create
+On first run it will create new folders:
 ```
-./thextech/worlds/asset_name
+./thextech/worlds/<asset_pack_1>  
+./thextech/worlds/<asset_pack_2>  
 ```
-folder, where you can add your own episodes to play
+You can place your own episodes (maps) into those folders. By default they are empty.
 
 
 ## CONTROLS
