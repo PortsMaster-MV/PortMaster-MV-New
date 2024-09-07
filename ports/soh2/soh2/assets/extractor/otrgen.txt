@@ -5,7 +5,7 @@ process_rom() {
     local romfile=$1
 
     # Compute SHA-1 hash of the file
-    ROMHASH=$(sha1sum -b "$romfile" | awk '{ print $1 }') || { echo "Error: Failed to compute SHA-1 hash" | tee -a log.txt; return 1; }
+    ROMHASH=$(sha1sum -b "$romfile" 2>> log.txt | awk '{ print $1 }') || { echo "Error: Failed to compute SHA-1 hash" >> log.txt; return 1; }
 
     # Remap v64 and n64 hashes to their z64 hash equivalent
     case "$ROMHASH" in
@@ -22,7 +22,7 @@ process_rom() {
     d6133ace5afaa0882cf214cf88daba39e266c078) ROM=N64_US;;
     9743aa026e9269b339eb0e3044cd5830a440c1fd) ROM=GC_US;;
     *)
-        echo "$ROMHASH rom hash does not match" | tee -a log.txt
+        echo "$ROMHASH rom hash does not match: $ROMHASH" > $CUR_TTY
         return 1
         ;;
     esac
@@ -30,7 +30,7 @@ process_rom() {
     OTRNAME="mm.o2r"
     if [ ! -e "$GAMEDIR/$OTRNAME" ]; then
         echo "Generating $OTRNAME from $romfile..." | tee -a log.txt
-        ERROR_LOG=$(./assets/extractor/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b ./$romfile -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "1.0.2" > 2>&1)
+        ERROR_LOG=$(./assets/extractor/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b ./$romfile -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "1.0.2" 2>&1)
         if [ $? -eq 0 ]; then
             echo "Successfully generated $OTRNAME" > $CUR_TTY
         else
@@ -63,8 +63,3 @@ for romfile in *.*64; do
         fi
     fi
 done
-
-# Cleanup
-echo "Finished processing all ROM files." > $CUR_TTY
-rm -rf ./placeholder
-rm -rf *.*64
