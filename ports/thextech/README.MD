@@ -28,18 +28,19 @@ make
 
 ## HOW TO RUN
 
-Package contains only open source engine. For gaming you need assets (sprites, music and etc.), you can find them at the original github project https://github.com/TheXTech/TheXTech  
-Engine can use different asset packs, each of them should be placed in separate folders, example:
+Package contains only open source engine. For gaming you need assets (sprites, music and etc.), you can find them at the original github project. 
+Default asset pack can be downloaded from https://github.com/TheXTech/TheXTech/releases, file "thextech-smbx13-assets-full.7z".  
+Unpack content of the archive into
 ```
-./thextech/assets/<asset_pack_1>
-./thextech/assets/<asset_pack_2>
+./thextech/assets/smbx
 ```
-On first run it will create new folders:
+folder.
+Game is ready to run!
+
+Additional downloaded worlds and episodes can be put into
 ```
-./thextech/worlds/<asset_pack_1>  
-./thextech/worlds/<asset_pack_2>  
+./thextech/worlds/smbx
 ```
-You can place your own episodes (maps) into those folders. By default they are empty.
 
 
 ## CONTROLS
