@@ -20,10 +20,7 @@ get_controls
 
 GAMEDIR=/$directory/ports/thextech
 
-export TEXTINPUTINTERACTIVE="Y"
-export TEXTINPUTNOAUTOCAPITALS="Y"
-
-export LD_LIBRARY_PATH="$GAMEDIR/libs":LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 $ESUDO chmod 666 /dev/uinput
