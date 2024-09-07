@@ -5,7 +5,7 @@ process_rom() {
     local romfile=$1
 
     # Compute SHA-1 hash of the file
-    ROMHASH=$(sha1sum -b "$romfile" | awk '{ print $1 }') || { echo "Error: Failed to compute SHA-1 hash" | tee -a log.txt; return 1; }
+    ROMHASH=$(sha1sum -b "$romfile" 2>> log.txt | awk '{ print $1 }') || { echo "Error: Failed to compute SHA-1 hash" >> log.txt; return 1; }
 
     # Remap v64 and n64 hashes to their z64 hash equivalent
     case "$ROMHASH" in

@@ -21,15 +21,17 @@ source $controlfolder/device_info.txt
 
 # Set variables
 GAMEDIR="/$directory/ports/soh2"
-> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
 cd $GAMEDIR
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib":$LD_LIBRARY_PATH
 export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
 
 # Permissions
+printf "\033c" >> /dev/tty1
+printf "\033c" > /dev/tty0
 $ESUDO chmod 666 /dev/tty0
 $ESUDO chmod 666 /dev/tty1
 $ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen.txt
@@ -78,7 +80,12 @@ if [ ! -f "mm.o2r" ]; then
         # Check if OTR files were generated
         if [ ! -f "mm.o2r" ]; then
             echo "Error: Failed to generate mm.o2r." > $CUR_TTY
+            sleep 1
             exit 1
+        else
+            # Cleanup
+            echo "Finished processing all ROM files." > $CUR_TTY
+            rm -rf ./placeholder ./*.*64
         fi
     else
         echo "Missing ROM!" > $CUR_TTY
