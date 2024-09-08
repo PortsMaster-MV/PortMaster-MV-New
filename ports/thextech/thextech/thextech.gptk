@@ -1,0 +1,36 @@
+guide = \"
+start = \"
+
+a = \"
+b = \"
+x = \"
+y = \"
+
+l1 = \"
+l2 = mouse_right
+l3 = \"
+
+r1 = \"
+r2 = mouse_left
+r3 = \"
+
+up = \"
+down = \"
+left = \"
+right = \"
+
+left_analog_up = \"
+left_analog_down = \"
+left_analog_left = \"
+left_analog_right = \"
+
+right_analog_up = mouse_movement_up
+right_analog_down = mouse_movement_down
+right_analog_left = mouse_movement_left
+right_analog_right = mouse_movement_right
+
+deadzone_triggers = 3000
+mouse_scale = 5500
+mouse_delay = 16
+repeat_delay = 500
+repeat_interval = 150
