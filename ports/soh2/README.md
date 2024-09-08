@@ -14,7 +14,7 @@ Legally obtain your rom and place it in the `ports/soh2`, then start the port. T
 Logs are recorded automatically as `ports/soh/log.txt`. Please provide a log if you report an issue. PortMaster does not maintain the Ship of Harkinian repository and is not responsible for bugs or issues outside of our control. Likewise, HarbourMasters is not affiliated with PortMaster and this distribution is not officially supported by them. *Please come to PortMaster for help before approaching the HarbourMasters!*
 
 ## Graphics Adjustments
-You can open `2ship2harkinan.json` in a text editor and modify the values as you wish. If you mess up the syntax, the game will regenerate this file and your settings will be reverted to default. Please create a backup before modification. If you're running a widescreen device, you can copy `json/2ship2harkinian-ws.json` to the base folder as `2ship2harkinian.json` for a widescreen HUD.
+You can open `2ship2harkinan.json` in a text editor and modify the values as you wish. If you mess up the syntax, the game will regenerate this file and your settings will be reverted to default. Please create a backup before modification.
 
 ## Menu Navigation
 There is a `soh2.gptk` file you can use to change which button emulates F1 (default is L3). Some devices have a special button called `guide` that makes for a good F1 mapping. Controller menu navigation is not implemented yet, but you can use a mouse.
