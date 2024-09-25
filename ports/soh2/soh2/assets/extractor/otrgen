@@ -30,11 +30,11 @@ process_rom() {
     OTRNAME="mm.o2r"
     if [ ! -e "$GAMEDIR/$OTRNAME" ]; then
         echo "Generating $OTRNAME from $romfile..." | tee -a log.txt
-        ERROR_LOG=$(./assets/extractor/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b ./$romfile -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "1.0.2" 2>&1)
+        ./assets/extractor/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b ./$romfile -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "1.0.2"
         if [ $? -eq 0 ]; then
-            echo "Successfully generated $OTRNAME" > $CUR_TTY
+            echo "Successfully generated $OTRNAME"
         else
-            echo "Error: Failed to generate $OTRNAME. Details: $ERROR_LOG" > $CUR_TTY
+            echo "Error: Failed to generate $OTRNAME."
             return 1
         fi
     fi
@@ -49,13 +49,13 @@ for romfile in *.*64; do
 done
 
 sleep 1
-echo "Found $rom_count ROM files!" > $CUR_TTY
+echo "Found $rom_count ROM files!"
 
 # Process them all
 counter=1
 for romfile in *.*64; do
     if [ -f "$romfile" ]; then
-        echo "Processing ${romfile}..." > $CUR_TTY
+        echo "Processing ${romfile}..."
         mv "$romfile" "rom${counter}.z64"
         if [ $? -eq 0 ]; then
             process_rom "rom${counter}.z64"
@@ -63,3 +63,9 @@ for romfile in *.*64; do
         fi
     fi
 done
+
+# Cleanup
+echo "Finished processing all ROM files."
+rm -rf ./placeholder
+rm -rf *.*64
+echo "Patching process complete!"
