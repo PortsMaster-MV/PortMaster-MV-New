@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 
@@ -68,19 +68,22 @@ else
     cp -f "$GAMEDIR/bin/performance.elf" "$GAMEDIR/soh.elf"
 fi
 
-# Check if we need to generate any otr files
 if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
+    # Ensure we have a rom file before attempting to generate otr
     if ls *.*64 1> /dev/null 2>&1; then
-        echo "We need to generate OTR files! Stand by..." > $CUR_TTY
-        ./assets/extractor/otrgen.txt
-        # Check if OTR files were generated
-        if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
-            echo "Error: Failed to generate OTR files." > $CUR_TTY
-            exit 1
-        fi
+        $GPTOKEYB "love" &
+        ./love patcher -f "assets/extractor/otrgen" -g "Ship of Harkinian" -t "about 5 minutes"
+        $ESUDO kill -9 $(pidof gptokeyb)
     else
-        echo "Missing ROM files!" > $CUR_TTY
+        echo "Missing ROM files!"
+        exit 1
     fi
+fi
+
+# Check if OTR files were generated
+if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
+    echo "Error: Failed to generate OTR files."
+    exit 1
 fi
 
 # Run the game

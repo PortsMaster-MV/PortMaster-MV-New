@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 
@@ -74,22 +74,21 @@ fi
 
 # Check if we need to generate any o2r files
 if [ ! -f "mm.o2r" ]; then
+    # Ensure we have a rom file before attempting to generate o2r
     if ls *.*64 1> /dev/null 2>&1; then
-        echo "We need to generate mm.o2r! Stand by..." > $CUR_TTY
-        ./assets/extractor/otrgen.txt
-        # Check if OTR files were generated
-        if [ ! -f "mm.o2r" ]; then
-            echo "Error: Failed to generate mm.o2r." > $CUR_TTY
-            sleep 1
-            exit 1
-        else
-            # Cleanup
-            echo "Finished processing all ROM files." > $CUR_TTY
-            rm -rf ./placeholder ./*.*64
-        fi
+        $GPTOKEYB "love" &
+        ./love patcher -f "assets/extractor/otrgen" -g "2Ship2Harkinian" -t "about 5 minutes"
+        $ESUDO kill -9 $(pidof gptokeyb)
     else
-        echo "Missing ROM!" > $CUR_TTY
+        echo "Missing ROM files!"
+        exit 1
     fi
+fi
+
+# Check if OTR files were generated
+if [ ! -f "mm.o2r" ]; then
+    echo "Error: Failed to generate OTR files."
+    exit 1
 fi
 
 # Run the game
