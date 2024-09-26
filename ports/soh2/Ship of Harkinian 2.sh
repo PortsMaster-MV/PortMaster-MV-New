@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 
@@ -34,7 +34,7 @@ printf "\033c" >> /dev/tty1
 printf "\033c" > /dev/tty0
 $ESUDO chmod 666 /dev/tty0
 $ESUDO chmod 666 /dev/tty1
-$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen.txt
+$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen
 $ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
 
 # List of compatibility firmwares
