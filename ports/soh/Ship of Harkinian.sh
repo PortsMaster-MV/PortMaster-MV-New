@@ -32,7 +32,7 @@ export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
 # Permissions
 $ESUDO chmod 666 /dev/tty0
 $ESUDO chmod 666 /dev/tty1
-$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen.txt
+$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen
 $ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
 
 # List of compatibility firmwares
