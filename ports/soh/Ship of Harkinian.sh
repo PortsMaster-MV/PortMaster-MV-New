@@ -75,14 +75,13 @@ if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
         ./love patcher -f "assets/extractor/otrgen" -g "Ship of Harkinian" -t "about 5 minutes"
         $ESUDO kill -9 $(pidof gptokeyb)
     else
-        echo "Missing ROM files!"
-        exit 1
+        echo "Missing oot.otr or oot-mq.otr. If you meant to try to generate one, make sure tyour rom is in this folder."
     fi
 fi
 
 # Check if OTR files were generated
-if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
-    echo "Error: Failed to generate OTR files."
+if [ ! -f "oot.otr" ] && [ ! -f "oot-mq.otr" ]; then
+    echo "No otr files, can't run the game!"
     exit 1
 fi
 

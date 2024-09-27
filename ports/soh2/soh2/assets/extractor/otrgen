@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Function to handle a single ROM file
 process_rom() {

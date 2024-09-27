@@ -80,14 +80,13 @@ if [ ! -f "mm.o2r" ]; then
         ./love patcher -f "assets/extractor/otrgen" -g "2Ship2Harkinian" -t "about 5 minutes"
         $ESUDO kill -9 $(pidof gptokeyb)
     else
-        echo "Missing ROM files!"
-        exit 1
+        echo "Missing ROM files! Can't generate o2r!"
     fi
 fi
 
 # Check if OTR files were generated
 if [ ! -f "mm.o2r" ]; then
-    echo "Error: Failed to generate OTR files."
+    echo "No o2r found, can't run the game!"
     exit 1
 fi
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Function to handle a single ROM file
 process_rom() {
@@ -51,7 +51,7 @@ process_rom() {
         if [ $? -eq 0 ]; then
             echo "Successfully generated $OTRNAME"
         else
-            echo "Error: Failed to generate $OTRNAME."
+            echo "Error: Failed to generate $OTRNAME"
             return 1
         fi
     fi
