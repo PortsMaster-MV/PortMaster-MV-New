@@ -22,20 +22,17 @@ source $controlfolder/device_info.txt
 # Set variables
 GAMEDIR="/$directory/ports/soh2"
 
-cd $GAMEDIR
-> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib":$LD_LIBRARY_PATH
 export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
+export PATCHER_FILE="$GAMEDIR/assets/extractor/otrgen"
+export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
+export PATCHER_TIME="5 to 10 minutes"
 
-# Permissions
-printf "\033c" >> /dev/tty1
-printf "\033c" > /dev/tty0
-$ESUDO chmod 666 /dev/tty0
-$ESUDO chmod 666 /dev/tty1
-$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen
-$ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
+# CD and set permissions
+cd $GAMEDIR
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
+$ESUDO chmod +x -R $GAMEDIR/*
 
 # List of compatibility firmwares
 CFW_NAMES="ArkOS:ArkOS wuMMLe:ArkOS AeUX:knulli:TrimUI"
@@ -76,9 +73,12 @@ fi
 if [ ! -f "mm.o2r" ]; then
     # Ensure we have a rom file before attempting to generate o2r
     if ls *.*64 1> /dev/null 2>&1; then
-        $GPTOKEYB "love" &
-        ./love patcher -f "assets/extractor/otrgen" -g "2Ship2Harkinian" -t "about 5 minutes"
-        $ESUDO kill -9 $(pidof gptokeyb)
+        if [ -f "$controlfolder/utils/patcher.txt" ]; then
+            source "$controlfolder/utils/patcher.txt"
+            $ESUDO kill -9 $(pidof gptokeyb)
+        else
+            echo "This port requires the latest version of PortMaster." > $CUR_TTY
+        fi
     else
         echo "Missing ROM files! Can't generate o2r!"
     fi
@@ -91,7 +91,6 @@ if [ ! -f "mm.o2r" ]; then
 fi
 
 # Run the game
-$ESUDO chmod 777 $GAMEDIR/2s2h.elf
 echo "Loading, please wait... (might take a while!)" > $CUR_TTY
 $GPTOKEYB "2s2h.elf" -c "soh2.gptk" & 
 ./2s2h.elf
