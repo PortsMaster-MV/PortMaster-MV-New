@@ -65,6 +65,7 @@ jobs:
           python3 tools/build_release.py "${{steps.date.outputs.date}}"
           rm -fv releases/.gitignore
           rm -f releases/*.squashfs
+          rm -fv releases/port_stats_raw.json
 
       - name: "Prepare Release"
         uses: ncipollo/release-action@v1

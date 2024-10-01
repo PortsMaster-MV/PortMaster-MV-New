@@ -7,3 +7,5 @@
 ports_status.json
 manifest.json
 ports.json
+gameinfo_status.json
+port_stats_raw.json
