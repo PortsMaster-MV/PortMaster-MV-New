@@ -13,7 +13,6 @@ else
 fi
 
 source $controlfolder/control.txt
-source $controlfolder/device_info.txt
 export PORT_32BIT="Y"
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 get_controls
@@ -35,8 +34,6 @@ export GMLOADER_PLATFORM="os_linux"
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 $ESUDO chmod +x -R $GAMEDIR/*
-$ESUDO chmod 666 /dev/tty1
-$ESUDO chmod 666 /dev/uinput
 
 # dos2unix in case we need it
 dos2unix "$GAMEDIR/tools/gmKtool.py"
@@ -55,12 +52,13 @@ else
     echo "Patching process already completed. Skipping."
 fi
 
+# Run game
 echo "Loading, please wait..." > $CUR_TTY
-
 $GPTOKEYB "gmloader" -c "zelda.gptk" &
+pm_platform_helper "$GAMEDIR/game.apk"
 ./gmloader game.apk
 
-$ESUDO kill -9 $(pidof gptokeyb)
-$ESUDO systemctl restart oga_events &
+# Cleanup
+pm_finish &
 printf "\033c" >> /dev/tty1
 printf "\033c" > /dev/tty0
