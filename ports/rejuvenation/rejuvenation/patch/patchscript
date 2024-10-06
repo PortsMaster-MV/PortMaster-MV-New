@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Set the log file
+LOGFILE="$PATCHDIR/patchlog.txt"
+
+# Redirect output and error to the log file
+exec > >(tee -a "$LOGFILE") 2>&1
+
+echo "PATCHDIR is set to: $PATCHDIR"
+
+cd "$PATCHDIR"
+
+# Use ffmpeg to lower the gif's framerate to reduce ram usage spike
+./utils/ffmpeg -i Graphics/Titles/splash.gif -vf "fps=15,scale=480:-1:flags=lanczos" -y Graphics/Titles/temp_splash.gif
+mv Graphics/Titles/temp_splash.gif Graphics/Titles/splash.gif
