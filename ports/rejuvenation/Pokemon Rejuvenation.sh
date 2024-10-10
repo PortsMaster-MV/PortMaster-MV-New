@@ -56,4 +56,3 @@ pm_platform_helper $GAMEDIR/mkxp-z.${DEVICE_ARCH}
 
 # Cleanup
 pm_finish
-printf "\033c" > /dev/tty0

@@ -459,7 +459,7 @@
     // called before it is compiled by MJIT.
     // (default: 10000)
     //
-     "JITMinCalls": 5000,
+     "JITMinCalls": 5000
 
     // Determines whether YJIT is enabled.
     // Only works with Ruby 3.1 or higher.
