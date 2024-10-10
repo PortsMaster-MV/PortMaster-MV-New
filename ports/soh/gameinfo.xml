@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gamelist>
 	<game>
 		<path>./Ship of Harkinian.sh</path>
 		<name>Ship of Harkinian</name>
@@ -8,3 +10,4 @@
 		<publisher>Harbour Masters</publisher>
 		<genre>Adventure</genre>
 	</game>
+</gamelist>

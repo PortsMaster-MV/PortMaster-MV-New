@@ -15,25 +15,23 @@ fi
 source $controlfolder/control.txt
 get_controls
 
-# Source Device Info
-source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
 # Set variables
 GAMEDIR="/$directory/ports/soh"
-> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-
-cd $GAMEDIR
 
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib":$LD_LIBRARY_PATH
 export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
+export PATCHER_FILE="$GAMEDIR/assets/extractor/otrgen"
+export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
+export PATCHER_TIME="5 to 10 minutes"
 
-# Permissions
-$ESUDO chmod 666 /dev/tty0
-$ESUDO chmod 666 /dev/tty1
-$ESUDO chmod 777 $GAMEDIR/assets/extractor/otrgen
-$ESUDO chmod 777 $GAMEDIR/assets/extractor/ZAPD.out
+# CD and set permissions
+cd $GAMEDIR
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
+$ESUDO chmod +x -R $GAMEDIR/*
+
 
 # List of compatibility firmwares
 CFW_NAMES="ArkOS:ArkOS wuMMLe:ArkOS AeUX:knulli:TrimUI"
@@ -71,11 +69,14 @@ fi
 if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
     # Ensure we have a rom file before attempting to generate otr
     if ls *.*64 1> /dev/null 2>&1; then
-        $GPTOKEYB "love" &
-        ./love patcher -f "assets/extractor/otrgen" -g "Ship of Harkinian" -t "about 5 minutes"
-        $ESUDO kill -9 $(pidof gptokeyb)
+        if [ -f "$controlfolder/utils/patcher.txt" ]; then
+            source "$controlfolder/utils/patcher.txt"
+            $ESUDO kill -9 $(pidof gptokeyb)
+        else
+            echo "This port requires the latest version of PortMaster." > $CUR_TTY
+        fi
     else
-        echo "Missing oot.otr or oot-mq.otr. If you meant to try to generate one, make sure tyour rom is in this folder."
+        echo "Missing ROM files! Can't generate otr!"
     fi
 fi
 
@@ -86,14 +87,12 @@ if [ ! -f "oot.otr" ] && [ ! -f "oot-mq.otr" ]; then
 fi
 
 # Run the game
-$ESUDO chmod 777 $GAMEDIR/soh.elf
 echo "Loading, please wait... (might take a while!)" > $CUR_TTY
 $GPTOKEYB "soh.elf" -c "soh.gptk" & 
+pm_platform_helper soh.elf
 ./soh.elf
 
 # Cleanup
 rm -rf "$GAMEDIR/logs/"
-$ESUDO kill -9 $(pidof gptokeyb)
-$ESUDO systemctl restart oga_events & 
-printf "\033c" > /dev/tty1
-printf "\033c" > /dev/tty0
+
+pm_finish
