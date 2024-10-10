@@ -60,4 +60,3 @@ pm_platform_helper "$GAMEDIR/game.apk"
 
 # Cleanup
 pm_finish &
-printf "\033c" > /dev/tty0
