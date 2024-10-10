@@ -48,8 +48,6 @@ process_game() {
             echo "Compression completed successfully."
             mv "$TMPDIR/"* "$GAMEDIR/gamedata"
             echo "Moved compressed files to $GAMEDIR/gamedata."
-            rm "$GAMEDIR/compress.txt"
-            echo "Removed compress.txt from $GAMEDIR."
             rmdir "$TMPDIR"
             echo "Temporary directory $TMPDIR removed."
             echo "Audio compression applied successfully."
