@@ -15,8 +15,6 @@ fi
 source $controlfolder/control.txt
 get_controls
 
-# Source Device Info
-source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
 # Set variables
@@ -92,11 +90,11 @@ fi
 
 # Run the game
 echo "Loading, please wait... (might take a while!)" > $CUR_TTY
-$GPTOKEYB "2s2h.elf" -c "soh2.gptk" & 
+$GPTOKEYB "2s2h.elf" -c "soh2.gptk" &
+pm_platform_helper 2s2h.elf
 ./2s2h.elf
 
 # Cleanup
 rm -rf "$GAMEDIR/logs/"
-$ESUDO systemctl restart oga_events & 
-printf "\033c" >> /dev/tty1
-printf "\033c" > /dev/tty0
+
+pm_finish
