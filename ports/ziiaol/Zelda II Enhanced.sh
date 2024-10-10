@@ -55,7 +55,7 @@ fi
 # Run game
 echo "Loading, please wait..." > $CUR_TTY
 $GPTOKEYB "gmloader" -c "zelda.gptk" &
-pm_platform_helper "$GAMEDIR/game.apk"
+pm_platform_helper "$GAMEDIR/gmloader"
 ./gmloader game.apk
 
 # Cleanup
