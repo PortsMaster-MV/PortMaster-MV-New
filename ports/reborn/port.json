@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "name": "reborn.zip",
+  "items": [
+    "Pokemon Reborn.sh",
+    "reborn"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Pokemon Reborn",
+    "porter": [
+      "JanTrueno"
+    ],
+    "desc": "Reborn is a free 3rd-gen style downloadable game featuring all content through Generation 7. Experience a never-before-seen layer of strategy with the all-original Field Effects, using the terrain to outplay and overwhelm your opponent! Collect, train and battle with all 807 species available in-game and take on Gym Leaders of all 18 types as you fight to restore Reborn to prosperity!\n\nAre you ready?",
+    "desc_md": "Reborn is a free 3rd-gen style downloadable game featuring all content through Generation 7. Experience a never-before-seen layer of strategy with the all-original Field Effects, using the terrain to outplay and overwhelm your opponent! Collect, train and battle with all 807 species available in-game and take on Gym Leaders of all 18 types as you fight to restore Reborn to prosperity!\n\n \n*Are you ready?*",
+    "inst": "Download the legacy Windows version of the game here: https://www.rebornevo.com/pr/download/. Install the game and copy all assets within the \"Pokemon Reborn\" folder to the \"reborn\" portfolder. The version has to be 19.16 or 19.17, this can be checked with the version file included with the game.",
+    "inst_md": "Download the legacy Windows version of the game [here](https://www.rebornevo.com/pr/download/). Install the game and copy all assets within the \"Pokemon Reborn\" folder to the \"reborn\" portfolder. The version has to be 19.16 or 19.17, this can be checked with the version file included with the game.",
+    "genres": [
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": null,
+    "reqs": [
+      "power"
+    ],
+    "arch": [
+      "aarch64"
+    ]
+  }
+}
