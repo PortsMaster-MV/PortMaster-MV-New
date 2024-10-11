@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "name": "rejuvenation.zip",
+  "items": [
+    "Pokemon Rejuvenation.sh",
+    "rejuvenation"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Pokemon Rejuvenation",
+    "porter": [
+      "JanTrueno"
+    ],
+    "desc": "Many decades ago, Aevium was once a united and strong blossoming region. However, the calamity known as Storm-9 tore the region apart.\n\nThe Aevium Region has lived a time of peace since then. People and the creatures inhabiting the lands band together to create a region worth living in. However, the dark and sinister organization, Team Xen, rises from the shadows to destroy what little peace the region has left.\n\nExplore the Aevium Region while also defending the land from Team Xen. Discover the dark secrets this world has kept hidden under the cracks that separate Aevium and shakes it to its very core. \n\nThis world needs you.\n\nWill you lend us your strength?",
+    "desc_md": null,
+    "inst": "Download the Windows version of the game here: https://www.rebornevo.com/rejuvdown/. Install the game and copy all assets within the \"Pokemon Rejuvenation\" folder to the \"rejuvenation\" portfolder. Version 13.5.0 is known to work, future updates may be incompatible.",
+    "inst_md": "Download the Windows version of the game [here](https://www.rebornevo.com/rejuvdown/). Install the game and copy all assets within the \"Pokemon Rejuvenation\" folder to the \"rejuvenation\" portfolder. Version 13.5.0 is known to work, future updates may be incompatible.",
+    "genres": [
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": null,
+    "reqs": [
+      "power"
+    ],
+    "arch": [
+      "aarch64"
+    ]
+  }
+}
