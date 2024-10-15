@@ -31,7 +31,7 @@ This port comes with 3 optional packages:
 
 The extraction of the assets from the rom will temporary uses up to 1 GB of extra storage. Be sure to have at least this amount of free space before launching the game for the first time or it will fail.
 
-**If you are using muOS** (2405.2 refried beans or older version) the dynos audio pack is not supported yet. If you have chosen to install this pack it will be disabled. Without this pack the game will then be missing musics and sfx sounds. This is the only option until the support of multiple audio stream is added in muOS (maybe in Banana).
+**If you are using muOS** you need at least the banana version to run this port.
 
 If you have chosen to install the Dynos 3D model pack, it is not enabled by default because on most handheld the game will be choppy when combined with the 60 fps feature. You have to enable it in the dynos menu.
 
