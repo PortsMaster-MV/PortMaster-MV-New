@@ -13,12 +13,8 @@ else
 fi
 
 source $controlfolder/control.txt
-get_controls
-
-# Source Device Info
-source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
-
+get_controls
 # Set variables
 GAMEDIR="/$directory/ports/soh2"
 
