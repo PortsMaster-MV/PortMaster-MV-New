@@ -1,0 +1,6 @@
+[powerboth1] 
+filename=engine.wav 
+MinimumRPM=1000 
+MaximumRPM=16000 
+NaturalRPM=8000 
+power=both

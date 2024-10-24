@@ -1,0 +1,451 @@
+# based on Revision 141+03+147+148: /vdrift-data/cars/360
+#
+# 360.car   (v. 360-06) 20080202 by cologne
+#
+# total weight	1544.00 kg at start
+# wheelbase:	2.63
+# weight distribution (front/rear)	 43% / 57% at start
+# centre of mass 0.03
+# centre of downforce 0.28
+#
+# length, width, height :: X(+front), Y(+left), Z(+up)
+#
+#-----------------------------------------
+#
+#	http://www.supercarsite.net/ferrari/360-modena/2000
+#
+# Length			4477 mm / 176.3 in
+# Width				1922 mm / 75.7 in
+# Height			1214 mm / 47.8 in
+# Wheelbase			2600 mm / 102.4 in
+# Weight			1390 kg / 3,064 lbs
+# Front Track  			F 1669 mm / 65.7 in
+# Rear Track			R 1617 mm / 63.7 in
+
+# Engine
+# Configuration 		3.6 Liter V8
+# Power 			298.3 kW / 400.0 bhp at 8500 rpm
+# Torque 			372.9 Nm / 275.1 ft lbs at 4750 rpm
+# Redline 			8500 rpm
+
+# Chassis & Body
+# Brake Type 			Vented Discs w/ Vacuum Assist & ABS
+# Brake Size 			F 330 mm / 13.0 in
+# 				R 330 mm / 13.0 in
+
+# Wheels 			F 45.7 x 19.1 cm / 18.0 x 7.5 in	=> 45.7/2 + 21.5 x 0.45 = 22.85 + 9.675 = 32.5
+# 				R 45.7 x 24.1 cm / 18.0 x 9.5 in	=> 45.7/2 + 27.5 x 0.40 = 22.85 + 11.0 = 33.85
+
+# Tyres 			F 215/45ZR-18
+# 				R 275/40ZR-18
+
+# Transmission
+# Gear Type 			6 Speed Manual
+# Final Drive 			4.44:1
+# 1st Gear Ratio 		3.29:1
+# 2nd Gear Ratio 		2.16:1
+# 3rd Gear Ratio 		1.61:1
+# 4th Gear Ratio 		1.27:1
+# 5th Gear Ratio 		1.03:1
+# 6th Gear Ratio 		0.85:1
+
+# Performance
+# Top Speed 			295.0 kph / 183.3 mph
+# 0 - 62 mph 			4.3 seconds
+# 0 - 100 mph 			10.2 seconds
+# 0 - 1/2 mile 			12.6 seconds
+#
+#---------------------------------------
+#
+# http://www.ferrariworld.com/FWorld/fw/index.jsp
+#
+#	Weight distribution 43/57% front/rear
+#	Fuel capacity 95 liter
+#	Downforce by ground effect: 396 lbs at 180 mph
+#	Downforce by ground effect: 180 kg  at 290 km/h
+#
+#---------------------------------------
+#
+# Suspension (Challenge Stradale)
+# 
+# Height: 110 mm front, 130 mm rear
+# Camber: -1.28 deg front, -2.00 deg rear
+# Camber track: -3.5 deg front, -3.0 deg rear
+# Caster: 6.3 deg
+# Toe: 0.09 deg (1.25 mm) front, 0.10 deg (1.5 mm) rear
+# Toe track: -0.02 deg (-0.25 mm) front, 0.27 deg (4.0 mm) rear
+#
+
+[engine]
+position = 0.0, -1.0, -0.05
+mass = 150.0
+displacement = 3.6E-3
+max-power = 313000
+peak-engine-rpm = 8500
+rpm-limit = 9000.0
+inertia = 0.25
+start-rpm = 1000
+stall-rpm = 500
+fuel-consumption = 0.0001
+#
+#	P = M x n x 0.10472 
+#	HP = 0.7355 x P (KW)
+#
+torque-curve-00 = 1000, 121
+torque-curve-01 = 1500, 182
+torque-curve-02 = 2200, 217
+torque-curve-03 = 2700, 246
+torque-curve-04 = 3200, 257
+torque-curve-05 = 3850, 302
+torque-curve-06 = 4200, 322
+torque-curve-07 = 4800, 355
+torque-curve-08 = 5050, 373
+torque-curve-09 = 5200, 368
+torque-curve-10 = 5775, 361
+torque-curve-11 = 5850, 365
+torque-curve-12 = 6000, 365
+torque-curve-13 = 6800, 332
+torque-curve-14 = 7300, 332
+torque-curve-15 = 7700, 338
+torque-curve-16 = 8000, 335
+torque-curve-17 = 8600, 309
+torque-curve-18 = 9200, 279
+
+[clutch]
+sliding = 0.025
+radius = 0.15
+area = 1.0
+max-pressure = 4e5
+
+[transmission]
+gears = 6
+gear-ratio-r = -3.29
+gear-ratio-1 = 3.29
+gear-ratio-2 = 2.16
+gear-ratio-3 = 1.61
+gear-ratio-4 = 1.27
+gear-ratio-5 = 1.03
+gear-ratio-6 = 0.85
+shift-time = 0.15
+
+[differential-rear]
+final-drive = 4.44
+anti-slip = 750.0
+anti-slip-torque = 0.01
+anti-slip-torque-deceleration-factor = 0
+
+[fuel-tank]
+position = 0.0, -1.50, -0.10
+capacity = 95.0
+volume = 40.0
+fuel-density = 0.8
+
+[wing-front]
+position = 0.0, 0.15, 0.00
+frontal-area = 2.03
+drag-coefficient = 0.29
+
+[wing-center]
+position = 0, 1.15, -0.3
+frontal-area = 0.0
+drag-coefficient = 0
+surface-area = 1.0
+lift-coefficient = -0.22
+lift-efficiency = 1
+
+[wing-rear]
+position = 0, -1.50, -0.3
+frontal-area = 0.0
+drag-coefficient = 0
+surface-area = 1.0
+lift-coefficient = -0.20
+lift-efficiency = 1
+
+[wheel.fl.coilover]
+spring-constant = 79865 # assuming 0.75 to 1 lever arm ratio
+bounce = 3000.0
+rebound = 10000.0
+travel = 0.06
+anti-roll = 12000
+
+[wheel.fr.coilover]
+spring-constant = 79865
+bounce = 3000.0
+rebound = 10000.0
+travel = 0.06
+anti-roll = 12000
+
+[wheel.rl.coilover]
+spring-constant = 104062
+bounce = 4000.0
+rebound = 12000.0
+travel = 0.06
+anti-roll = 10000
+
+[wheel.rr.coilover]
+spring-constant = 104062
+bounce = 4000.0
+rebound = 12000.0
+travel = 0.06
+anti-roll = 10000
+
+[wheel.fl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.7
+max-pressure = 10e6
+bias = 0.5
+radius = 0.175 # 350mm
+area = 0.009 # 205mm x 48mm
+
+[wheel.fr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.7
+max-pressure = 10e6
+bias = 0.5
+radius = 0.175 # 350mm
+area = 0.009 # 205mm x 48mm
+
+[wheel.rl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.7
+max-pressure = 10e6
+bias = 0.5
+radius = 0.125 # 230mm
+area = 0.005 # 105mm x 48mm
+handbrake = 1.0
+
+[wheel.rr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.7
+max-pressure = 10e6
+bias = 0.5
+radius = 0.125 # 230mm
+area = 0.005 # 105mm x 48mm
+handbrake = 1.0
+
+[wheel.fl.double-wishbone]
+upper-chassis-front = -0.57, 1.24, -0.19
+upper-chassis-rear = -0.57, 1.00, -0.19
+upper-hub = -0.76, 1.09, -0.17
+lower-chassis-front = -0.54, 1.28, -0.42
+lower-chassis-rear = -0.54, 0.95, -0.42
+lower-hub = -0.82, 1.12, -0.42
+
+[wheel.fr.double-wishbone]
+upper-chassis-front = 0.57, 1.24, -0.19
+upper-chassis-rear = 0.57, 1.00, -0.19
+upper-hub = 0.76, 1.09, -0.17
+lower-chassis-front = 0.54, 1.28, -0.42
+lower-chassis-rear = 0.54, 0.95, -0.42
+lower-hub = 0.82, 1.12, -0.42
+
+[wheel.rl.double-wishbone]
+upper-chassis-front = -0.57, -1.38, -0.22
+upper-chassis-rear = -0.57, -1.62, -0.19
+upper-hub = -0.76, -1.50, -0.19
+lower-chassis-front = -0.54, -1.33, -0.42
+lower-chassis-rear = -0.54, -1.66, -0.42
+lower-hub = -0.81, -1.50, -0.42
+
+[wheel.rr.double-wishbone]
+upper-chassis-front = 0.57, -1.38, -0.22
+upper-chassis-rear = 0.57, -1.62, -0.19
+upper-hub = 0.76, -1.50, -0.19
+lower-chassis-front = 0.54, -1.33, -0.42
+lower-chassis-rear = 0.54, -1.66, -0.42
+lower-hub = 0.81, -1.50, -0.42
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 215, 45, 18
+type = tire/sports.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 215, 45, 18
+type = tire/sports.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 275, 40, 18
+type = tire/sports.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 275, 40, 18
+type = tire/sports.tire
+
+[wheel.fl]
+texture = wheel/pentagonal_hub.png
+mesh = wheel/pentagonal_hub.joe
+position = -0.85, 1.12, -0.27
+camber = -1.0
+caster = 6.12
+toe = 0.0
+ackermann = 8.96	# 50% ackermann
+steering = 33
+
+[wheel.fr]
+texture = wheel/pentagonal_hub.png
+mesh = wheel/pentagonal_hub.joe
+scale = -1, 1, 1
+position = 0.85, 1.12, -0.27
+camber = 1.0
+caster = 6.12
+toe = 0.0
+ackermann = -8.96
+steering = 33
+
+[wheel.rl]
+texture = wheel/pentagonal_hub.png
+mesh = wheel/pentagonal_hub.joe
+position = -0.8085, -1.51, -0.28
+camber = -1.5
+caster = 0.28
+toe = -0.1
+
+[wheel.rr]
+texture = wheel/pentagonal_hub.png
+mesh = wheel/pentagonal_hub.joe
+scale = -1, 1, 1
+position = 0.8085, -1.51, -0.28
+camber = 1.5
+caster = 0.28
+toe = 0.1
+
+[steering]
+texture = steering_wheel.png
+mesh = steering_wheel.joe
+position = -0.28, 0.49, 0.16
+rotation = 87.5, 0.0, 0.0
+max-angle = 320
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = -0.28, 0.12, 0.12
+mass = 80.0
+
+[balance-weight]
+position = 0.28, 0.12, 0.12
+mass = 80.0
+
+[body]
+texture = body00.png, body-misc1.png
+mesh = body.joe
+
+[interior]
+texture = interior.png
+mesh = interior.joe
+
+[glass]
+texture = glass.png, glass-misc1.png
+mesh = glass.joe
+draw = transparent
+
+[light-brake]
+texture = body00.png
+mesh = brakelight.joe
+draw = emissive
+
+[light-reverse]
+texture = body00.png
+mesh = revlight.joe
+draw = emissive
+
+# main collision shape
+[body.hull]
+00 = -0.71,  1.67, -0.14, 0.30
+01 =  0.71,  1.67, -0.14, 0.30
+02 = -0.62, -1.97, -0.03, 0.40
+03 =  0.62, -1.97, -0.03, 0.40
+04 = -0.37, -0.36,  0.30, 0.35
+05 =  0.37, -0.36,  0.30, 0.35
+06 =  0.00,  2.03, -0.21, 0.20
+
+# these are used to calculate the weight distribution and balance
+
+[particle-00]# Chassis Front
+mass = 50
+position = 0.4, 1.5, -0.25
+
+[particle-01]# Chassis Front
+mass = 50
+position = -0.4, 1.5, -0.25
+
+[particle-02]#	Chassis left
+mass = 160
+position = 0.75, -0.3, -0.1
+
+[particle-03]#	Chassis right
+mass = 160
+position = -0.75, -0.3, -0.1
+
+[particle-04]#	Motor Env. left
+mass = 100
+position = 0.7, -1.10, -0.0
+
+[particle-05]# Motor Env. right
+mass = 100
+position = -0.7, -1.10, -0.0
+
+[particle-06]# Interieur
+mass = 60
+position = 0.7, 0.60, -0.10
+
+[particle-07]# Interieur
+mass = 60
+position = -0.7, 0.60, -0.10
+
+[particle-08]# Chassis top
+mass = 80
+position = 0.0, -0.3, 0.3
+
+[particle-09]# Gearbox
+mass = 60.0
+position = 0.00, -1.75, -0.25
+
+[particle-10]# Chassis rear
+mass = 100.0
+position = 0.00, -1.80, -0.0
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.7, 0.5
+stiffness = 0.75
+
+[camera.1]
+name = driver
+type = mount
+position = -0.28, 0.12, 0.42
+stiffness = 0.75
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+stiffness = 0.75
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0
+
+[camera.6]
+name = wheel front right
+type = mount
+position = 3.0, 1.0, 0.75
+lookat = 0.85, 1.12, -0.2
+stiffness = 0.75

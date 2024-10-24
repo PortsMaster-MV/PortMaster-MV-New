@@ -1,0 +1,40 @@
+17
+
+#entry n
+#model
+#texture
+#mipmap
+#nolighting
+#skybox
+#transparent_blend
+#(ignored) bump_wavelength
+#(ignored) bump_amplitude
+#(ignored) driveable
+#collideable
+#(ignored) friction_notread 
+#(ignored) friction_tread
+#(ignored) rolling_resistance
+#(ignored) rolling_drag
+#shadow
+#clamptexture
+#surface
+
+
+#entry 0
+room.joe
+room.png
+1
+0
+0
+0
+1.0
+0.0
+0
+1
+1.0
+0.9
+1.0
+0.0
+0
+0
+1

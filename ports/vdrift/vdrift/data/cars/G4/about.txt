@@ -1,0 +1,9 @@
+G4
+ 
+Base Model by Christophe Guionneau
+
+Model refined and converted by Dick Maurer
+
+Car settings by Dick Maurer
+Car settings modded by Cotharyus. This should be roughly correct for the 1969 Mark IV.
+

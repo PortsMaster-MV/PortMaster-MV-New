@@ -1,0 +1,11 @@
+cull faces = on
+vertical tracking skyboxes = no
+sun elevation = 50
+sun azimuth = 15
+non-treaded friction coefficient = 1.00
+treaded friction coefficient = 0.90
+lap sequences = 2
+lap sequence 0 = 0,1,0
+lap sequence 1 = 0,128,0
+start position 0 = 9.00,0.31,0.30
+start orientation 0 = 0.00,-60.00,0.00

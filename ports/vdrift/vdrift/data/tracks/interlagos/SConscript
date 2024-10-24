@@ -1,0 +1,34 @@
+#-------------#
+# Import Vars #
+#-------------#
+Import('*')
+
+#---------#
+# Sources #
+#---------#
+src = ["roads.trk",
+       "about.txt",
+       "surfaces.txt",
+       "trackshot.png",
+       "track.txt"]
+
+#---------------------------------#
+# Distribute to src_dir & bin_dir #
+#---------------------------------#
+dist_files = ['SConscript'] + src
+
+env.Distribute (src_dir, dist_files)
+env.Distribute (bin_dir, src)
+
+#--------------------#
+# Install data files #
+#--------------------#
+install = env.Install(Dir(env.subst('$data_directory/tracks/interlagos')), src)
+env.Alias('install', install)
+
+#----------------#
+# Subdirectories #
+#----------------#
+Export(['env', 'src_dir', 'bin_dir'])
+
+SConscript('objects/SConscript')

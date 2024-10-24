@@ -1,0 +1,259 @@
+name = ReplaysControls
+oncancel = LoadControls gui.page:ControlsOptions
+
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.14
+layer = -1
+
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+
+[ tooltip ]
+text = none
+fontsize = 0.03
+left = 0
+right = 0
+bottom = 0.04
+height = 0.04
+
+
+[ bg-labels ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.008
+width = 0.29
+top = 0.181
+height = 0.078
+layer = -1
+
+
+[ bg-options ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.48
+top = 0.181
+height = 0.078
+layer = -1
+
+
+[ widget-00 ]
+text = Options / Controls / Replays
+fontsize = 0.06
+align = left
+left = 0.29
+width = 0.20
+top = 0.07
+height = 0.06
+
+
+[ widget-01a ]
+text = Skip Forward
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.18
+height = 0.04
+
+[ widget-01b ]
+name = control.replay_ff.0
+text = none
+fontsize = 0.03
+onselect = controledit.string:replay_ff:0
+onmoveleft = widget-01d
+onmoveright = widget-01c
+onmoveup = widget-04b
+onmovedown = widget-02b
+onfocus = widget-01b.sat:0.56 tooltip.text:"The skip forward control skips ahead ten seconds during a replay."
+onblur = widget-01b.sat:0.0
+focus = true
+hue = 0.56
+left = 0.30
+width = 0.16
+top = 0.18
+height = 0.04
+
+[ widget-01c ]
+name = control.replay_ff.1
+text = none
+fontsize = 0.03
+onselect = controledit.string:replay_ff:1
+onmoveleft = widget-01b
+onmoveright = widget-01d
+onmoveup = widget-04b
+onmovedown = widget-02c
+onfocus = widget-01c.sat:0.56 tooltip.text:"The skip forward control skips ahead ten seconds during a replay."
+onblur = widget-01c.sat:0.0
+focus = false
+hue = 0.56
+left = 0.46
+width = 0.16
+top = 0.18
+height = 0.04
+
+[ widget-01d ]
+name = control.replay_ff.2
+text = none
+fontsize = 0.03
+onselect = controledit.string:replay_ff:2
+onmoveleft = widget-01c
+onmoveright = widget-01b
+onmoveup = widget-04b
+onmovedown = widget-02d
+onfocus = widget-01d.sat:0.56 tooltip.text:"The skip forward control skips ahead ten seconds during a replay."
+onblur = widget-01d.sat:0.0
+focus = false
+hue = 0.56
+left = 0.62
+width = 0.16
+top = 0.18
+height = 0.04
+
+
+[ widget-02a ]
+text = Skip Backward
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.22
+height = 0.04
+
+[ widget-02b ]
+name = control.replay_rw.0
+text = none
+fontsize = 0.03
+onselect = controledit.string:replay_rw:0
+onmoveleft = widget-02d
+onmoveright = widget-02c
+onmoveup = widget-01b
+onmovedown = widget-03b
+onfocus = widget-02b.sat:0.56 tooltip.text:"The skip backward control goes back ten seconds during a replay."
+onblur = widget-02b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.30
+width = 0.16
+top = 0.22
+height = 0.04
+
+[ widget-02c ]
+name = control.replay_rw.1
+text = none
+fontsize = 0.03
+onselect = controledit.string:replay_rw:1
+onmoveleft = widget-02b
+onmoveright = widget-02d
+onmoveup = widget-01c
+onmovedown = widget-03b
+onfocus = widget-02c.sat:0.56 tooltip.text:"The skip backward control goes back ten seconds during a replay."
+onblur = widget-02c.sat:0.0
+focus = false
+hue = 0.56
+left = 0.46
+width = 0.16
+top = 0.22
+height = 0.04
+
+[ widget-02d ]
+name = control.replay_rw.2
+text = none
+fontsize = 0.03
+onselect = controledit.string:replay_rw:2
+onmoveleft = widget-02c
+onmoveright = widget-02b
+onmoveup = widget-01d
+onmovedown = widget-03b
+onfocus = widget-02d.sat:0.56 tooltip.text:"The skip backward control goes back ten seconds during a replay."
+onblur = widget-02d.sat:0.0
+focus = false
+hue = 0.56
+left = 0.62
+width = 0.16
+top = 0.22
+height = 0.04
+
+
+[ widget-03b ]
+text = Cancel
+fontsize = 0.03
+#align = left
+onselect = LoadControls gui.page:ControlsOptions
+onmoveup = widget-02b
+onmovedown = widget-04b
+onfocus = widget-03b.sat:0.56 tooltip.text:"Forget changes and return to Game Controls menu."
+onblur = widget-03b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.26
+height = 0.04
+
+[ widget-03e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.261
+height = 0.038
+layer = -1
+
+
+[ widget-04b ]
+text = OK
+fontsize = 0.03
+#align = left
+onselect = SaveControls gui.page:ControlsOptions
+onmoveup = widget-03b
+onmovedown = widget-01b
+onfocus = widget-04b.sat:0.56 tooltip.text:"Save changes and return to Game Controls menu."
+onblur = widget-04b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.30
+height = 0.04
+
+[ widget-04e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.301
+height = 0.038
+layer = -1

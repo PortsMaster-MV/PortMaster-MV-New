@@ -1,0 +1,68 @@
+[surface-00]
+Type = none
+BumpWaveLength = 1.0
+BumpAmplitude = 0.0
+FrictionNonTread = 0.0
+FrictionTread = 0.0
+RollResistanceCoefficient = 0.0
+RollingDrag = 0.0
+
+
+[surface-01] 
+Type = asphalt
+BumpWaveLength = 1.0
+BumpAmplitude = 0.0
+FrictionNonTread = 1.0
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+
+[surface-02]
+Type = grass
+BumpWaveLength = 5.0
+BumpAmplitude = 0.02
+FrictionNonTread = 0.6
+FrictionTread = 0.8
+RollResistanceCoefficient = 3.0
+RollingDrag = 10.0
+
+
+[surface-03]
+Type = gravel
+BumpWaveLength = 10.0
+BumpAmplitude = 0.06
+FrictionNonTread = 0.5
+FrictionTread = 0.7
+RollResistanceCoefficient = 6.0
+RollingDrag = 20.0
+
+
+[surface-04]
+Type = concrete
+BumpWaveLength = 1.0
+BumpAmplitude = 0.0
+FrictionNonTread = 0.95
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+
+[surface-05]
+Type = sand
+BumpWaveLength = 10.0
+BumpAmplitude = 0.04
+FrictionNonTread = 0.5
+FrictionTread = 0.7
+RollResistanceCoefficient = 5.0
+RollingDrag = 15.0
+
+
+[surface-06]
+Type = cobbles
+BumpWaveLength = 0.2
+BumpAmplitude = 0.01
+FrictionNonTread = 0.95
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0

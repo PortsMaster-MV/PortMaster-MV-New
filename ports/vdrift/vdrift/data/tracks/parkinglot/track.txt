@@ -1,0 +1,10 @@
+cull faces = true
+non-treaded friction coefficient = 1.000000
+treaded friction coefficient = 0.900000
+origin = -15.319,0.54907,-15.7462
+width = 31.695
+height = 32.5701
+lap sequences = 0
+start position 0 = 7.524787,2.211630,-5.473845
+start orientation 0 = 175, 49, 179
+

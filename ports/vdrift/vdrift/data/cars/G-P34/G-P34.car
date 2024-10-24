@@ -1,0 +1,351 @@
+# Tyrrell P34 sixwheeler http://cars.vdrift.net/node/17
+# Model modified by G. MacGruer, from Racer files. 
+# Car settings modified, by G. MacGruer, from Vdrift's AX2.
+
+# second Alpha! Version G-P34-02 
+# New Engine definition
+# new weight and downforce balance
+# published 20090926 on http://www.aikx.de/aikxdrift/archives/2009/09/entry_47.html
+
+# first Alpha! Version G-P34-01 
+# Changed from AX2 to Formula One like properties
+# published 20090923 on http://www.aikx.de/aikxdrift/archives/2009/02/entry_26.html 
+#
+# more infos:
+# http://8w.forix.com/sixwheelers.html
+# 1976 max. 575kg
+
+# Tyrrell P34 Engine
+# http://www.research-racing.de/cosworth07-3.htm
+# mass = 168 kg
+# max-power = about 485 hp / 357 kW at 11000rpm
+# fastest laps Tyrrell-Ford P34 Tyrrell G about 1:30,xxx
+# my fastest time 1:48 ...
+# torque * rpm * ( 2 * pi /60 ) = p [kW]; 2 * pi / 60 = 0,10471975511966; hp * 1.36 = p;
+
+[engine]
+position = 0.0, -0.50, -0.24
+mass = 140.0
+displacement = 3.0E-3
+max-power = 633844
+peak-engine-rpm = 10500.0
+rpm-limit = 11000.0
+inertia = 0.2
+idle = 0.08
+start-rpm = 4000
+stall-rpm = 2500
+fuel-consumption = 6e-9
+torque-curve-00 = 2000, 200
+torque-curve-01 = 3000, 280
+torque-curve-02 = 4000, 290
+torque-curve-03 = 5000, 300
+torque-curve-04 = 6000, 310
+torque-curve-05 = 7000, 330
+torque-curve-06 = 8000, 340
+torque-curve-07 = 8500, 340
+torque-curve-08 = 9000, 340
+torque-curve-09 = 9500, 335
+torque-curve-17 = 10000, 330
+torque-curve-18 = 10500, 325
+torque-curve-19 = 11000, 305
+
+[clutch]
+sliding = 0.10
+radius = 0.15
+area = 0.90
+max-pressure = 70000.00
+
+[transmission]
+gears = 6
+gear-ratio-r = -4.5
+gear-ratio-1 = 4.80
+gear-ratio-2 = 3.90
+gear-ratio-3 = 3.30
+gear-ratio-4 = 2.70
+gear-ratio-5 = 2.00
+gear-ratio-6 = 1.90
+shift-time = 0.15
+
+[differential-rear]
+final-drive = 2.2	# max ca 300 km/h (final-drive = 3.7)
+anti-slip = 300.0
+
+#[fuel-tank]
+#position = -0.00, +0.30, -0.30 
+#capacity = 200
+#volume = 76
+#fuel-density = 0.8
+[fuel-tank]
+position = -0.17, -0.26, -0.56
+capacity = 0.0492
+volume = 0.0492
+fuel-density = 730.0
+
+[wing-front]
+position = 0.0, 0.0, 0.2
+frontal-area = 1.2
+drag-coefficient = 0.5
+
+[wing-center]
+position = 0.0, 1.5, 0.60
+frontal-area = 0.2
+drag-coefficient = 0.0
+surface-area = 1.0
+lift-coefficient = -0.5
+lift-efficiency = 0.99
+
+[wing-rear]
+position = 0.0, -1.80, 0.37
+frontal-area = 0.05
+drag-coefficient = 0.0
+surface-area = 1.0
+lift-coefficient = -1.0
+lift-efficiency = 0.99
+
+[wheel.fl.coilover]
+spring-constant = 150000
+bounce = 2500   ## Druckstufe 1/3 - 1/4
+rebound = 6000  ## Zugstufe
+travel = 0.10
+anti-roll = 3000
+
+[wheel.fr.coilover]
+spring-constant = 150000
+bounce = 2500   ## Druckstufe 1/3 - 1/4
+rebound = 6000  ## Zugstufe
+travel = 0.10
+anti-roll = 3000
+
+[wheel.rl.coilover]
+spring-constant = 200000
+bounce = 3000   ## Druckstufe 1/3 - 1/4
+rebound = 9000  ## Zugstufe
+travel = 0.12
+anti-roll = 5000
+
+[wheel.rr.coilover]
+spring-constant = 200000
+bounce = 3000   ## Druckstufe 1/3 - 1/4
+rebound = 9000  ## Zugstufe
+travel = 0.12
+anti-roll = 5000
+
+[wheel.fl.brake]
+texture = rotor_carbon_ceramic.png
+friction = 0.7
+max-pressure = 5.0e6
+bias = 0.61
+radius = 0.17
+area = 0.020
+
+[wheel.fr.brake]
+texture = rotor_carbon_ceramic.png
+friction = 0.7
+max-pressure = 5.0e6
+bias = 0.61
+radius = 0.17
+area = 0.020
+
+[wheel.rl.brake]
+#texture = rotor_carbon_ceramic.png
+friction = 0.7
+max-pressure = 5.0e6
+bias = 0.39
+radius = 0.14
+area = 0.015
+handbrake = 1.0
+
+[wheel.rr.brake]
+#texture = rotor_carbon_ceramic.png
+friction = 0.7
+max-pressure = 5.0e6
+bias = 0.39
+radius = 0.14
+area = 0.015
+handbrake = 1.0
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 245, 30, 10
+type = tire/racing.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 245, 30, 10
+type = tire/racing.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 475, 35, 13
+type = tire/racing.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 475, 35, 13
+type = tire/racing.tire
+
+[wheel.fl.hinge]
+wheel = -0.73, 1.48, -0.50
+chassis = 0, 0, -0.30
+
+[wheel.fr.hinge]
+wheel = 0.73, 1.48, -0.50
+chassis = 0, 0, -0.30
+
+[wheel.rl.hinge]
+wheel = -0.73, -1.12, -0.39
+chassis = 0, -1.0, -0.30
+
+[wheel.rr.hinge]
+wheel = 0.73, -1.12, -0.39
+chassis = 0, -1.0, -0.30
+
+[wheel.fl]
+texture = oem_wheel.png
+mesh = oem_wheel.joe
+position = -0.73, 1.48, -0.50
+camber = -1.33
+caster = 0.12
+toe = -0.9
+ackermann = 7.84	# 50% ackermann
+steering = 35
+
+[wheel.fr]
+texture = oem_wheel.png
+mesh = oem_wheel.joe
+scale = -1, 1, 1
+position = 0.73, 1.48, -0.50
+camber = 1.33
+caster = 0.12
+toe = 0.9
+ackermann = -7.84
+steering = 35
+
+[wheel.rl]
+texture = oem_wheel_rear.png
+mesh = oem_wheel_rear.joe
+position = -0.73, -1.12, -0.39
+camber = -0.45
+caster = 0.28
+toe = 0.0
+
+[wheel.rr]
+texture = oem_wheel_rear.png
+mesh = oem_wheel_rear.joe
+scale = -1, 1, 1
+position = 0.73, -1.12, -0.39
+camber = 0.45
+caster = 0.28
+toe = 0.0
+
+[steering]
+texture = steering_wheel.png
+mesh = steering_wheel.joe
+position = 0.00, 0.62, -0.26
+rotation = 87.5, 0.0, 0.0
+max-angle = 320
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = 0, 0.25, -0.30
+mass = 80.0
+
+[body]
+texture = body00.png
+mesh = body.joe
+
+# main collision shape
+[body.box]
+center = 0.00, 0.07, -0.23
+size = 1.50, 3.80, 0.80
+
+# these are used to calculate the weight distribution and balance
+[particle-00]
+# Front-Wing/Nose
+mass = 25.0
+position = 0.0, -1.60, -0.47
+
+[particle-01]
+# Chassis
+mass = 90.0
+position = 0.0, 0.60, -0.47
+
+[particle-02]
+# Cooler left
+mass = 20.0
+position = 0.5, -0.6, 0.09
+
+[particle-03]
+# Cooler right
+mass = 20.0
+position = -0.5, -0.6, 0.09
+
+[particle-04]
+# Exhaust left
+mass = 100.0
+position = 0.45, 0.8, -0.13
+
+[particle-05]
+# Exhaust right
+mass = 100.0
+position = -0.45, 0.8, -0.13
+
+[particle-06]
+# Covering rear
+mass = 0.0
+position = -0.45, 0.8, -0.13
+
+[particle-07]
+# Ballast
+mass = 0.0
+position = -0.45, 0.8, -0.13
+
+[particle-08]
+# Reserve
+mass = 0.0
+position = -0.45, 0.8, -0.13
+
+[particle-09]
+# Gearbox
+mass = 40.0
+position = 0, 1.5, -0.55
+
+[particle-10]
+# Rear-Wing/Diffusor
+mass = 25.0
+position = 0, -1.8, -0.13
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.19, 0.05
+stiffness = 0.8
+
+[camera.1]
+name = driver
+type = mount
+position = -0.35, -0.64, 0.25
+stiffness = 0.8
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+stiffness = 0.8
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0

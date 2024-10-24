@@ -1,0 +1,71 @@
+; standard equipment
+
+[mirror_r]
+mesh=mirror_r.joe
+texture=mirror.png
+mass=1.0
+position=0.667, 0.401, 0.026
+
+[mirror_l]
+mesh=mirror_r.joe
+mirror_geometry_x=true
+texture=mirror.png
+mass=1.0
+position=-0.667, 0.401, 0.026
+
+[wiper]
+mesh=wiper.joe
+texture=wiper.png
+mass=0.5
+position=0.0, 0.941, -0.018
+
+[foglight_r]
+mesh=foglight.joe
+texture=foglight.png
+mass=1.0
+position=0.288, 1.819, -0.390
+
+[seat_r]
+mesh=seat_r.joe
+texture=seat.png
+mass=10.0
+position=0.292, -0.210, -0.144
+
+[seat_l]
+mesh=seat_r.joe
+mirror_geometry_x=true
+texture=seat.png
+mass=10.0
+position=0.292, -0.210, -0.144
+
+[gauge_pod]
+mesh=gauge_pod.joe
+texture=gauge_pod.png
+mass=2.0
+position=0.274, 0.437, -0.060
+right_hand_drive=true
+
+[steering_wheel]
+mesh=steering_wheel.joe
+texture=steering_wheel.png
+mass=0.5
+position=0.274, 0.311, -0.102
+right_hand_drive=true
+
+
+
+
+; options
+
+[foglight_l]
+mesh=foglight.joe
+texture=foglight.png
+mass=1.0
+position=-0.288, 1.819, -0.390
+
+[hard_top_roof]
+mesh=hard_top.joe
+texture=hard_top.png
+color-able=body
+mass=6.0
+position=

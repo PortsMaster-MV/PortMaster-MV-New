@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./VDrift.sh</path>
+    <name>VDrift</name>
+    <desc>Drift is a cross-platform, open source driving simulation made with drift racing in mind.</desc>
+    <releasedate>20050101T000000</releasedate>
+    <developer>VDrift Team</developer>
+    <publisher>Self-Published</publisher>
+    <genre>Racing</genre>
+    <image>./vdrift/screenshot.jpg</image>
+  </game>
+</gameList>

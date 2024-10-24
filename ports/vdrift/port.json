@@ -1,0 +1,30 @@
+{
+  "version": 3,
+  "name": "vdrift.zip",
+  "items": [
+    "VDrift.sh",
+    "vdrift"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "VDrift",
+    "porter": [
+      "Cebion"
+    ],
+    "desc": "Drift is a cross-platform, open source driving simulation made with drift racing in mind.",
+    "desc_md": null,
+    "inst": "Ready to run!",
+    "inst_md": null,
+    "genres": [
+      "racing"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": null,
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ]
+  }
+}

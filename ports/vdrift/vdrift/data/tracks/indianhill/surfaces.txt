@@ -1,0 +1,27 @@
+[surface-00]
+Type = asphalt
+BumpWaveLength = 2.0
+BumpAmplitude = 0.0
+FrictionNonTread = 1.0
+FrictionTread = 1.0
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+[surface-01]
+Type = concrete
+BumpWaveLength = 2.0
+BumpAmplitude = 0.01
+FrictionNonTread = 0.9
+FrictionTread = 0.8
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+[surface-02]
+Type = grass
+BumpWaveLength = 1.0
+BumpAmplitude = 0.05
+FrictionNonTread = 0.5
+FrictionTread = 0.8
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+

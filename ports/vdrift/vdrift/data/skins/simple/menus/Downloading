@@ -1,0 +1,54 @@
+name = Downloading
+oncancel = CancelDownload gui.page:Updates
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.14
+layer = -1
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+[ title ]
+text = Downloading
+fontsize = 0.06
+align = left
+left = 0.29
+width = 0.20
+top = 0.07
+height = 0.06
+
+[ widget-01 ]
+slider-max = game.loading
+slider-min = 0
+image = white.png
+opacity = 0.8
+left = 0.2
+right = 0.2
+top = 0.68
+height = 0.02
+
+[ widget-02 ]
+image = white.png
+val = 0.4
+left = 0.2
+right = 0.2
+top = 0.68
+height = 0.02
+layer = -1

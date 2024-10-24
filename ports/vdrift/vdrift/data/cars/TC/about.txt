@@ -1,0 +1,6 @@
+TC
+Model by www.gggraphics.co.uk
+ import and settings by Dick Maurer
+
+Updated by Cotharyus:
+HP and torque settings updated per specifications provided by xTs

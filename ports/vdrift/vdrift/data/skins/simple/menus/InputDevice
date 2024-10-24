@@ -1,0 +1,835 @@
+name = InputDevice
+oncancel = SyncOptions gui.page:ControlsOptions
+
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.14
+layer = -1
+
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+
+[ tooltip ]
+text = none
+fontsize = 0.03
+left = 0
+right = 0
+bottom = 0.04
+height = 0.04
+
+
+[ bg-labels ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.008
+width = 0.32
+top = 0.181
+height = 0.478
+layer = -1
+
+
+[ bg-options ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.33
+width = 0.30
+top = 0.181
+height = 0.478
+layer = -1
+
+
+[ title ]
+text = Options / Controls / Input Device
+fontsize = 0.06
+align = left
+left = 0.32
+width = 0.20
+top = 0.07
+height = 0.06
+
+
+[ widget-01a ]
+text = Type
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.18
+height = 0.04
+
+[ widget-01b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = joystick.device_type.prev
+onmoveleft = joystick.device_type.prev
+onmoveright = joystick.device_type.next
+onmoveup = widget-11b
+onmovedown = widget-02b
+onfocus = widget-01b.opacity:1 widget-01c.opacity:1 widget-01d.sat:0.56 tooltip.text:"Change the type of joystick device."
+onblur = widget-01b.opacity:0 widget-01c.opacity:0 widget-01d.sat:0.0
+focus = true
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.18
+height = 0.04
+
+[ widget-01c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = joystick.device_type.next
+onmoveleft = joystick.device_type.prev
+onmoveright = joystick.device_type.next
+onmoveup = widget-11b
+onmovedown = widget-02b
+onfocus = widget-01b.opacity:1 widget-01c.opacity:1 widget-01d.sat:0.56 tooltip.text:"Change the type of joystick device."
+onblur = widget-01b.opacity:0 widget-01c.opacity:0 widget-01d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.18
+height = 0.04
+
+[ widget-01d ]
+text = joystick.device_type.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.18
+height = 0.04
+
+
+[ widget-02a ]
+text = 200 Degree Wheel
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.22
+height = 0.04
+
+[ widget-02b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = joystick.two_hundred.prev
+onmoveleft = joystick.two_hundred.prev
+onmoveright = joystick.two_hundred.next
+onmoveup = widget-01b
+onmovedown = widget-03b
+onfocus = widget-02b.opacity:1 widget-02c.opacity:1 widget-02d.sat:0.56 tooltip.text:"Limit steering range to 200 degrees, gives a realistic feel to limited range wheels."
+onblur = widget-02b.opacity:0 widget-02c.opacity:0 widget-02d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.22
+height = 0.04
+
+[ widget-02c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = joystick.two_hundred.next
+onmoveleft = joystick.two_hundred.prev
+onmoveright = joystick.two_hundred.next
+onmoveup = widget-01b
+onmovedown = widget-03b
+onfocus = widget-02b.opacity:1 widget-02c.opacity:1 widget-02d.sat:0.56 tooltip.text:"Limit steering range to 200 degrees, gives a realistic feel to limited range wheels."
+onblur = widget-02b.opacity:0 widget-02c.opacity:0 widget-02d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.22
+height = 0.04
+
+[ widget-02d ]
+text = joystick.two_hundred.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.22
+height = 0.04
+
+
+[ widget-03a ]
+text = Force Feedback Invert 
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.26
+height = 0.04
+
+[ widget-03b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = joystick.ff_invert.prev
+onmoveleft = joystick.ff_invert.prev
+onmoveright = joystick.ff_invert.next
+onmoveup = widget-02b
+onmovedown = widget-04b
+onfocus = widget-03b.opacity:1 widget-03c.opacity:1 widget-03d.sat:0.56 tooltip.text:"Reverse the force feedback, if necessary for your wheel."
+onblur = widget-03b.opacity:0 widget-03c.opacity:0 widget-03d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.26
+height = 0.04
+
+[ widget-03c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = joystick.ff_invert.next
+onmoveleft = joystick.ff_invert.prev
+onmoveright = joystick.ff_invert.next
+onmoveup = widget-02b
+onmovedown = widget-04b
+onfocus = widget-03b.opacity:1 widget-03c.opacity:1 widget-03d.sat:0.56 tooltip.text:"Reverse the force feedback, if necessary for your wheel."
+onblur = widget-03b.opacity:0 widget-03c.opacity:0 widget-03d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.26
+height = 0.04
+
+[ widget-03d ]
+text = joystick.ff_invert.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.26
+height = 0.04
+
+
+[ widget-04a ]
+text = Force Feedback Gain
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.30
+height = 0.04
+
+[ widget-04b ]
+text = joystick.ff_gain.str
+fontsize = 0.03
+onselectx = joystick.ff_gain.norm
+onmoveleft = joystick.ff_gain.prev
+onmoveright = joystick.ff_gain.next
+onmoveup = widget-03b
+onmovedown = widget-05b
+onfocus = widget-04c.opacity:1 widget-04d.opacity:1 widget-04b.sat:0.56 tooltip.text:"Multiplier to adjust strength of force feedback."
+onblur = widget-04c.opacity:0 widget-04d.opacity:0 widget-04b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.30
+height = 0.04
+
+[ widget-04c ]
+slider-max = joystick.ff_gain.norm
+slider-min = 0
+image = white.png
+opacity = 0.0
+left = 0.34
+width = 0.28
+top = 0.306
+height = 0.028
+layer = 1
+
+[ widget-04d ]
+image = white.png
+val = 0.3
+opacity = 0.0
+left = 0.34
+width = 0.28
+top = 0.306
+height = 0.028
+
+
+[ widget-05a ]
+text = Steering Speed Effect
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.34
+height = 0.04
+
+[ widget-05b ]
+text = control.speed_sens_steering.str
+fontsize = 0.03
+onselectx = control.speed_sens_steering.norm
+onmoveleft = control.speed_sens_steering.prev
+onmoveright = control.speed_sens_steering.next
+onmoveup = widget-04b
+onmovedown = widget-06b
+onfocus = widget-05c.opacity:1 widget-05d.opacity:1 widget-05b.sat:0.56 tooltip.text:"The higher the value on this setting, the more steering is limited as car speed increases."
+onblur = widget-05c.opacity:0 widget-05d.opacity:0 widget-05b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.34
+height = 0.04
+
+[ widget-05c ]
+slider-max = control.speed_sens_steering.norm
+slider-min = 0
+image = white.png
+opacity = 0.0
+left = 0.34
+width = 0.28
+top = 0.346
+height = 0.028
+layer = 1
+
+[ widget-05d ]
+image = white.png
+val = 0.3
+opacity = 0.0
+left = 0.34
+width = 0.28
+top = 0.346
+height = 0.028
+
+
+[ widget-06a ]
+text = Button Control Delay
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.38
+height = 0.04
+
+[ widget-06b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = control.button_ramp.prev
+onmoveleft = control.button_ramp.prev
+onmoveright = control.button_ramp.next
+onmoveup = widget-05b
+onmovedown = widget-16b
+onfocus = widget-06b.opacity:1 widget-06c.opacity:1 widget-06d.sat:0.56 tooltip.text:"Slow down the application of button inputs on analogue controls."
+onblur = widget-06b.opacity:0 widget-06c.opacity:0 widget-06d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.38
+height = 0.04
+
+[ widget-06c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = control.button_ramp.next
+onmoveleft = control.button_ramp.prev
+onmoveright = control.button_ramp.next
+onmoveup = widget-05b
+onmovedown = widget-16b
+onfocus = widget-06b.opacity:1 widget-06c.opacity:1 widget-06d.sat:0.56 tooltip.text:"Slow down the application of button inputs on analogue controls."
+onblur = widget-06b.opacity:0 widget-06c.opacity:0 widget-06d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.38
+height = 0.04
+
+[ widget-06d ]
+text = control.button_ramp.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.38
+height = 0.04
+
+
+[ widget-16a ]
+text = Steering Assist
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.42
+height = 0.04
+
+[ widget-16b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = control.steering_assist.prev
+onmoveleft = control.steering_assist.prev
+onmoveright = control.steering_assist.next
+onmoveup = widget-06b
+onmovedown = widget-07b
+onfocus = widget-16b.opacity:1 widget-16c.opacity:1 widget-16d.sat:0.56 tooltip.text:"Limit steering angle to reduce understeer."
+onblur = widget-16b.opacity:0 widget-16c.opacity:0 widget-16d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.42
+height = 0.04
+
+[ widget-16c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = control.steering_assist.next
+onmoveleft = control.steering_assist.prev
+onmoveright = control.steering_assist.next
+onmoveup = widget-06b
+onmovedown = widget-07b
+onfocus = widget-16b.opacity:1 widget-16c.opacity:1 widget-16d.sat:0.56 tooltip.text:"Limit steering angle to reduce understeer."
+onblur = widget-16b.opacity:0 widget-16c.opacity:0 widget-16d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.42
+height = 0.04
+
+[ widget-16d ]
+text = control.steering_assist.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.42
+height = 0.04
+
+
+[ widget-07a ]
+text = Automatic Shift
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.46
+height = 0.04
+
+[ widget-07b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = control.autotrans.prev
+onmoveleft = control.autotrans.prev
+onmoveright = control.autotrans.next
+onmoveup = widget-16b
+onmovedown = widget-07g
+onfocus = widget-07b.opacity:1 widget-07c.opacity:1 widget-07d.sat:0.56 tooltip.text:"Enable/disable automatic transmission shifting."
+onblur = widget-07b.opacity:0 widget-07c.opacity:0 widget-07d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.46
+height = 0.04
+
+[ widget-07c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = control.autotrans.next
+onmoveleft = control.autotrans.prev
+onmoveright = control.autotrans.next
+onmoveup = widget-16b
+onmovedown = widget-07g
+onfocus = widget-07b.opacity:1 widget-07c.opacity:1 widget-07d.sat:0.56 tooltip.text:"Enable/disable automatic transmission shifting."
+onblur = widget-07b.opacity:0 widget-07c.opacity:0 widget-07d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.46
+height = 0.04
+
+[ widget-07d ]
+text = control.autotrans.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.46
+height = 0.04
+
+
+[ widget-07f ]
+text = Automatic Reverse
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.50
+height = 0.04
+
+[ widget-07g ]
+text = <
+fontsize = 0.03
+align = left
+onselect = control.autoreverse.prev
+onmoveleft = control.autoreverse.prev
+onmoveright = control.autoreverse.next
+onmoveup = widget-07b
+onmovedown = widget-08b
+onfocus = widget-07g.opacity:1 widget-07h.opacity:1 widget-07j.sat:0.56 tooltip.text:"Use brake to accelerate backwards."
+onblur = widget-07g.opacity:0 widget-07h.opacity:0 widget-07j.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.50
+height = 0.04
+
+[ widget-07h ]
+text = >
+fontsize = 0.03
+align = right
+onselect = control.autoreverse.next
+onmoveleft = control.autoreverse.prev
+onmoveright = control.autoreverse.next
+onmoveup = widget-07b
+onmovedown = widget-08b
+onfocus = widget-07g.opacity:1 widget-07h.opacity:1 widget-07j.sat:0.56 tooltip.text:"Use brake to accelerate backwards."
+onblur = widget-07g.opacity:0 widget-07h.opacity:0 widget-07j.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.50
+height = 0.04
+
+[ widget-07j ]
+text = control.autoreverse.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.50
+height = 0.04
+
+
+[ widget-08a ]
+text = Automatic Clutch
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.54
+height = 0.04
+
+[ widget-08b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = control.autoclutch.prev
+onmoveleft = control.autoclutch.prev
+onmoveright = control.autoclutch.next
+onmoveup = widget-07g
+onmovedown = widget-09b
+onfocus = widget-08b.opacity:1 widget-08c.opacity:1 widget-08d.sat:0.56 tooltip.text:"Enable/disable automatic clutching (prevents car from stalling)."
+onblur = widget-08b.opacity:0 widget-08c.opacity:0 widget-08d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.54
+height = 0.04
+
+[ widget-08c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = control.autoclutch.next
+onmoveleft = control.autoclutch.prev
+onmoveright = control.autoclutch.next
+onmoveup = widget-07g
+onmovedown = widget-09b
+onfocus = widget-08b.opacity:1 widget-08c.opacity:1 widget-08d.sat:0.56 tooltip.text:"Enable/disable automatic clutching (prevents car from stalling)."
+onblur = widget-08b.opacity:0 widget-08c.opacity:0 widget-08d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.54
+height = 0.04
+
+[ widget-08d ]
+text = control.autoclutch.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.54
+height = 0.04
+
+
+[ widget-09a ]
+text = H-Gate Shifter
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.58
+height = 0.04
+
+[ widget-09b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = joystick.hgateshifter.prev
+onmoveleft = joystick.hgateshifter.prev
+onmoveright = joystick.hgateshifter.next
+onmoveup = widget-08b
+onmovedown = widget-10b
+onfocus = widget-09b.opacity:1 widget-09c.opacity:1 widget-09d.sat:0.56 tooltip.text:"Automatically shift to neutral when no gear button is active, as with H-Gate shifters."
+onblur = widget-09b.opacity:0 widget-09c.opacity:0 widget-09d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.58
+height = 0.04
+
+[ widget-09c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = joystick.hgateshifter.next
+onmoveleft = joystick.hgateshifter.prev
+onmoveright = joystick.hgateshifter.next
+onmoveup = widget-08b
+onmovedown = widget-10b
+onfocus = widget-09b.opacity:1 widget-09c.opacity:1 widget-09d.sat:0.56 tooltip.text:"Automatically shift to neutral when no gear button is active, as with H-Gate shifters."
+onblur = widget-09b.opacity:0 widget-09c.opacity:0 widget-09d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.58
+height = 0.04
+
+[ widget-09d ]
+text = joystick.hgateshifter.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.58
+height = 0.04
+
+
+[ widget-10a ]
+text = Grab Mouse
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.31
+top = 0.62
+height = 0.04
+
+[ widget-10b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = control.mousegrab.prev
+onmoveleft = control.mousegrab.prev
+onmoveright = control.mousegrab.next
+onmoveup = widget-09b
+onmovedown = widget-11b
+onfocus = widget-10b.opacity:1 widget-10c.opacity:1 widget-10d.sat:0.56 tooltip.text:"Confine mouse to the application window and hide cursor when playing."
+onblur = widget-10b.opacity:0 widget-10c.opacity:0 widget-10d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.34
+width = 0.14
+top = 0.62
+height = 0.04
+
+[ widget-10c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = control.mousegrab.next
+onmoveleft = control.mousegrab.prev
+onmoveright = control.mousegrab.next
+onmoveup = widget-09b
+onmovedown = widget-11b
+onfocus = widget-10b.opacity:1 widget-10c.opacity:1 widget-10d.sat:0.56 tooltip.text:"Confine mouse to the application window and hide cursor when playing."
+onblur = widget-10b.opacity:0 widget-10c.opacity:0 widget-10d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.48
+width = 0.14
+top = 0.62
+height = 0.04
+
+[ widget-10d ]
+text = control.mousegrab.str
+fontsize = 0.03
+hue = 0.56
+left = 0.34
+width = 0.28
+top = 0.62
+height = 0.04
+
+
+[ widget-11b ]
+text = Cancel
+fontsize = 0.03
+#align = left
+onselect = SyncOptions gui.page:ControlsOptions
+onmoveup = widget-10b
+onmovedown = widget-12b
+onfocus = widget-11b.sat:0.56 tooltip.text:"Forget changes and return to Controls menu."
+onblur = widget-11b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.34
+width = 0.29
+top = 0.66
+height = 0.04
+
+[ widget-11e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.33
+width = 0.30
+top = 0.661
+height = 0.038
+layer = -1
+
+
+[ widget-12b ]
+text = OK
+fontsize = 0.03
+#align = left
+onselect = SyncSettings gui.page:ControlsOptions
+onmoveup = widget-11b
+onmovedown = widget-01b
+onfocus = widget-12b.sat:0.56 tooltip.text:"Save changes and return to Controls menu."
+onblur = widget-12b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.34
+width = 0.29
+top = 0.70
+height = 0.04
+
+[ widget-12e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.33
+width = 0.30
+top = 0.701
+height = 0.038
+layer = -1

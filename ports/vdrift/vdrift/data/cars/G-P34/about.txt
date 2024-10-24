@@ -1,0 +1,6 @@
+G-P34
+ 
+Model modified by G. MacGruer, from Racer files.
+
+Car settings modified, by G. MacGruer, from Vdrift's AX2
+

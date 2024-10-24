@@ -1,0 +1,561 @@
+# VR6 3189cc
+# 320Nm at 2500rpm, 184kW at 6300rpm
+[engine]
+position = 0.0, 1.342, -0.113
+mass = 180.0
+mesh = engine.joe
+texture = engine.png
+displacement = 3.2E-3
+max-power = 184E3
+peak-engine-rpm = 6300.0
+rpm-limit = 6600.0
+inertia = 0.35
+idle = 0.02
+start-rpm = 1000
+stall-rpm = 400
+fuel-consumption = 1e-9
+torque-curve-00 = 1000, 240
+torque-curve-01 = 1400, 256
+torque-curve-02 = 2000, 292
+torque-curve-03 = 2440, 320
+torque-curve-04 = 3000, 320
+torque-curve-05 = 3600, 313
+torque-curve-06 = 4230, 307
+torque-curve-07 = 4700, 308
+torque-curve-08 = 5000, 306
+torque-curve-09 = 5500, 297
+torque-curve-10 = 6000, 287
+torque-curve-11 = 6300, 279
+torque-curve-12 = 6600, 260
+
+[clutch]
+sliding = 0.27
+radius = 0.15
+area = 0.75
+max-pressure = 15000.0
+
+[transmission]
+gears = 6
+gear-ratio-r = -3.99
+gear-ratio-1 = 3.36
+gear-ratio-2 = 2.09
+gear-ratio-3 = 1.47
+gear-ratio-4 = 1.11
+gear-ratio-5 = 1.09
+gear-ratio-6 = 0.91
+shift-time = 0.05
+
+[differential-front]
+final-drive = 1.0
+anti-slip = 150.0
+
+[differential-rear]
+final-drive = 1.0
+anti-slip = 150.0
+
+[differential-center]
+final-drive = 3.27   #4.285
+anti-slip = 150.0
+
+[fuel-tank]
+position = -0.17, -1.7, -0.34
+capacity = 60.0
+volume = 60.0
+fuel-density = 1.0
+
+[wing-front]
+position = 0.0, 0.0, 0.2
+frontal-area = 2
+drag-coefficient = 0.3
+
+[wing-center]
+position = 0.0, 1.9, 0.20
+frontal-area = 0.2
+drag-coefficient = 0.0
+surface-area = 0.3
+lift-coefficient = -0.5
+lift-efficiency = 0.95
+
+[wing-rear]
+position = 0.0, -2.14, 0.37
+frontal-area = 0.05
+drag-coefficient = 0.0
+surface-area = 0.5
+lift-coefficient = -1.2
+lift-efficiency = 0.95
+
+[wheel.fl.coilover]
+spring-constant = 72000
+bounce = 7500
+rebound = 5000
+travel = 0.10
+anti-roll = 3700
+
+[wheel.fr.coilover]
+spring-constant = 72000
+bounce = 7500
+rebound = 5000
+travel = 0.10
+anti-roll = 3700
+
+[wheel.rl.coilover]
+spring-constant = 60000
+bounce = 7000
+rebound = 4000
+travel = 0.10
+anti-roll = 8000
+
+[wheel.rr.coilover]
+spring-constant = 60000
+bounce = 7000
+rebound = 4000
+travel = 0.10
+anti-roll = 8000
+
+[wheel.fl.brake]
+texture = rotor_worn.png
+friction = 0.5
+max-pressure = 6.0e6
+bias = 0.61
+radius = 0.17
+area = 0.015
+
+[wheel.fr.brake]
+texture = rotor_worn.png
+friction = 0.5
+max-pressure = 6.0e6
+bias = 0.61
+radius = 0.17
+area = 0.015
+
+[wheel.rl.brake]
+texture = rotor_worn.png
+friction = 0.5
+max-pressure = 6.0e6
+bias = 0.39
+radius = 0.14
+area = 0.015
+handbrake = 1.0
+
+[wheel.rr.brake]
+texture = rotor_worn.png
+friction = 0.5
+max-pressure = 6.0e6
+bias = 0.39
+radius = 0.14
+area = 0.015
+handbrake = 1.0
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 245, 40, 18
+type = tire/touring.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 245, 40, 18
+type = tire/touring.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 245, 40, 18
+type = tire/touring.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 245, 40, 18
+type = tire/touring.tire
+
+[wheel.fl.macpherson-strut]
+strut-top = -0.55, 1.185, 0.0
+strut-end = -0.71, 1.185, -0.50
+hinge = -0.38, 1.185, -0.50
+
+[wheel.fr.macpherson-strut]
+strut-top = 0.55, 1.185, 0.0
+strut-end = 0.71, 1.185, -0.50
+hinge = 0.38, 1.185, -0.50
+
+[wheel.rl.double-wishbone]
+upper-hub = -0.72, -1.28, -0.30  
+upper-chassis-rear = -0.12, -1.19, -0.37
+upper-chassis-front = -0.60, -0.86, -0.46
+lower-hub = -0.72, -1.28, -0.44 
+lower-chassis-rear =-0.12, -1.19, -0.42
+lower-chassis-front = -0.60, -0.86, -0.48
+
+[wheel.rr.double-wishbone]
+upper-hub = 0.72, -1.28, -0.30
+upper-chassis-rear = 0.12, -1.19, -0.37
+upper-chassis-front = 0.60, -0.86, -0.46
+lower-hub = 0.72, -1.28, -0.44
+lower-chassis-rear = 0.12, -1.19, -0.42
+lower-chassis-front = 0.60, -0.86, -0.48
+
+[wheel.fl]
+texture = wheel/10_spoke_f.png
+mesh = wheel/10_spoke_f.joe
+position = -0.764, 1.185, -0.37
+camber = -1.33
+caster = 6.12
+toe = 0.0
+ackermann = 8.23	# 50% ackermann
+steering = 26
+
+[wheel.fr]
+texture = wheel/10_spoke_f.png
+mesh = wheel/10_spoke_f.joe
+scale = -1, 1, 1
+position = 0.764, 1.185, -0.37
+camber = 1.33
+caster = 6.12
+toe = 0.0
+ackermann = -8.23
+steering = 26
+
+[wheel.rl]
+texture = wheel/10_spoke_f.png
+mesh = wheel/10_spoke_f.joe
+position = -0.764, -1.281, -0.37
+camber = -0.45
+caster = 0.28
+toe = 0.0
+
+[wheel.rr]
+texture = wheel/10_spoke_f.png
+mesh = wheel/10_spoke_f.joe
+scale = -1, 1, 1
+position = 0.764, -1.281, -0.37
+camber = 0.45
+caster = 0.28
+toe = 0.0
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = -0.4, -0.13, 0.05
+mass = 80.0
+
+[balance-weight]
+position = 0.4, -0.13, 0.05
+mass = 80.0
+
+#################################################
+## body - exterior
+
+[body]
+texture = body00.png, body-misc1.png
+mesh = body.joe
+
+[undercarriage]
+texture = undercarriage.png
+mesh = undercarriage.joe
+
+[hood]
+texture = hood.png, spec-misc1.png
+mesh = hood.joe
+
+[hatch]
+texture = hatch.png, spec-misc1.png
+mesh = hatch.joe
+
+[bumper_front]
+mesh = front_bumper.joe
+texture = front_bumper.png, spec-misc1.png
+
+[bumper_rear]
+mesh = rear_bumper.joe
+texture = rear_bumper.png, spec-misc1.png
+
+[fender_r]
+texture = fender.png, spec-misc1.png
+mesh = fender_r.joe
+
+[fender_l]
+texture = fender.png, spec-misc1.png
+mesh = fender_r.joe
+scale = -1, 1, 1
+
+[door_r]
+texture = door.png, door-misc1.png
+mesh = door_r.joe
+
+#[door_r_shadow]
+#texture = dark_shadow.png
+#mesh = door_shadow.joe
+
+[door_l]
+texture = door.png, door-misc1.png
+mesh = door_r.joe
+scale = -1, 1, 1
+
+#[door_l_shadow]
+#scale = -1,1,1
+#texture = dark_shadow.png
+#mesh = door_shadow.joe
+
+[side_mirror_r]
+texture = side_mirror.png, spec-misc1.png
+mesh = side_mirror_r.joe
+
+[side_mirror_l]
+texture = side_mirror.png, spec-misc1.png
+mesh = side_mirror_r.joe
+scale = -1, 1, 1
+
+[grill]
+texture = front_grill.png
+mesh = front_grill.joe
+
+#[glass]
+#texture = glass.png
+#mesh = glass.joe
+#draw = transparent
+
+
+#################################################
+## windows: door_window.png and rear_quarter_window.png are missing
+
+[windshield_glass]
+texture = windshield.png, spec-misc1.png
+mesh = windshield.joe
+draw = transparent
+
+[hatch_glass]
+texture = hatch_glass.png, spec-misc1.png
+mesh = hatch_glass.joe
+draw = transparent
+
+#[rear_quarter_r_glass]
+#texture = rear_quarter_window.png, spec-misc1.png
+#mesh = rear_quarter_window_r.joe
+#draw = transparent
+
+#[rear_quarter_l_glass]
+#texture = rear_quarter_window.png, spec-misc1.png
+#mesh = rear_quarter_window_r.joe
+#scale = -1, 1, 1
+#draw = transparent
+
+#[door_r_glass]
+#texture = door_window.png, spec-misc1.png
+#mesh = door_window_r.joe
+#draw = transparent
+
+#[door_l_glass]
+#texture = door_window.png, spec-misc1.png
+#mesh = door_window_r.joe
+#scale = -1, 1, 1
+#draw = transparent
+
+#################################################
+## mechanical detail
+
+[radiator]
+mesh = radiator.joe
+texture = radiator.png
+
+[air_intake_r]
+mesh = air_intake_r.joe
+texture = air_intake.png
+
+[air_intake_l]
+mesh = air_intake_r.joe
+scale = -1, 1, 1
+texture = air_intake.png
+
+
+#################################################
+## interior
+
+[interior]
+texture = interior.png
+mesh = interior.joe
+
+[dashboard]
+texture = dashboard.png
+mesh = dashboard_lhd.joe
+
+[gauge_pod]
+texture = gauge_pod.png
+mesh = gauge_pod.joe
+
+[seat_driver]
+position = -0.4, -0.137, -0.429
+texture = seat/sport_luxury.png
+mesh = seat/sport_luxury.joe
+
+[seat_passenger]
+position = 0.4, -0.137, -0.429
+texture = seat/sport_luxury.png
+mesh = seat/sport_luxury.joe
+
+[seat_rear]
+position = 0, -0.945, -0.242
+texture = rear_seat.png
+mesh = rear_seat.joe
+
+[vent_0]
+position = -0.638, 0.425, 0.215
+texture = vent.png
+mesh = vent.joe
+
+[vent_1]
+position = -0.099, 0.423, 0.215
+texture = vent.png
+mesh = vent.joe
+
+[vent_2]
+position = 0.0, 0.416, 0.215
+texture = vent.png
+mesh = vent.joe
+
+[vent_3]
+position = 0.094, 0.408, 0.215
+texture = vent.png
+mesh = vent.joe
+
+[vent_4]
+position = 0.606, 0.429, 0.215
+texture = vent.png
+mesh = vent.joe
+
+
+#################################################
+## lights
+
+[headlight_r]
+mesh = lights/headlight_r.joe
+texture = lights/headlight.png
+
+[headlight_l]
+mesh = lights/headlight_r.joe
+scale = -1, 1, 1
+texture = lights/headlight.png
+
+[foglight_r]
+mesh = lights/foglight_r.joe
+texture = lights/foglight.png
+
+[foglight_l]
+mesh = lights/foglight_r.joe
+scale = -1, 1, 1
+texture = lights/foglight.png
+
+[taillight_r]
+mesh = lights/taillight_r.joe
+texture = lights/taillight.png
+
+[taillight_l]
+mesh = lights/taillight_r.joe
+scale = -1, 1, 1
+texture = lights/taillight.png
+
+[headlight_r_lens]
+mesh = lights/headlight_r_lens.joe
+texture = lights/headlight_lens.png
+draw = transparent
+
+[headlight_l_lens]
+mesh = lights/headlight_r_lens.joe
+scale = -1, 1, 1
+texture = lights/headlight_lens.png
+draw = transparent
+
+[foglight_r_lens]
+mesh = lights/foglight_r_lens.joe
+texture = lights/foglight_lens.png
+draw = transparent
+
+[foglight_l_lens]
+mesh = lights/foglight_r_lens.joe
+scale = -1, 1, 1
+texture = lights/foglight_lens.png
+draw = transparent
+
+[taillight_r_lens]
+mesh = lights/taillight_r_lens.joe
+texture = lights/taillight_lens.png
+draw = transparent
+
+[taillight_l_lens]
+mesh = lights/taillight_r_lens.joe
+scale = -1, 1, 1
+texture = lights/taillight_lens.png
+draw = transparent
+
+#[light-brake]
+#texture = brake.png
+#mesh = body.joe
+#draw = emissive
+
+#[light-reverse]
+#texture = reverse.png
+#mesh = body.joe
+#draw = emissive
+
+# main collision shape
+[body.hull]
+00 = -0.55,  1.58, -0.16, 0.35
+01 =  0.55,  1.58, -0.16, 0.35
+02 = -0.54, -1.73, -0.16, 0.35
+03 =  0.54, -1.73, -0.16, 0.35
+04 = -0.35, -0.14,  0.30, 0.35
+05 =  0.35, -0.14,  0.30, 0.35
+06 =  0.00,  1.78, -0.18, 0.30
+
+# these are used to calculate the weight distribution and balance
+[particle-00]
+mass = 30.0
+position = 0.0, -1.35, -0.47
+
+[particle-01]
+mass = 60.0
+position = 0.0, 0.96, -0.47
+
+[particle-02]
+mass = 308.0
+position = 0.5, -1.3, -0.2
+
+[particle-03]
+mass = 308.0
+position = -0.5, -1.3, -0.2
+
+[particle-04]
+mass = 287.0
+position = 0.45, 1.6, -0.3
+
+[particle-05]
+mass = 287.0
+position = -0.45, 1.6, -0.3
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.7, 0.41
+
+[camera.1]
+name = driver
+type = mount
+position = -0.4, -0.13, 0.40
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0
