@@ -1,0 +1,306 @@
+
+[engine]
+position = 0.0, 0.86, -0.21
+mass = 150.0
+displacement = 1.3E-3
+max-power = 177000
+peak-engine-rpm = 8500.0
+rpm-limit = 9000.0
+inertia = 0.25
+idle = 0.02
+start-rpm = 1000
+stall-rpm = 350
+fuel-consumption = 1e-9
+torque-curve-00 = 1000, 179.12
+torque-curve-01 = 2000, 186.23
+torque-curve-02 = 2250, 191.91
+torque-curve-03 = 2500, 195.56
+torque-curve-04 = 3000, 199.20
+torque-curve-05 = 3500, 202.04
+torque-curve-06 = 4000, 205.41
+torque-curve-07 = 4500, 208.39
+torque-curve-08 = 5000, 209.78
+torque-curve-09 = 5500, 216.0
+torque-curve-10 = 6000, 210.57
+torque-curve-11 = 6250, 210.01
+torque-curve-12 = 6500, 208.96
+torque-curve-13 = 6750, 206.12
+torque-curve-14 = 7000, 204.17
+torque-curve-15 = 7500, 201.48
+torque-curve-16 = 8000, 198.29
+torque-curve-17 = 8500, 194.04
+torque-curve-18 = 9000, 187.25
+
+[clutch]
+sliding = 0.27
+radius = 0.1
+area = 0.75
+max-pressure = 15000.0
+
+[transmission]
+gears = 6
+gear-ratio-r = -3.35
+gear-ratio-1 = 3.76
+gear-ratio-2 = 2.369
+gear-ratio-3 = 1.745
+gear-ratio-4 = 1.327
+gear-ratio-5 = 1.132
+gear-ratio-6 = 1.0
+shift-time = 0.06
+
+[differential-rear]
+final-drive = 4.150
+anti-slip = 600.0
+
+[fuel-tank]
+position = -0.1, -0.8, -0.26
+capacity = 61.0
+volume = 61.0
+fuel-density = 1.0
+
+[wing-front]
+position = 0.0, 0.0, 0.2
+frontal-area = 2
+drag-coefficient = 0.3
+
+[wing-center]
+position = 0.0, 1.9, 0.60
+frontal-area = 0.2
+drag-coefficient = 0.0
+surface-area = 0.3
+lift-coefficient = -1.5
+lift-efficiency = 0.95
+
+[wing-rear]
+position = 0.0, -2.14, 0.37
+frontal-area = 0.05
+drag-coefficient = 0.0
+surface-area = 0.5
+lift-coefficient = -3.5
+lift-efficiency = 0.95
+
+[wheel.fl.coilover]
+spring-constant = 49131.9
+bounce = 2588
+rebound = 2612
+travel = 0.07
+anti-roll = 9500.0
+
+[wheel.fr.coilover]
+spring-constant = 49131.9
+bounce = 2588
+rebound = 2612
+travel = 0.07
+anti-roll = 9500.0
+
+[wheel.rl.coilover]
+spring-constant = 51137.3
+bounce = 2788
+rebound = 2912
+travel = 0.07
+anti-roll = 6000.0
+
+[wheel.rr.coilover]
+spring-constant = 51137.3
+bounce = 2788
+rebound = 2912
+travel = 0.07
+anti-roll = 6000.0
+
+[wheel.fl.brake]
+texture = rotor_worn.png
+friction = 0.4
+max-pressure = 8.0e6
+bias = 0.57
+radius = 0.14
+area = 0.015
+
+[wheel.fr.brake]
+texture = rotor_worn.png
+friction = 0.4
+max-pressure = 8.0e6
+bias = 0.57
+radius = 0.14
+area = 0.015
+
+[wheel.rl.brake]
+texture = rotor_worn.png
+friction = 0.4
+max-pressure = 8.0e6
+bias = 0.43
+radius = 0.14
+area = 0.015
+
+[wheel.rr.brake]
+texture = rotor_worn.png
+friction = 0.4
+max-pressure = 8.0e6
+bias = 0.43
+radius = 0.14
+area = 0.015
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 225, 45, 18
+type = tire/touring.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 225, 45, 18
+type = tire/touring.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 225, 45, 18
+type = tire/touring.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 225, 45, 18
+type = tire/touring.tire
+
+[wheel.fl.hinge]
+wheel = -0.75, 1.20, -0.42
+chassis = 0, 0, -0.40
+
+[wheel.fr.hinge]
+wheel = 0.75, 1.20, -0.42
+chassis = 0, 0, -0.40
+
+[wheel.rl.hinge]
+wheel = -0.75, -1.20, -0.42
+chassis = 0, -0.85, -0.40
+
+[wheel.rr.hinge]
+wheel = 0.75, -1.20, -0.42
+chassis = 0, -0.85, -0.40
+
+[wheel.fl]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+position = -0.75, 1.20, -0.42
+camber = -1.33
+caster = 6.12
+toe = 0.5
+ackermann = 8.68	# 50% Ackermann
+steering = 30
+
+[wheel.fr]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+scale = -1, 1, 1
+position = 0.75, 1.20, -0.42
+camber = 1.33
+caster = 6.12
+toe = -0.5
+ackermann = -8.68
+steering = 30
+
+[wheel.rl]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+position = -0.75, -1.20, -0.42
+camber = -0.45
+caster = 0.28
+toe = 0.0
+
+[wheel.rr]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+scale = -1, 1, 1
+position = 0.75, -1.20, -0.42
+camber = 0.45
+caster = 0.28
+toe = 0.0
+
+[steering]
+texture = steering_wheel.png
+mesh = steering_wheel.joe
+position = -0.37, 0.27, -0.01
+rotation = 87.5, 0.0, 0.0
+max-angle = 320
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = -0.37, -0.10, -0.05
+mass = 80.0
+
+[balance-weight]
+position = 0.37, -0.10, -0.05
+mass = 80.0
+
+[body]
+texture = body00.png
+mesh = body.joe
+
+# main collision shape
+[body.hull]
+00 = -0.54,  1.49, -0.26, 0.30
+01 =  0.54,  1.49, -0.26, 0.30
+02 = -0.44, -1.66, -0.16, 0.40
+03 =  0.44, -1.66, -0.16, 0.40
+04 = -0.26, -0.50,  0.09, 0.40
+05 =  0.26, -0.50,  0.09, 0.40
+06 =  0.00,  1.80, -0.32, 0.20
+
+[light-reverse]
+texture = reverse.png
+mesh = body.joe
+draw = emissive
+
+# these are used to calculate the weight distribution and balance
+[particle-00]
+mass = 30.0
+position = 0.0, -1.28, -0.36
+
+[particle-01]
+mass = 63.0
+position = 0.0, 0.11, -0.36
+
+[particle-02]
+mass = 276.0
+position = 0.39, -1.7, 0.0
+
+[particle-03]
+mass = 276.0
+position = -0.39, -1.7, 0.0
+
+[particle-04]
+mass = 227.0
+position = 0.39, 1.32, -0.07
+
+[particle-05]
+mass = 227.0
+position = -0.39, 1.32, -0.07
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.87, 0.14
+
+[camera.1]
+name = driver
+type = mount
+position = -0.37, -0.10, 0.35
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0

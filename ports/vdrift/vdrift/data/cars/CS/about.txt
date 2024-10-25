@@ -1,0 +1,5 @@
+CS
+Original model and settings by loungekid and other Racer-Xtreme contributors.
+Imported by Gianni Cestari and Chris Guirl, some settings by Chris.
+Car settings modded by Cotharyus. There was no specific model settings I was looking for, only more porsche like handling properties. As such, I left all engine and gear settings etc alone, and concentrated only on suspension setup.
+

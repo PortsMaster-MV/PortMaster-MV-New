@@ -1,0 +1,25 @@
+#-------------#
+# Import Vars #
+#-------------#
+Import('*')
+import glob
+
+#---------#
+# Sources #
+#---------#
+src = ["list.txt", "objects.jpk"] + glob.glob('*.png')
+
+#---------------------------------#
+# Distribute to src_dir & bin_dir #
+#---------------------------------#
+dist_files = ['SConscript'] + src
+
+env.Distribute (src_dir, dist_files)
+env.Distribute (bin_dir, src)
+
+#--------------------#
+# Install data files #
+#--------------------#
+
+install = env.Install(Dir(env.subst('$data_directory/tracks/mosport/objects')), src)
+env.Alias('install', install)

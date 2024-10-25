@@ -1,0 +1,17 @@
+radius=0.28
+width=0.2
+ar=0.45
+pt=2.0
+ktx=825
+kty=825
+kcb=2E6
+ccb=0.36
+cfy=0.90
+dz0=0.006
+p0=2.0
+mus=2.1
+muc=1.1
+vs=2.5
+cr0=1.3E-2
+cr2=7.0E-6
+tread=0.1

@@ -1,0 +1,5 @@
+GTV6
+Alfa Romeo GTV6 - 117kW street car.
+fudje.
+"Car model and data made exclusively for VDrift, I'm happy to release under GPL."
+http://vdrift.net/Forum/viewtopic.php?p=6979

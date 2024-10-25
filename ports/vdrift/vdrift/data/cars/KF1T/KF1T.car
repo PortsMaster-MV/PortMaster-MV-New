@@ -1,0 +1,269 @@
+# Mass: 158kg with driver, 75kg without driver and fuel.
+# Engine: 125cm3, 40hp at 14.000rpm
+# torque loosely based on parilla reedjet 100ccm scaled by 40/26
+# Fuel Tank: 8 liters
+# Transmission: 1 gear, 130kph max
+# Suspension: None
+# Brake: 4 disc brakes
+
+[engine]
+position = 0.245, -0.339, -0.032
+mass = 15.0
+inertia = 0.1
+displacement = 0.125E-3
+max-power = 29828
+fuel-consumption = 1E-6
+stall-rpm = 1000
+start-rpm = 3000
+peak-engine-rpm = 14000
+rpm-limit = 16000
+torque-curve-01 = 1000, 32.55
+torque-curve-00 = 3000, 33.17
+torque-curve-01 = 5000, 33.83
+torque-curve-02 = 7000, 34.58
+torque-curve-03 = 8000, 35.34
+torque-curve-04 = 9000, 36.15
+torque-curve-05 = 10000, 38.11
+torque-curve-06 = 11000, 40.52
+torque-curve-07 = 12000, 41.58
+torque-curve-08 = 13000, 41.12
+torque-curve-09 = 14000, 39.46
+torque-curve-10 = 15000, 37.06
+torque-curve-11 = 16000, 35.09
+
+[clutch]
+sliding = 0.25
+radius = 0.1
+area = 0.25
+max-pressure = 5000
+
+[transmission]
+gears = 1
+gear-ratio-r = -6.7
+gear-ratio-1 = 6.7
+shift-time = 0.08
+
+[differential-rear]
+final-drive = 1.0
+anti-slip = 200.0
+
+[fuel-tank]
+position = -0.007, 0.189, -0,058
+capacity = 8
+volume = 8
+fuel-density = 0.71
+
+[wing.center]
+position = 0.0, 0.0, 0.2
+frontal-area = 1
+drag-coefficient = 0.4
+
+[wheel.fl.coilover]
+spring-constant = 50000
+bounce = 3000
+rebound = 9000
+travel = 0.08
+anti-roll = 0
+
+[wheel.fr.coilover]
+spring-constant = 50000
+bounce = 3000
+rebound = 9000
+travel = 0.08
+anti-roll = 0
+
+[wheel.rl.coilover]
+spring-constant = 50000
+bounce = 3000
+rebound = 9000
+travel = 0.08
+anti-roll = 0
+
+[wheel.rr.coilover]
+spring-constant = 50000
+bounce = 3000
+rebound = 9000
+travel = 0.08
+anti-roll = 0
+
+[wheel.fl.brake]
+friction = 0.5
+max-pressure = 2.5E5
+bias = 0.6
+radius = 0.1
+area = 0.03
+
+[wheel.fr.brake]
+friction = 0.5
+max-pressure = 2.5E5
+bias = 0.6
+radius = 0.1
+area = 0.03
+
+[wheel.rl.brake]
+friction = 0.5
+max-pressure = 2.5E5
+bias = 0.4
+radius = 0.1
+area = 0.03
+handbrake = 1.0
+
+[wheel.rr.brake]
+friction = 0.5
+max-pressure = 2.5E5
+bias = 0.4
+radius = 0.1
+area = 0.03
+handbrake = 1.0
+
+[wheel.fl.tire]
+texture = tire00.png
+size = 114, 45, 5
+type = tire/touring.tire
+
+[wheel.fr.tire]
+texture = tire00.png
+size = 114, 45, 5
+type = tire/touring.tire
+
+[wheel.rl.tire]
+texture = tire00.png
+size = 200, 32, 5
+type = tire/touring.tire
+
+[wheel.rr.tire]
+texture = tire00.png
+size = 200, 32, 5
+type = tire/touring.tire
+
+[wheel.fl.hinge]
+wheel = -0.492, 0.476, -0.17
+chassis = 0, 0.4, -0.165
+
+[wheel.fr.hinge]
+wheel = 0.479, 0.476, -0.17
+chassis = 0, 0.4, -0.165
+
+[wheel.rl.hinge]
+wheel = -0.5, -0.573, -0.19
+chassis = 0, -0.5, -0.185
+
+[wheel.rr.hinge]
+wheel = 0.528, -0.573, -0.19
+chassis = 0.028, -0.5, -0.185
+
+[wheel.fl]
+texture = wheel00.png
+mesh = k_wheel.joe
+position = -0.492, 0.476, -0.13
+camber = -0.0
+caster = 0.0
+toe = 0.0
+ackermann = 8.4	# 50% ackermann
+steering = 25
+
+[wheel.fr]
+texture = wheel00.png
+mesh = k_wheel.joe
+scale = -1, 1, 1
+position = 0.479, 0.476, -0.13
+camber = 0.0
+caster = 0.0
+toe = 0.0
+ackermann = -8.4
+steering = 25
+
+[wheel.rl]
+texture = wheel00.png
+mesh = k_wheel.joe
+position = -0.5, -0.573, -0.13
+camber = -0.0
+caster = 0.0
+toe = -0.15
+
+[wheel.rr]
+texture = wheel00.png
+mesh = k_wheel.joe
+scale = -1, 1, 1
+position = 0.528, -0.573, -0.13
+camber = 0.0
+caster = 0.0
+toe = 0.15
+
+[steering]
+texture = steer00.png
+mesh = steer.joe
+position = -0.001, 0.17, 0.242
+rotation = 40.0, 0.0, 0.0
+max-angle = 100
+
+[driver]
+texture = driver00.png
+mesh = driver.joe
+position = -0.015, 0.088, 0.245
+
+[body]
+texture = body00.png
+mesh = body.joe
+
+[chassis]
+texture = engine00.png 
+mesh = engine.joe 
+
+[chassis.box]
+center = 0, -0.025, 0
+size = 1.1, 1.65, 0.25
+
+# these are used to calculate the weight distribution and balance
+[particle-00] # driver
+position = -0.045, 0.08, 0.02
+mass = 80.0
+
+[particle-01]
+position = -0.3, 0.5, -0.1
+mass = 7.25
+
+[particle-02]
+position = 0.3, 0.5, -0.1
+mass = 7.25
+
+[particle-03]
+position = -0.3, -0.5, -0.1
+mass = 7.25
+
+[particle-04]
+position = 0.3, -0.5, -0.1
+mass = 7.25
+
+[camera.0]
+name = hood
+type = mount
+position = -0.0, 0.5, 0.3
+lookat = -1.0, 50.0, -15.0
+
+[camera.1]
+name = driver
+type = mount
+position = -0.023, -0.32, 0.45
+lookat = -0.023, 0.32, 0.30
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -3.0, 1.0
+lookat = 0, 5, 0
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -2.5, 1.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -1.5, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -2.0, 2.0

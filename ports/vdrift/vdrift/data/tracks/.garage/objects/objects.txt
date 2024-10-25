@@ -1,0 +1,5 @@
+#[object.toolbox]
+#body = &garage/toolbox
+#position = 2, 2, 0
+#rotation = 0, 0, 100
+

@@ -1,0 +1,6 @@
+EF
+
+Model by cinder1 from http://blenderartists.org/forum/showthread.php/97202-Ferrari-Enzo-free-blend-file?p=1098444#post1098444
+.car settings by Tim Porter
+engine.wav modified from CO
+released under GPL v2

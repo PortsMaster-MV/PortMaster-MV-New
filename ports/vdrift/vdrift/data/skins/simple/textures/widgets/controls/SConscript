@@ -1,0 +1,32 @@
+#-------------#
+# Import Vars #
+#-------------#
+Import('*')
+
+#---------#
+# Sources #
+#---------#
+src = Split("""add.png
+               add_sel.png
+               key.png
+               key_sel.png
+               mouse.png
+               mouse_sel.png
+               joy_axis.png
+               joy_axis_sel.png
+               joy_btn.png
+               joy_btn_sel.png""")
+
+#---------------------------------#
+# Distribute to src_dir & bin_dir #
+#---------------------------------#
+dist_files = ['SConscript'] + src
+
+env.Distribute (src_dir, dist_files)
+env.Distribute (bin_dir, src)
+
+#--------------------#
+# Install data files #
+#--------------------#
+install = env.Install(Dir(env.subst('$data_directory/skins/simple/textures/widgets/controls')), src)
+env.Alias('install', install)

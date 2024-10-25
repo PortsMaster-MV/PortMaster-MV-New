@@ -1,0 +1,25 @@
+#ref: "Development of Toyota 1ZZ-FE Engine"
+mass = 107.0 # 102.0 dry
+max-power = 89E3
+peak-engine-rpm = 6400.0
+rpm-limit = 7200.0
+inertia = 0.1
+idle = 0.02
+start-rpm = 1000
+stall-rpm = 350
+fuel-consumption = 1e-9
+torque-friction = 0.0003
+torque-curve-00 = 1000, 133
+torque-curve-01 = 1500, 142
+torque-curve-02 = 2000, 149
+torque-curve-03 = 2500, 154
+torque-curve-04 = 2850, 155
+torque-curve-05 = 3250, 155
+torque-curve-06 = 3500, 160
+torque-curve-07 = 4000, 164
+torque-curve-08 = 4400, 165
+torque-curve-09 = 4800, 163
+torque-curve-10 = 5000, 161
+torque-curve-11 = 5500, 153
+torque-curve-12 = 6000, 144
+torque-curve-13 = 7200, 100

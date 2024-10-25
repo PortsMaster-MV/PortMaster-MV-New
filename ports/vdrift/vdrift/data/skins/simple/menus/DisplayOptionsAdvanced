@@ -1,0 +1,1058 @@
+name = DisplayOptionsAdvanced
+oncancel = SyncOptions gui.page:Options
+
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.16
+layer = -1
+
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+
+[ tooltip ]
+text = none
+fontsize = 0.03
+left = 0
+right = 0
+bottom = 0.04
+height = 0.04
+
+
+[ bg-labels ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.008
+width = 0.29
+top = 0.181
+height = 0.598
+layer = -1
+
+
+[ bg-options ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.181
+height = 0.598
+layer = -1
+
+
+[ title ]
+text = Options / Graphics
+fontsize = 0.06
+align = left
+left = 0.29
+width = 0.20
+top = 0.07
+height = 0.06
+
+
+[ disclaimer ]
+text = Some options will not take effect until the game is restarted
+fontsize = 0.03
+align = left
+left = 0.29
+width = 0.20
+top = 0.12
+height = 0.04
+
+
+[ widget-02a ]
+text = Texture Size
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.18
+height = 0.04
+
+[ widget-02b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.texture_size.prev
+onmoveleft = display.texture_size.prev
+onmoveright = display.texture_size.next
+onmoveup = widget-17b
+onmovedown = widget-03b
+onfocus = widget-02b.opacity:1 widget-02c.opacity:1 widget-02d.sat:0.56 tooltip.text:"Change the size of the textures displayed."
+onblur = widget-02b.opacity:0 widget-02c.opacity:0 widget-02d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.18
+height = 0.04
+
+[ widget-02c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.texture_size.next
+onmoveleft = display.texture_size.prev
+onmoveright = display.texture_size.next
+onmoveup = widget-17b
+onmovedown = widget-03b
+onfocus = widget-02b.opacity:1 widget-02c.opacity:1 widget-02d.sat:0.56 tooltip.text:"Change the size of the textures displayed."
+onblur = widget-02b.opacity:0 widget-02c.opacity:0 widget-02d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.18
+height = 0.04
+
+[ widget-02d ]
+text = display.texture_size.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.18
+height = 0.04
+
+
+[ widget-03a ]
+text = View Distance
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.22
+height = 0.04
+
+[ widget-03b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.view_distance.prev
+onmoveleft = display.view_distance.prev
+onmoveright = display.view_distance.next
+onmoveup = widget-02b
+onmovedown = widget-04b
+onfocus = widget-03b.opacity:1 widget-03c.opacity:1 widget-03d.sat:0.56 tooltip.text:"Change the maximum view distance."
+onblur = widget-03b.opacity:0 widget-03c.opacity:0 widget-03d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.22
+height = 0.04
+
+[ widget-03c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.view_distance.next
+onmoveleft = display.view_distance.prev
+onmoveright = display.view_distance.next
+onmoveup = widget-02b
+onmovedown = widget-04b
+onfocus = widget-03b.opacity:1 widget-03c.opacity:1 widget-03d.sat:0.56 tooltip.text:"Change the maximum view distance."
+onblur = widget-03b.opacity:0 widget-03c.opacity:0 widget-03d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.22
+height = 0.04
+
+[ widget-03d ]
+text = display.view_distance.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.22
+height = 0.04
+
+
+[ widget-04a ]
+text = Anisotropic Filtering
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.26
+height = 0.04
+
+[ widget-04b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.anisotropic.prev
+onmoveleft = display.anisotropic.prev
+onmoveright = display.anisotropic.next
+onmoveup = widget-03b
+onmovedown = widget-05b
+onfocus = widget-04b.opacity:1 widget-04c.opacity:1 widget-04d.sat:0.56 tooltip.text:"Set the anisotropic filtering level for textures."
+onblur = widget-04b.opacity:0 widget-04c.opacity:0 widget-04d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.26
+height = 0.04
+
+[ widget-04c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.anisotropic.next
+onmoveleft = display.anisotropic.prev
+onmoveright = display.anisotropic.next
+onmoveup = widget-03b
+onmovedown = widget-05b
+onfocus = widget-04b.opacity:1 widget-04c.opacity:1 widget-04d.sat:0.56 tooltip.text:"Set the anisotropic filtering level for textures."
+onblur = widget-04b.opacity:0 widget-04c.opacity:0 widget-04d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.26
+height = 0.04
+
+[ widget-04d ]
+text = display.anisotropic.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.26
+height = 0.04
+
+
+[ widget-05a ]
+text = Antialiasing
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.30
+height = 0.04
+
+[ widget-05b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.antialiasing.prev
+onmoveleft = display.antialiasing.prev
+onmoveright = display.antialiasing.next
+onmoveup = widget-04b
+onmovedown = widget-06b
+onfocus = widget-05b.opacity:1 widget-05c.opacity:1 widget-05d.sat:0.56 tooltip.text:"Set the full scene antialiasing level."
+onblur = widget-05b.opacity:0 widget-05c.opacity:0 widget-05d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.30
+height = 0.04
+
+[ widget-05c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.antialiasing.next
+onmoveleft = display.antialiasing.prev
+onmoveright = display.antialiasing.next
+onmoveup = widget-04b
+onmovedown = widget-06b
+onfocus = widget-05b.opacity:1 widget-05c.opacity:1 widget-05d.sat:0.56 tooltip.text:"Set the full scene antialiasing level."
+onblur = widget-05b.opacity:0 widget-05c.opacity:0 widget-05d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.30
+height = 0.04
+
+[ widget-05d]
+text = display.antialiasing.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.30
+height = 0.04
+
+
+[ widget-06a ]
+text = Shadows
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.34
+height = 0.04
+
+[ widget-06b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.shadows.prev
+onmoveleft = display.shadows.prev
+onmoveright = display.shadows.next
+onmoveup = widget-05b
+onmovedown = widget-07b
+onfocus = widget-06b.opacity:1 widget-06c.opacity:1 widget-06d.sat:0.56 tooltip.text:"Draw dynamic shadows."
+onblur = widget-06b.opacity:0 widget-06c.opacity:0 widget-06d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.34
+height = 0.04
+
+[ widget-06c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.shadows.next
+onmoveleft = display.shadows.prev
+onmoveright = display.shadows.next
+onmoveup = widget-05b
+onmovedown = widget-07b
+onfocus = widget-06b.opacity:1 widget-06c.opacity:1 widget-06d.sat:0.56 tooltip.text:"Draw dynamic shadows."
+onblur = widget-06b.opacity:0 widget-06c.opacity:0 widget-06d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.34
+height = 0.04
+
+[ widget-06d ]
+text = display.shadows.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.34
+height = 0.04
+
+
+[ widget-07a ]
+text = Renderer
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.38
+height = 0.04
+
+[ widget-07b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.renderer.prev
+onmoveleft = display.renderer.prev
+onmoveright = display.renderer.next
+onmoveup = widget-06b
+onmovedown = widget-08b
+onfocus = widget-07b.opacity:1 widget-07c.opacity:1 widget-07d.sat:0.56 tooltip.text:"Lower renderer version will speed up rendering at the cost of visual quality."
+onblur = widget-07b.opacity:0 widget-07c.opacity:0 widget-07d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.38
+height = 0.04
+
+[ widget-07c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.renderer.next
+onmoveleft = display.renderer.prev
+onmoveright = display.renderer.next
+onmoveup = widget-06b
+onmovedown = widget-08b
+onfocus = widget-07b.opacity:1 widget-07c.opacity:1 widget-07d.sat:0.56 tooltip.text:"Lower renderer version will speed up rendering at the cost of visual quality."
+onblur = widget-07b.opacity:0 widget-07c.opacity:0 widget-07d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.38
+height = 0.04
+
+[ widget-07d ]
+text = display.renderer.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.38
+height = 0.04
+
+
+[ widget-08a ]
+text = Bloom
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.42
+height = 0.04
+
+[ widget-08b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.bloom.prev
+onmoveleft = display.bloom.prev
+onmoveright = display.bloom.next
+onmoveup = widget-07b
+onmovedown = widget-09b
+onfocus = widget-08b.opacity:1 widget-08c.opacity:1 widget-08d.sat:0.56 tooltip.text:"Draw highlights."
+onblur = widget-08b.opacity:0 widget-08c.opacity:0 widget-08d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.42
+height = 0.04
+
+[ widget-08c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.bloom.next
+onmoveleft = display.bloom.prev
+onmoveright = display.bloom.next
+onmoveup = widget-07b
+onmovedown = widget-09b
+onfocus = widget-08b.opacity:1 widget-08c.opacity:1 widget-08d.sat:0.56 tooltip.text:"Draw highlights."
+onblur = widget-08b.opacity:0 widget-08c.opacity:0 widget-08d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.42
+height = 0.04
+
+[ widget-08d ]
+text = display.bloom.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.42
+height = 0.04
+
+
+[ widget-09a ]
+text = Normal Maps
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.46
+height = 0.04
+
+[ widget-09b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.normalmaps.prev
+onmoveleft = display.normalmaps.prev
+onmoveright = display.normalmaps.next
+onmoveup = widget-08b
+onmovedown = widget-10b
+onfocus = widget-09b.opacity:1 widget-09c.opacity:1 widget-09d.sat:0.56 tooltip.text:"Use normal maps."
+onblur = widget-09b.opacity:0 widget-09c.opacity:0 widget-09d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.46
+height = 0.04
+
+[ widget-09c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.normalmaps.next
+onmoveleft = display.normalmaps.prev
+onmoveright = display.normalmaps.next
+onmoveup = widget-08b
+onmovedown = widget-10b
+onfocus = widget-09b.opacity:1 widget-09c.opacity:1 widget-09d.sat:0.56 tooltip.text:"Use normal maps."
+onblur = widget-09b.opacity:0 widget-09c.opacity:0 widget-09d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.46
+height = 0.04
+
+[ widget-09d ]
+text = display.normalmaps.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.46
+height = 0.04
+
+
+[ widget-10a ]
+text = Motion Blur
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.50
+height = 0.04
+
+[ widget-10b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.motionblur.prev
+onmoveleft = display.motionblur.prev
+onmoveright = display.motionblur.next
+onmoveup = widget-09b
+onmovedown = widget-11b
+onfocus = widget-10b.opacity:1 widget-10c.opacity:1 widget-10d.sat:0.56 tooltip.text:"Fast moving objects blur slightly."
+onblur = widget-10b.opacity:0 widget-10c.opacity:0 widget-10d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.50
+height = 0.04
+
+[ widget-10c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.motionblur.next
+onmoveleft = display.motionblur.prev
+onmoveright = display.motionblur.next
+onmoveup = widget-09b
+onmovedown = widget-11b
+onfocus = widget-10b.opacity:1 widget-10c.opacity:1 widget-10d.sat:0.56 tooltip.text:"Fast moving objects blur slightly."
+onblur = widget-10b.opacity:0 widget-10c.opacity:0 widget-10d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.50
+height = 0.04
+
+[ widget-10d ]
+text = display.motionblur.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.50
+height = 0.04
+
+
+[ widget-11a ]
+text = Particles
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.54
+height = 0.04
+
+[ widget-11b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.particles.prev
+onmoveleft = display.particles.prev
+onmoveright = display.particles.next
+onmoveup = widget-10b
+onmovedown = skp
+onfocus = widget-11b.opacity:1 widget-11c.opacity:1 widget-11d.sat:0.56 tooltip.text:"Change the amount of particles used for smoke and dust effects."
+onblur = widget-11b.opacity:0 widget-11c.opacity:0 widget-11d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.54
+height = 0.04
+
+[ widget-11c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.particles.next
+onmoveleft = display.particles.prev
+onmoveright = display.particles.next
+onmoveup = widget-10b
+onmovedown = skn
+onfocus = widget-11b.opacity:1 widget-11c.opacity:1 widget-11d.sat:0.56 tooltip.text:"Change the amount of particles used for smoke and dust effects."
+onblur = widget-11b.opacity:0 widget-11c.opacity:0 widget-11d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.54
+height = 0.04
+
+
+[ widget-11d ]
+text = display.particles.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.54
+height = 0.04
+
+
+[ skl ]
+text = Skidmarks
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.58
+height = 0.04
+
+[ skp ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.skidmarks.prev
+onmoveleft = display.skidmarks.prev
+onmoveright = display.skidmarks.next
+onmoveup = widget-11b
+onmovedown = widget-12b
+onfocus = skp.opacity:1 skn.opacity:1 skt.sat:0.56 tooltip.text:"Change the amount of skidmarks visible."
+onblur = skp.opacity:0 skn.opacity:0 skt.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.58
+height = 0.04
+
+[ skn ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.skidmarks.next
+onmoveleft = display.skidmarks.prev
+onmoveright = display.skidmarks.next
+onmoveup = widget-11b
+onmovedown = widget-12b
+onfocus = skp.opacity:1 skn.opacity:1 skt.sat:0.56 tooltip.text:"Change the amount of skidmarks visible."
+onblur = skp.opacity:0 skn.opacity:0 skt.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.58
+height = 0.04
+
+
+[ skt ]
+text = display.skidmarks.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.58
+height = 0.04
+
+
+[ widget-12a ]
+text = Ambient Occlusion
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.62
+height = 0.04
+
+[ widget-12b]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.lighting.prev
+onmoveleft = display.lighting.prev
+onmoveright = display.lighting.next
+onmoveup = skp
+onmovedown = widget-13b
+onfocus = widget-12b.opacity:1 widget-12c.opacity:1 widget-12d.sat:0.56 tooltip.text:"Set how good the SSAO looks during gameplay."
+onblur = widget-12b.opacity:0 widget-12c.opacity:0 widget-12d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.62
+height = 0.04
+
+[ widget-12c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.lighting.next
+onmoveleft = display.lighting.prev
+onmoveright = display.lighting.next
+onmoveup = skn
+onmovedown = widget-13b
+onfocus = widget-12b.opacity:1 widget-12c.opacity:1 widget-12d.sat:0.56 tooltip.text:"Set how good the SSAO looks during gameplay."
+onblur = widget-12b.opacity:0 widget-12c.opacity:0 widget-12d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.62
+height = 0.04
+
+[ widget-12d ]
+text = display.lighting.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.62
+height = 0.04
+
+
+[ widget-13a ]
+text = Reflection Quality
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.66
+height = 0.04
+
+[ widget-13b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.reflections.prev
+onmoveleft = display.reflections.prev
+onmoveright = display.reflections.next
+onmoveup = widget-12b
+onmovedown = widget-14b
+onfocus = widget-13b.opacity:1 widget-13c.opacity:1 widget-13d.sat:0.56 tooltip.text:"Set how good the reflections looks during gameplay."
+onblur = widget-13b.opacity:0 widget-13c.opacity:0 widget-13d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.66
+height = 0.04
+
+[ widget-13c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.reflections.next
+onmoveleft = display.reflections.prev
+onmoveright = display.reflections.next
+onmoveup = widget-12b
+onmovedown = widget-14b
+onfocus = widget-13b.opacity:1 widget-13c.opacity:1 widget-13d.sat:0.56 tooltip.text:"Set how good the reflections looks during gameplay."
+onblur = widget-13b.opacity:0 widget-13c.opacity:0 widget-13d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.66
+height = 0.04
+
+[ widget-13d ]
+text = display.reflections.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.66
+height = 0.04
+
+
+[ widget-14a ]
+text = Shadow Distance
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.70
+height = 0.04
+
+[ widget-14b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.shadow_distance.prev
+onmoveleft = display.shadow_distance.prev
+onmoveright = display.shadow_distance.next
+onmoveup = widget-13b
+onmovedown = widget-15b
+onfocus = widget-14b.opacity:1 widget-14c.opacity:1 widget-14d.sat:0.56 tooltip.text:"Set the distance at which shadows become visible."
+onblur = widget-14b.opacity:0 widget-14c.opacity:0 widget-14d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.70
+height = 0.04
+
+[ widget-14c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.shadow_distance.next
+onmoveleft = display.shadow_distance.prev
+onmoveright = display.shadow_distance.next
+onmoveup = widget-13b
+onmovedown = widget-15b
+onfocus = widget-14b.opacity:1 widget-14c.opacity:1 widget-14d.sat:0.56 tooltip.text:"Set the distance at which shadows become visible."
+onblur = widget-14b.opacity:0 widget-14c.opacity:0 widget-14d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.70
+height = 0.04
+
+[ widget-14d ]
+text = display.shadow_distance.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.70
+height = 0.04
+
+
+[ widget-15a ]
+text = Shadow Quality
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.74
+height = 0.04
+
+[ widget-15b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = display.shadow_quality.prev
+onmoveleft = display.shadow_quality.prev
+onmoveright = display.shadow_quality.next
+onmoveup = widget-14b
+onmovedown = widget-16b
+onfocus = widget-15b.opacity:1 widget-15c.opacity:1 widget-15d.sat:0.56 tooltip.text:"Set the quality of shadow rendering."
+onblur = widget-15b.opacity:0 widget-15c.opacity:0 widget-15d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.74
+height = 0.04
+
+[ widget-15c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = display.shadow_quality.next
+onmoveleft = display.shadow_quality.prev
+onmoveright = display.shadow_quality.next
+onmoveup = widget-14b
+onmovedown = widget-16b
+onfocus = widget-15b.opacity:1 widget-15c.opacity:1 widget-15d.sat:0.56 tooltip.text:"Set the quality of shadow rendering."
+onblur = widget-15b.opacity:0 widget-15c.opacity:0 widget-15d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.74
+height = 0.04
+
+[ widget-15d ]
+text = display.shadow_quality.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.74
+height = 0.04
+
+
+[ widget-16b ]
+text = Cancel
+fontsize = 0.03
+#align = left
+onselect = SyncOptions gui.page:Options
+onmoveup = widget-15b
+onmovedown = widget-17b
+onfocus = widget-16b.sat:0.56 tooltip.text:"Forget changes and return to Options menu."
+onblur = widget-16b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.29
+top = 0.78
+height = 0.04
+
+[ widget-16e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.781
+height = 0.038
+layer = -1
+
+
+[ widget-17b ]
+text = OK
+fontsize = 0.03
+#align = left
+onselect = SyncSettings gui.page:Options
+onmoveup = widget-16b
+onmovedown = widget-02b
+onfocus = widget-17b.sat:0.56 tooltip.text:"Save changes and return to Options menu."
+onblur = widget-17b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.29
+top = 0.82
+height = 0.04
+
+[ widget-17e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.821
+height = 0.038
+layer = -1

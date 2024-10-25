@@ -1,0 +1,400 @@
+# Elise R
+
+# 2ZZ-GE, I4 1796cc
+# 180Nm at 6800rpm, 141kW at 7800rpm
+# Ref: "Development of the High Speed 2ZZ-GE Engine"
+[engine]
+position = 0.0, -0.8, -0.20
+mass = 120.0 # 115.0 dry
+displacement = 1.8E-3
+max-power = 141E3
+peak-engine-rpm = 7800.0
+rpm-limit = 8400.0
+inertia = 0.1
+idle = 0.02
+start-rpm = 1000
+stall-rpm = 400
+fuel-consumption = 1e-9
+torque-curve-00 = 1000, 121
+torque-curve-01 = 1600, 137
+torque-curve-02 = 2000, 148
+torque-curve-03 = 2400, 150
+torque-curve-04 = 3200, 150
+torque-curve-05 = 3500, 155
+torque-curve-06 = 4000, 167
+torque-curve-07 = 4400, 164
+torque-curve-08 = 4800, 166
+torque-curve-09 = 5200, 158
+torque-curve-10 = 5600, 156
+torque-curve-11 = 6000, 151
+torque-curve-12 = 6400, 174
+torque-curve-13 = 6800, 180
+torque-curve-14 = 7200, 177
+torque-curve-15 = 7600, 170
+torque-curve-16 = 8500, 147
+
+# Toyota C64 gearbox
+[transmission]
+gears = 6
+gear-ratio-r = -3.250
+gear-ratio-1 = 3.166
+gear-ratio-2 = 2.050
+gear-ratio-3 = 1.481
+gear-ratio-4 = 1.166
+gear-ratio-5 = 0.916
+gear-ratio-6 = 0.815
+shift-time = 0.08
+
+[differential-rear]
+final-drive = 4.529
+anti-slip = 600.0
+
+[clutch]
+sliding = 0.27
+radius = 0.15
+area = 0.75
+max-pressure = 11079.26
+
+[fuel-tank]
+position = 0.0, -0.75, -0.26
+capacity = 0.0492
+volume = 0.0492
+fuel-density = 730.0
+
+[wing-front]
+position = 0.0, 0.0, 0.2
+frontal-area = 2
+drag-coefficient = 0.3
+
+[wing-center]
+position = 1.9, 0.0, 0.60
+frontal-area = 0.2
+drag-coefficient = 0.0
+surface-area = 0.3
+lift-coefficient = -0.5
+lift-efficiency = 0.95
+
+[wing-rear]
+position = 0.0, -2.14, 0.37
+frontal-area = 0.05
+drag-coefficient = 0.0
+surface-area = 0.5
+lift-coefficient = -0.7
+lift-efficiency = 0.95
+
+[wheel.fl.coilover]
+spring-constant = 35000
+bounce = 2500
+rebound = 7500
+travel = 0.05
+anti-roll = 800.0
+
+[wheel.fr.coilover]
+spring-constant = 35000
+bounce = 2500
+rebound = 7500
+travel = 0.05
+anti-roll = 800.0
+
+[wheel.rl.coilover]
+spring-constant = 50000
+bounce = 3000
+rebound = 9000
+travel = 0.06
+anti-roll = 600.0
+
+[wheel.rr.coilover]
+spring-constant = 50000
+bounce = 3000
+rebound = 9000
+travel = 0.06
+anti-roll = 600.0
+
+[wheel.fl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.4
+max-pressure = 4.0e6
+bias = 0.65
+radius = 0.14
+area = 0.015
+
+[wheel.fr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.4
+max-pressure = 4.0e6
+bias = 0.65
+radius = 0.14
+area = 0.015
+
+[wheel.rl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.4
+max-pressure = 4.0e6
+bias = 0.35
+radius = 0.14
+area = 0.015
+handbrake = 1.0
+
+[wheel.rr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.4
+max-pressure = 4.0e6
+bias = 0.35
+radius = 0.14
+area = 0.015
+handbrake = 1.0
+
+# Bridgestone Potenza RE040 tyres 175/55R16 front and 225/45R17 rear
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 175, 55, 16
+type = tire/touring.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 175, 55, 16
+type = tire/touring.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 225, 45, 17
+type = tire/touring.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 225, 45, 17
+type = tire/touring.tire
+
+[wheel.fl.double-wishbone]
+upper-chassis-rear = -0.40, 0.92, -0.35
+upper-chassis-front = -0.40, 1.22, -0.35
+upper-hub = -0.67, 1.10, -0.30
+lower-chassis-rear = -0.40, 0.92, -0.58
+lower-chassis-front = -0.40, 1.22, -0.58
+lower-hub = -0.70, 1.10, -0.58
+
+[wheel.fr.double-wishbone]
+upper-chassis-rear = 0.40, 0.92, -0.35
+upper-chassis-front = 0.40, 1.22, -0.35
+upper-hub = 0.67, 1.10, -0.30
+lower-chassis-rear = 0.40, 0.92, -0.58
+lower-chassis-front = 0.40, 1.22, -0.58
+lower-hub = 0.7, 1.10, -0.58
+
+[wheel.rl.double-wishbone]
+upper-chassis-rear = -0.42, -1.40, -0.40
+upper-chassis-front = -0.42, -1.15, -0.40
+upper-hub = -0.70, -1.15, -0.30
+lower-chassis-rear = -0.32, -1.40, -0.58
+lower-chassis-front = -0.32, -0.8, -0.58
+lower-hub = -0.70, -1.15, -0.58
+
+[wheel.rr.double-wishbone]
+upper-chassis-rear = 0.42, -1.40, -0.40
+upper-chassis-front = 0.42, -1.15, -0.40
+upper-hub = 0.70, -1.15, -0.30
+lower-chassis-rear = 0.32, -1.4, -0.58
+lower-chassis-front = 0.32, -0.8, -0.58
+lower-hub = 0.70, -1.15, -0.58
+
+[wheel.fl]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+position = -0.706, 1.108, -0.42
+camber = -0.1
+caster = 3.8
+toe = 0.0
+ackermann = 8.56	# 50% ackermann
+steering = 30
+
+[wheel.fr]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+scale = -1, 1, 1
+position = 0.706, 1.108, -0.42
+camber = 0.1
+caster = 3.8
+toe = 0.0
+ackermann = -8.56
+steering = 30
+
+[wheel.rl]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+position = -0.730, -1.183, -0.42
+camber = -1.8
+caster = 0.0
+toe = -0.18 # toe-in
+
+[wheel.rr]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+scale = -1, 1, 1
+position = 0.730, -1.183, -0.42
+camber = 1.8
+caster = 0.0
+toe = 0.18
+
+# these are used to calculate the weight distribution and balance
+[particle-00]
+mass = 30.0
+position = 0.0, -1.28, -0.26
+
+[particle-01]
+mass = 60.0
+position = 0.0, 0.11, -0.26
+
+[particle-02]
+mass = 116.0
+position = -0.39, -1.7, -0.28
+
+[particle-03]
+mass = 116.0
+position = 0.39, -1.7, -0.28
+
+[particle-04]
+mass = 166.0
+position = -0.39, 1.32, -0.28
+
+[particle-05]
+mass = 166.0
+position = 0.39, 1.32, -0.28
+
+[body]
+texture = body00.png, body-misc1.png
+mesh = body.joe
+
+# main collision shape
+[body.hull]
+00 = -0.52,  1.38, -0.29, 0.30
+01 =  0.52,  1.38, -0.29, 0.30
+02 = -0.48, -1.53, -0.23, 0.35
+03 =  0.48, -1.53, -0.23, 0.35
+04 = -0.20, -0.34,  0.00, 0.40
+05 =  0.20, -0.34,  0.00, 0.40
+06 =  0.00,  1.69, -0.39, 0.20
+
+[steering]
+texture = steering_wheel.png
+mesh = steering_wheel.joe
+position = 0.29, 0.16, -0.08
+rotation = 87.5, 0.0, 0.0
+max-angle = 320
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = 0.292, -0.210, -0.125
+mass = 80.0
+
+[balance-weight]
+position = -0.292, -0.210, -0.125
+mass = 80.0
+
+[interior]
+texture = interior.png
+mesh = interior.joe
+
+[glass]
+texture = glass.png, glass-misc1.png
+mesh = glass.joe
+draw = transparent
+
+[seat_driver]
+texture = seat.png
+mesh = seat.joe
+position = 0.292, -0.256, -0.313
+#rotation = 0,0,0
+#color = 1,1,1,1
+
+[seat_passenger]
+texture = seat.png
+mesh = seat.joe
+position = -0.292, -0.256, -0.313
+#rotation = 0,0,0
+#color = 1,1,1,1
+
+[gauge_pod]
+texture = gauge_pod.png
+mesh = gauge_pod.joe
+#position = 0,0,0
+#rotation = 0,0,0
+#color = 1,1,1,1
+
+[removable_hard_top]
+texture = removable_hard_top.png, removable_hard_top-misc1.png
+mesh = removable_hard_top.joe
+#position = 0,0,0
+#rotation = 0,0,0
+#color = 1,1,1,1
+
+[side_mirror_r]
+texture = side_mirror.png, side_mirror-misc1.png
+mesh = side_mirror_rr.joe
+#position = 0,0,0
+#rotation = 0,0,0
+#color = 1,1,1,1
+
+[side_mirror_l]
+texture = side_mirror.png, side_mirror-misc1.png
+mesh = side_mirror_rr.joe
+scale = -1, 1, 1
+#position = 0,0,0
+#rotation = 0,0,0
+#color = 1,1,1,1
+
+#[side_window_r]
+#texture = side_window.png
+#mesh = side_window_r.joe
+#position = 0,0,0
+#rotation = 0,0,0
+#color = 1,1,1,1
+#draw = transparent
+
+[foglight.r]
+texture = foglight.png
+mesh = foglight.joe
+position = 0.288, 1.819, -0.390
+rotation = 0, 0, 0
+color = 1, 1, 1, 1
+draw = transparent
+
+[foglight.l]
+texture = foglight.png
+mesh = foglight.joe
+position = -0.288, 1.819, -0.390
+rotation = 0, 0, 0
+color = 1, 1, 1, 1
+draw = transparent
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.55, 0.17
+
+[camera.1]
+name = driver
+type = mount
+position = 0.292, -0.18, 0.2
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0

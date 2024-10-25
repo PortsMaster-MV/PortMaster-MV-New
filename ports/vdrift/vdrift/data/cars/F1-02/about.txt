@@ -1,0 +1,5 @@
+F1-02
+
+20080122 "F1" new as "F1-02" (2002 Version): car realistic scaled (F1-02_5.0.4.blend), F1 race tyres, realistic settings usable on all tracks... by cologne
+Import settings and some textures by Dick Maurer.
+Car settings modded by Cotharyus. HP and torque should be consistant with 2006 V8 specs, top speed 200 mph. This model's settins are probly due some more tweaking.

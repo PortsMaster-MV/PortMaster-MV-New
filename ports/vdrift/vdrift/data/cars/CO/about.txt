@@ -1,0 +1,6 @@
+CO
+Model and settings by Dick Maurer
+Car settings modded by Cotharyus. This should be roughly a CSX250, or 289cid with updated suspension.
+
+
+SlickX added details to the car body,made new uw-s and textures for body and wheels

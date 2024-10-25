@@ -1,0 +1,74 @@
+name = UpdateSuccessful
+oncancel = gui.page:Updates
+
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.14
+layer = -1
+
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+
+[ tooltip ]
+text = none
+fontsize = 0.03
+left = 0
+right = 0
+bottom = 0.04
+height = 0.04
+
+
+[ title ]
+text = Update Successful
+fontsize = 0.04
+align = left
+left = 0.29
+width = 0.20
+top = 0.07
+height = 0.06
+
+
+[ widget-02b ]
+text = Back
+fontsize = 0.035
+align = left
+onselect = gui.page:Updates
+onfocus = widget-02b.sat:0.56 tooltip.text:"Go back to the Updates page."
+onblur = widget-02b.sat:0.0
+focus = true
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.18
+height = 0.05
+
+[ widget-02e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.18
+height = 0.048
+layer = -1

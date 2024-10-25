@@ -1,0 +1,11 @@
+AX2
+ 
+Model originally by Vincent Moyet
+
+Model refined and converted by Dick Maurer
+
+Car settings by Dick Maurer
+
+Car settings modded by Cotharyus. Should be a pretty good ball park for some LMP1 car.
+
+Modifications of weight/engine distribution and aero settings by Cologne, committed by Cotharyus.

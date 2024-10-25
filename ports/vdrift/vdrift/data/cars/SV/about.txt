@@ -1,0 +1,5 @@
+SV
+
+Model by Teemu Haapoja
+.car file and engine sound borrowed from XS, any volunteers for physics tuning?
+released under the Creative Commons Attribution-NonCommercial-ShareAlike 2.0 license
