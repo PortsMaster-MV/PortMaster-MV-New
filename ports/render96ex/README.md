@@ -71,6 +71,34 @@ If you did something wrong in the dynos configuration (dynos menu) and the game 
 |Y|Action|
 |Start|Start/Pause|
 
+### Control hacking (mario walking, use external controller)
+
+You can use [hacksdl](https://github.com/cdeletre/hacksdl) to hack the controls in Render96ex. First you'll need to install it:
+1. update the `render96ex.sh` by adding after line 40 (after `export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"`) this 3 lines:
+```
+export LD_PRELOAD="hacksdl.so"
+export HACKSDL_VERBOSE=1
+export HACKSDL_CONFIG_FILE="$PWD/hacksdl.conf"
+```
+2. copy `hacksdl.so` in `render96ex/libs.aarch64` folder (download [hacksdl-aarch64 v1.0](https://github.com/cdeletre/hacksdl/releases/download/v1.0/hacksdl-aarch64.v1.0.zip))
+
+Then use this configuration if you want to make it easier to get mario walking by pressing X (it won't work for dpad, only for analog sticks):
+- hacksdl.conf (must be located in `render96ex` folder)
+```
+HACKSDL_VERBOSE="1";
+HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
+HACKSDL_MODIFIER_BUTTON="X";
+HACKSDL_MODIFIER_SHIFT_LEFTX="2";
+HACKSDL_MODIFIER_SHIFT_LEFTY="2";
+```
+
+Use this configuration (configurations can be merged) if you want to use an external gamepad controller (bluetooth or USB):
+- hacksdl.conf (must be located in `render96ex` folder)
+```
+HACKSDL_VERBOSE="1";
+HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
+HACKSDL_DISABLE_DEVICE_0="1";
+```
 
 ## Compile
 
