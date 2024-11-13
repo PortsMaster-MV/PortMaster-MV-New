@@ -32,7 +32,7 @@ mkdir -p "$CONFDIR"
 
 cd $GAMEDIR
 
-> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt")
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
 export LD_LIBRARY_PATH="${GAMEDIR}/libs.${DEVICE_ARCH}:$LD_LIBRARY_PATH"
 export PATH="${GAMEDIR}/bin.${DEVICE_ARCH}:${PATH}"
