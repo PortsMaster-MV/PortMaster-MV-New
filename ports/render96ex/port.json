@@ -13,7 +13,7 @@
     ],
     "desc": "Super Mario 64 is the first Super Mario game to feature 3D. Discover the precursor to Mario Odyssey in this boosted version with the support of enhanced 3d models, HD textures, HQ musics and sounds, 60 fps.",
     "desc_md": null,
-    "inst": "Super Mario 64 rom must be present in the render96ex folder during first launch to install the assets.",
+    "inst": "Copy your Super Mario 64 USA rom the render96ex folder and rename it to baserom.us.z64 (md5sum 20b854b239203baf6c961b850a4a51a2)",
     "inst_md": null,
     "genres": [
       "platformer"

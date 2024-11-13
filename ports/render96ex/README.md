@@ -14,11 +14,12 @@ You must own a legal copy of the Super Mario 64 rom.
 
 ## Game data files needed:
 
-Copy your Super Mario 64 rom as *baserom.us.z64* to the root of the *render96ex* folder. A wizard will then guide you during the first launch of the game to install the assets from the rom and the optional packages. During this installation process if it seems that you can not validate a choice (Yes/No/OK) when a message popups try to press **A**/**B** then **DPAD up/down**.
+Copy your Super Mario 64 rom as *baserom.us.z64* to the root of the *render96ex* folder. The patcher will install the assets from the rom and packages on the first launch.
 
 **Only the US version of the ROM is supported in this port.**
 
 The SHA1 sum of *baserom.us.z64* is *9bef1128717f958171a4afac3ed78ee2bb4e86ce*.
+The MD5 sum of *baserom.us.z64* is *20b854b239203baf6c961b850a4a51a2*.
 
 ## Optional packages
 
@@ -33,7 +34,7 @@ The extraction of the assets from the rom will temporary uses up to 1 GB of extr
 
 **If you are using muOS** you need at least the banana version to run this port.
 
-If you have chosen to install the Dynos 3D model pack, it is not enabled by default because on most handheld the game will be choppy when combined with the 60 fps feature. You have to enable it in the dynos menu.
+The Dynos 3D model pack is installed but not enabled by default because on most handheld the game will be choppy when combined with the 60 fps feature. You have to enable it in the dynos menu.
 
 The 60 fps feature is enabled by default. If your device can not handle it and the game is running choppy you can try to disable it in the display options in the option menu. Then wait few seconds to let the framerate stabilize.
 

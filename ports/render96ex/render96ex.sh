@@ -13,7 +13,6 @@ else
 fi
 
 source $controlfolder/control.txt
-source $controlfolder/device_info.txt
 
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
@@ -33,39 +32,42 @@ mkdir -p "$CONFDIR"
 
 cd $GAMEDIR
 
-> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt")
 
 export LD_LIBRARY_PATH="${GAMEDIR}/libs.${DEVICE_ARCH}:$LD_LIBRARY_PATH"
 export PATH="${GAMEDIR}/bin.${DEVICE_ARCH}:${PATH}"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
-$ESUDO chmod 666 /dev/uinput
+# Patcher config
+export PATCHER_FILE="$GAMEDIR/restool/install-res.sh"
+export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
+export PATCHER_TIME="about 10 minutes"
 
-$GPTOKEYB "sm64.us.f3dex2e.${DEVICE_ARCH}" &
+# Check if patchlog.txt to skip patching
+if [ ! -f patchlog.txt ]; then
+    if [ -f "$controlfolder/utils/patcher.txt" ]; then
+        unzip "${RESTOOL_ZIP}"    
 
-# If a rom is detected try to install the ressources
-if [ -f "$BASEROM" ]
-then
-  text_viewer -f 25 -w -t "Ressources installation" --input_file $GAMEDIR/restool-msg.txt -y
-  if [ $? -eq 21 ]
-  then
-    unzip "${RESTOOL_ZIP}" 2>&1
-    if [ ! $? -eq 0 ]
-    then
-      echo "$0: An error occured while extracting ${RESTOOL_ZIP}"
-      text_viewer -e -f 25 -w -t "Error" -m "Oh, no! An error has occured while extracting ${RESTOOL_ZIP}. Please see log for details."
+        if [ $? -eq 0 ];then
+          source "$controlfolder/utils/patcher.txt"
+        else
+          echo "Unpacking ${RESTOOL_ZIP} has failed"
+        fi
+
+        rm -rf ${RESTOOL_DIR}
+    else
+        echo "This port requires the latest version of PortMaster."
+        text_viewer -e -f 25 -w -t "PortMaster needs to be updated" -m "This port requires the latest version of PortMaster. Please update PortMaster first."
+        exit 0
     fi
-    cd "${RESTOOL_DIR}"
-    ./install-res.sh ${CFW_NAME} 2>&1
-    cd ../
-    rm -rf ${RESTOOL_DIR}
-  fi
+else
+    echo "Patching process already completed. Skipping."
 fi
 
-# Install a default sm64conf.txt
+# Install a default sm64config.txt when it's missing
 if [ ! -f $CONFDIR/sm64config.txt ]
 then
-  cp sm64config.default.txt $CONFDIR/sm64config.txt 2>&1
+  cp sm64config.default.txt $CONFDIR/sm64config.txt
 fi
 
 # Check if mandatory ressources are installed before launching the game
@@ -74,9 +76,9 @@ then
   echo "Ressources are missing."
   text_viewer -e -f 25 -w -t "Error" -m "Oh, no! Ressources are missing. Install them first (put ${BASEROM} in ${GAMEDIR})."
 else
-  ./sm64.us.f3dex2e.${DEVICE_ARCH} --savepath ./conf/ 2>&1
+  $GPTOKEYB "sm64.us.f3dex2e.${DEVICE_ARCH}" &
+  pm_platform_helper "$GAMEDIR/sm64.us.f3dex2e.${DEVICE_ARCH}"
+  ./sm64.us.f3dex2e.${DEVICE_ARCH} --savepath ./conf/
 fi
 
-$ESUDO kill -9 $(pidof gptokeyb)
-$ESUDO systemctl restart oga_events &
-printf "\033c" > /dev/tty0
+pm_finish
