@@ -1,0 +1,335 @@
+# Celica ST185 4WD Turbo
+# front track 1564mm
+# rear track 1556mm
+
+[engine]
+position = 0.0, 1.42, -0.24
+mass = 180.0
+displacement = 2.0E-3
+max-power = 235745 # 316 hp
+peak-engine-rpm = 6000.0
+rpm-limit = 7250.0
+inertia = 0.25
+idle = 0.02
+start-rpm = 1000
+stall-rpm = 400
+fuel-consumption = 1e-9
+torque-curve-00 =  400, 254.60
+torque-curve-01 = 1000, 351.17
+torque-curve-02 = 1300, 402.75
+torque-curve-03 = 1800, 454.42
+torque-curve-04 = 2000, 468.47
+torque-curve-05 = 2200, 471.62
+torque-curve-06 = 2700, 482.27
+torque-curve-07 = 3200, 490.00
+torque-curve-08 = 3800, 495.37
+torque-curve-09 = 4100, 500.62
+torque-curve-10 = 4400, 489.98
+torque-curve-11 = 4600, 479.91
+torque-curve-12 = 5000, 445.40
+torque-curve-13 = 6000, 375.20
+torque-curve-14 = 7250, 305.00
+
+[clutch]
+sliding = 0.27
+radius = 0.15
+area = 0.75
+max-pressure = 40000.0
+
+[transmission]
+gears = 6
+gear-ratio-r = -3.8
+gear-ratio-1 = 3.583
+gear-ratio-2 = 2.045
+gear-ratio-3 = 1.333
+gear-ratio-4 = 0.972
+gear-ratio-5 = 0.791
+gear-ratio-6 = 0.621
+shift-time = 0.03
+
+[differential-front]
+final-drive = 1.0
+anti-slip = 180.0
+
+[differential-rear]
+final-drive = 1.0
+anti-slip = 180.0
+
+[differential-center]
+final-drive = 4.285
+anti-slip = 180.0
+
+[fuel-tank]
+position = -0.17, -0.26, -0.56
+capacity = 60.0
+volume = 60.0
+fuel-density = 1.0
+
+[wing-front]
+position = 0.0, 0.0, 0.2
+frontal-area = 2
+drag-coefficient = 0.3
+
+[wing-center]
+position = 0.0, 1.9, 0.60
+frontal-area = 0.2
+drag-coefficient = 0.0
+surface-area = 0.3
+lift-coefficient = -0.5
+lift-efficiency = 0.95
+
+[wing-rear]
+position = 0.0, -2.14, 0.37
+frontal-area = 0.05
+drag-coefficient = 0.0
+surface-area = 0.5
+lift-coefficient = -2
+lift-efficiency = 0.95
+
+[wheel.fl.coilover]
+spring-constant = 60000
+bounce = 3500
+rebound = 10600
+travel = 0.08
+anti-roll = 2000
+
+[wheel.fr.coilover]
+spring-constant = 60000
+bounce = 3500
+rebound = 10600
+travel = 0.08
+anti-roll = 2000
+
+[wheel.rl.coilover]
+spring-constant = 40000
+bounce = 2400
+rebound = 7200
+travel = 0.08
+anti-roll = 5500
+
+[wheel.rr.coilover]
+spring-constant = 40000
+bounce = 2400
+rebound = 7200
+travel = 0.08
+anti-roll = 5500
+
+[wheel.fl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.6
+max-pressure = 4.2e6
+bias = 0.60
+radius = 0.17
+area = 0.015
+
+[wheel.fr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.6
+max-pressure = 4.2e6
+bias = 0.60
+radius = 0.17
+area = 0.015
+
+[wheel.rl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.6
+max-pressure = 4.2e6
+bias = 0.40
+radius = 0.14
+area = 0.015
+handbrake = 1.1
+
+[wheel.rr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.6
+max-pressure = 4.2e6
+bias = 0.40
+radius = 0.14
+area = 0.015
+handbrake = 1.1
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 225, 40, 18
+type = tire/touring.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 225, 40, 18
+type = tire/touring.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 225, 40, 18
+type = tire/touring.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 225, 40, 18
+type = tire/touring.tire
+
+[wheel.fl.macpherson-strut]
+strut-top = -0.55, 1.26, 0.10
+strut-end = -0.71, 1.26, -0.45
+hinge = -0.38, 1.26, -0.45
+
+[wheel.fr.macpherson-strut]
+strut-top = 0.55, 1.26, 0.10
+strut-end = 0.71, 1.26, -0.45
+hinge = 0.38, 1.26, -0.45
+
+[wheel.rl.macpherson-strut]
+strut-top = -0.55, -1.28, 0.10
+strut-end = -0.71, -1.28, -0.45
+hinge = -0.50, -1.10, -0.45
+
+[wheel.rr.macpherson-strut]
+strut-top = 0.55, -1.28, 0.10
+strut-end = 0.71, -1.28, -0.45
+hinge = 0.50, -1.10, -0.45
+
+[wheel.fl]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+position = -0.782, 1.26, -0.36
+camber = -1.33
+caster = 6.12
+toe = 0.3
+ackermann = 8.56	# 50% ackermann
+steering = 30
+
+[wheel.fr]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+scale = -1, 1, 1
+position = 0.782, 1.26, -0.36
+camber = 1.33
+caster = 6.12
+toe = -0.3
+ackermann = -8.56
+steering = 30
+
+[wheel.rl]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+position = -0.778, -1.28, -0.36
+camber = -0.45
+caster = -0.28
+toe = 0.0
+
+[wheel.rr]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+scale = -1, 1, 1
+position = 0.778, -1.28, -0.36
+camber = 0.45
+caster = 0.28
+toe = 0.0
+
+[steering]
+texture = steering_wheel.png
+mesh = steering_wheel.joe
+position = -0.35, 0.34, 0.14
+rotation = 87.5, 0.0, 0.0
+max-angle = 320
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = -0.35, -0.03, 0.1
+mass = 80.0
+
+[balance-weight]
+position = 0.35, -0.03, 0.1
+mass = 80.0
+
+[body]
+texture = body00.png
+mesh = body.joe
+
+# main collision shape
+[body.hull]
+00 = -0.49,  1.94, -0.18, 0.30
+01 =  0.49,  1.94, -0.18, 0.30
+02 = -0.50, -1.72, -0.07, 0.40
+03 =  0.50, -1.72, -0.07, 0.40
+04 = -0.28, -0.52,  0.22, 0.40
+05 =  0.28, -0.52,  0.22, 0.40
+
+[interior]
+texture = interior.png
+mesh = interior.joe
+
+[glass]
+texture = glass.png
+mesh = glass.joe
+draw = transparent
+
+[light-brake]
+texture = brake.png
+mesh = body.joe
+draw = emissive
+
+[light-reverse]
+texture = reverse.png
+mesh = body.joe
+draw = emissive
+
+# these are used to calculate the weight distribution and balance
+[particle-00]
+mass = 30.0
+position = 0.0, -1.35, -0.47
+
+[particle-01]
+mass = 59.0
+position = 0.0, 0.96, -0.47
+
+[particle-02]
+mass = 268.0
+position = 0.5, -1.3, 0.09
+
+[particle-03]
+mass = 268.0
+position = -0.5, -1.3, 0.09
+
+[particle-04]
+mass = 247.0
+position = 0.45, 1.6, -0.13
+
+[particle-05]
+mass = 247.0
+position = -0.45, 1.6, -0.13
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.7, 0.41
+stiffness = 1.0
+
+[camera.1]
+name = driver
+type = mount
+position = -0.35, -0.03, 0.41
+stiffness = 1.0
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+stiffness = 1.0
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0

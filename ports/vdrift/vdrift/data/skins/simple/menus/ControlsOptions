@@ -1,0 +1,250 @@
+name = ControlsOptions
+oncancel = gui.page:Options
+
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.14
+layer = -1
+
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+
+[ tooltip ]
+text = none
+fontsize = 0.03
+left = 0
+right = 0
+bottom = 0.04
+height = 0.04
+
+
+[ widget-00 ]
+text = Options / Controls
+fontsize = 0.06
+align = left
+left = 0.29
+width = 0.20
+top = 0.07
+height = 0.06
+
+
+[ widget-01b ]
+text = Input Device
+fontsize = 0.035
+align = left
+onselect = gui.page:InputDevice
+onmoveup = widget-13b
+onmovedown = widget-02b
+onfocus = widget-01b.sat:0.56 tooltip.text:"Select and configure input device."
+onblur = widget-01b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.18
+height = 0.05
+
+[ widget-01e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.18
+height = 0.048
+layer = -1
+
+
+[ widget-02b ]
+text = Car
+fontsize = 0.035
+align = left
+onselect = gui.page:CarControls
+onmoveup = widget-01b
+onmovedown = widget-03b
+onfocus = widget-02b.sat:0.56 tooltip.text:"Assign inputs to car controls."
+onblur = widget-02b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.23
+height = 0.05
+
+[ widget-02e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.23
+height = 0.048
+layer = -1
+
+
+[ widget-03b ]
+text = Camera
+fontsize = 0.035
+align = left
+onselect = gui.page:CameraViewControls
+onmoveup = widget-02b
+onmovedown = widget-04b
+onfocus = widget-03b.sat:0.56 tooltip.text:"Assign inputs to camera controls."
+onblur = widget-03b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.28
+height = 0.05
+
+[ widget-03e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.28
+height = 0.048
+layer = -1
+
+
+[ widget-04b ]
+text = Replays
+fontsize = 0.035
+align = left
+onselect = gui.page:ReplaysControls
+onmoveup = widget-03b
+onmovedown = widget-05b
+onfocus = widget-04b.sat:0.56 tooltip.text:"Assign inputs to actions related to replays."
+onblur = widget-04b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.33
+height = 0.05
+
+[ widget-04e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.33
+height = 0.048
+layer = -1
+
+
+[ widget-05b ]
+text = Tools
+fontsize = 0.035
+align = left
+onselect = gui.page:ToolsControls
+onmoveup = widget-04b
+onmovedown = widget-12b
+onfocus = widget-05b.sat:0.56 tooltip.text:"Assign inputs to miscellaneous helpful actions."
+onblur = widget-05b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.38
+height = 0.05
+
+[ widget-05e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.38
+height = 0.048
+layer = -1
+
+
+[ widget-12b ]
+text = GUI
+fontsize = 0.035
+align = left
+onselect = gui.page:GuiControls
+onmoveup = widget-05b
+onmovedown = widget-13b
+onfocus = widget-12b.sat:0.56 tooltip.text:"Assign inputs to actions that affect the gui."
+onblur = widget-12b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.43
+height = 0.05
+
+[ widget-12e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.43
+height = 0.048
+layer = -1
+
+
+[ widget-13b ]
+text = Back
+fontsize = 0.035
+align = left
+onselect = gui.page:Options
+onmoveup = widget-12b
+onmovedown = widget-01b
+onfocus = widget-13b.sat:0.56 tooltip.text:"Return to Options menu."
+onblur = widget-13b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.24
+top = 0.48
+height = 0.05
+
+[ widget-13e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.26
+top = 0.48
+height = 0.048
+layer = -1

@@ -1,0 +1,6 @@
+model = road_cone.joe
+texture = road_cone.png
+shape = road_cone-collision.joe
+size = 0.7, 0.7, 1.0
+mass = 3
+

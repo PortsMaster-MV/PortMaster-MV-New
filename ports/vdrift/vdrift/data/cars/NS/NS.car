@@ -1,0 +1,320 @@
+
+[engine]
+position = 0.0, 1.04, -0.24
+mass = 150.0
+displacement = 2.6E-3
+max-power = 1.50e5
+peak-engine-rpm = 6800.0
+rpm-limit = 8000.0
+inertia = 0.35
+idle = 0.02
+start-rpm = 1000
+stall-rpm = 350
+fuel-consumption = 1e-9
+# The following values are from a BNR32 GT-R dyno chart.
+torque-curve-00 = 1000, 213.4
+torque-curve-01 = 2000, 315.2
+torque-curve-02 = 2500, 341.8
+torque-curve-03 = 3000, 345.9
+torque-curve-04 = 3800, 363.4
+torque-curve-05 = 4400, 368.0
+torque-curve-06 = 4600, 366.4
+torque-curve-07 = 4800, 364.0
+torque-curve-08 = 5000, 360.7
+torque-curve-09 = 6000, 331.1
+torque-curve-10 = 6500, 308.9
+torque-curve-11 = 7000, 293.4
+torque-curve-12 = 7200, 110.4
+torque-curve-13 = 8000, 89.2
+
+[clutch]
+sliding = 0.27
+radius = 0.1
+area = 0.75
+max-pressure = 30079.26
+
+[transmission]
+gears = 5
+gear-ratio-r = -3.214
+gear-ratio-1 = 3.214
+gear-ratio-2 = 1.925
+gear-ratio-3 = 1.302
+gear-ratio-4 = 1.0
+gear-ratio-5 = 0.752
+shift-time = 0.05
+
+[differential-front]
+final-drive = 1.0
+anti-slip = 600.0
+
+[differential-rear]
+final-drive = 1.0
+anti-slip = 600.0
+
+[differential-center]
+final-drive = 4.111
+anti-slip = 600.0
+
+[fuel-tank]
+position = -0.17, -0.26, -0.56
+capacity = 60
+volume = 60
+fuel-density = 1.0
+
+[wing-front]
+position = 0.0, 0.0, 0.2
+frontal-area = 2.37
+drag-coefficient = 0.52
+
+[wing-center]
+position = 0.0, 1.9, 0.60
+frontal-area = 0.2
+drag-coefficient = 0.0
+surface-area = 0.3
+lift-coefficient = -0.5
+lift-efficiency = 0.95
+
+[wing-rear]
+position = 0.0, -2.14, 0.37
+frontal-area = 0.05
+drag-coefficient = 0.0
+surface-area = 0.5
+lift-coefficient = -2
+lift-efficiency = 0.95
+
+[wheel.fl.coilover]
+spring-constant = 50000
+bounce = 3200
+rebound = 9600
+travel = 0.08
+anti-roll = 16000
+
+[wheel.fr.coilover]
+spring-constant = 50000
+bounce = 3200
+rebound = 9600
+travel = 0.08
+anti-roll = 16000
+
+[wheel.rl.coilover]
+spring-constant = 40000
+bounce = 2500
+rebound = 7500
+travel = 0.08
+anti-roll = 10000
+
+[wheel.rr.coilover]
+spring-constant = 40000
+bounce = 2500
+rebound = 7500
+travel = 0.08
+anti-roll = 10000
+
+[wheel.fl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.5
+max-pressure = 4.5e6
+bias = 0.60
+radius = 0.20
+area = 0.019
+
+[wheel.fr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.5
+max-pressure = 4.5e6
+bias = 0.60
+radius = 0.20
+area = 0.019
+
+[wheel.rl.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.5
+max-pressure = 4.5e6
+bias = 0.40
+radius = 0.16
+area = 0.015
+handbrake = 1.0
+
+[wheel.rr.brake]
+texture = rotor_shiny_slotted_drilled.png
+friction = 0.5
+max-pressure = 4.5e6
+bias = 0.40
+radius = 0.16
+area = 0.015
+handbrake = 1.0
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 225, 50, 17
+type = tire/touring.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 225, 50, 17
+type = tire/touring.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 225, 50, 17
+type = tire/touring.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 225, 50, 17
+type = tire/touring.tire
+
+[wheel.fl.hinge]
+wheel = -0.82, 1.37, -0.37
+chassis = 0, 0, 0
+
+[wheel.fr.hinge]
+wheel = 0.82, 1.37, -0.37
+chassis = 0, 0, 0
+
+[wheel.rl.hinge]
+wheel = -0.84, -1.37, -0.38
+chassis = 0.0, -0.6, 0.0
+
+[wheel.rr.hinge]
+wheel = 0.84, -1.37, -0.38
+chassis = 0.0, -0.6, 0.0
+
+[wheel.fl]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+position = -0.82, 1.37, -0.37
+camber = -1.0
+caster = 0.0
+toe = -0.5
+ackermann = 7.56	# 50% Ackermann
+steering = 30
+
+[wheel.fr]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+scale = -1,1,1
+position = 0.82, 1.37, -0.37
+camber = 1.0
+caster = 0.0
+toe = 0.5
+ackermann = -7.56
+steering = 30
+
+[wheel.rl]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+position = -0.84, -1.37, -0.38
+camber = -0.5
+caster = 0.0
+toe = 1.0
+
+[wheel.rr]
+texture = oem_wheel.png, oem_wheel-misc1.png
+mesh = oem_wheel.joe
+scale = -1, 1, 1
+position = 0.84, -1.37, -0.38
+camber = 0.5
+caster = 0.0
+toe = -1.0
+
+[steering]
+texture = steering_wheel.png
+mesh = steering_wheel.joe
+position = -0.38, 0.32, 0.17
+rotation = 87.5, 0.0, 0.0
+max-angle = 320
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = -0.38, -0.05, 0.13
+mass = 80.0
+
+[balance-weight]
+position = 0.38, -0.05, 0.13
+mass = 80.0
+
+[body]
+texture = body00.png
+mesh = body.joe
+
+# main collision shape
+[body.hull]
+00 = -0.58,  2.07, -0.20, 0.30
+01 =  0.58,  2.07, -0.20, 0.30
+02 = -0.58, -1.95, -0.11, 0.40
+03 =  0.58, -1.95, -0.11, 0.40
+04 = -0.33, -0.60,  0.27, 0.40
+05 =  0.33, -0.60,  0.27, 0.40
+
+[interior]
+texture = interior.png
+mesh = interior.joe
+
+[glass]
+texture = glass.png
+mesh = glass.joe
+draw = transparent
+
+[light-brake]
+texture = brake.png
+mesh = body.joe
+draw = emissive
+
+[light-reverse]
+texture = reverse.png
+mesh = body.joe
+draw = emissive
+
+# these are used to calculate the weight distribution and balance
+[particle-00]
+mass = 65.0
+position = 0.0, 1.008, -0.45
+
+[particle-01]
+mass = 192.5
+position = 0.4, -1.48, 0.1
+
+[particle-02]
+mass = 192.5
+position = -0.4, -1.48, 0.1
+
+[particle-03]
+mass = 368.0
+position = 0.4, 1.08, 0.0
+
+[particle-04]
+mass = 368.0
+position = -0.4, 1.08, 0.0
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.8, 0.4
+
+[camera.1]
+name = driver
+type = mount
+position = -0.38, 0.05, 0.53
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0

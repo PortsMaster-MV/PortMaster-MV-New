@@ -1,0 +1,23 @@
+#-------------#
+# Import Vars #
+#-------------#
+Import('*')
+
+#---------------------------------#
+# Distribute to src_dir & bin_dir #
+#---------------------------------#
+env.Distribute (src_dir, ['SConscript'])
+
+#----------------#
+# Subdirectories #
+#----------------#
+Export(['env', 'src_dir', 'bin_dir'])
+
+if env['minimal']:
+    SConscript(dirs = ['estoril88', 'jerez88', 'paulricard88'])
+else:
+    import glob
+
+    for path in glob.glob('*/SConscript'):
+        SConscript(path)
+

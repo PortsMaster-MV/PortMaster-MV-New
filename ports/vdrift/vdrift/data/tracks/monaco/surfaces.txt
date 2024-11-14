@@ -1,0 +1,18 @@
+[surface-00]
+Type = asphalt
+BumpWaveLength = 1.0
+BumpAmplitude = 0
+FrictionNonTread = 1.0
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+[surface-01]
+Type = asphalt
+BumpWaveLength = 2.0
+BumpAmplitude = 0.03
+FrictionNonTread = 1.0
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+

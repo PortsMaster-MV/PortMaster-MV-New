@@ -1,0 +1,5 @@
+M3D
+Original model and settings by FlashG
+Import settings and some textures by Dick Maurer.
+Based on the M3, drift settings by protomor
+Tweaks by Cotharyus

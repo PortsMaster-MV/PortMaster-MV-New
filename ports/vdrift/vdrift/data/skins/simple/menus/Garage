@@ -1,0 +1,904 @@
+name = Garage
+oncancel = SyncSettings gui.page:Main
+
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.14
+layer = -1
+
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+
+[ tooltip ]
+text = none
+fontsize = 0.03
+left = 0
+right = 0
+bottom = 0.04
+height = 0.04
+
+
+[ bg-labels ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.008
+width = 0.29
+top = 0.181
+height = 0.518
+layer = -1
+
+
+[ bg-options ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.181
+height = 0.518
+layer = -1
+
+
+[ title ]
+text = Garage
+fontsize = 0.06
+align = left
+left = 0.29
+width = 0.20
+top = 0.07
+height = 0.06
+
+
+[ startpos-lbl ]
+text = Start position
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.18
+height = 0.04
+
+[ startpos-prv ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.car_startpos.prev
+onmoveleft = game.car_startpos.prev
+onmoveright = game.car_startpos.next
+onmoveup = widget-17b
+onmovedown = driver-prv
+onfocus = startpos-prv.opacity:1 startpos-nxt.opacity:1 startpos-val.sat:0.56 tooltip.text:"Change car start position."
+onblur = startpos-prv.opacity:0 startpos-nxt.opacity:0 startpos-val.sat:0.0
+focus = true
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.18
+height = 0.04
+
+[ startpos-nxt ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.car_startpos.next
+onmoveleft = game.car_startpos.prev
+onmoveright = game.car_startpos.next
+onmoveup = widget-17b
+onmovedown = driver-nxt
+onfocus = startpos-prv.opacity:1 startpos-nxt.opacity:1 startpos-val.sat:0.56 tooltip.text:"Change car start position."
+onblur = startpos-prv.opacity:0 startpos-nxt.opacity:0 startpos-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.18
+height = 0.04
+
+[ startpos-val ]
+text = game.car_startpos.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.18
+height = 0.04
+
+
+[ driver-lbl ]
+text = Driver
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.22
+height = 0.04
+
+[ driver-prv ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.driver.prev
+onmoveleft = game.driver.prev
+onmoveright = game.driver.next
+onmoveup = startpos-prv
+onmovedown =  widget-08b
+onfocus = driver-prv.opacity:1 driver-nxt.opacity:1 driver-val.sat:0.56 tooltip.text:"Select car driver."
+onblur = driver-prv.opacity:0 driver-nxt.opacity:0 driver-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.22
+height = 0.04
+
+[ driver-nxt ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.driver.next
+onmoveleft = game.driver.prev
+onmoveright = game.driver.next
+onmoveup = startpos-nxt
+onmovedown = ailevel-val
+onfocus = driver-prv.opacity:1 driver-nxt.opacity:1 driver-val.sat:0.56 tooltip.text:"Select car driver."
+onblur = driver-prv.opacity:0 driver-nxt.opacity:0 driver-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.22
+height = 0.04
+
+[ driver-val ]
+text = game.driver.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.22
+height = 0.04
+
+
+[ ailevel-lbl ]
+text = AI Level
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.26
+height = 0.04
+
+[ ailevel-val ]
+text = game.ai_level.str
+fontsize = 0.03
+onselectx = game.ai_level.norm
+onmoveleft = game.ai_level.prev
+onmoveright = game.ai_level.next
+onmoveup = driver-prv
+onmovedown = widget-08b
+onfocus = ailevel-bar.opacity:1 ailevel-bg.opacity:1 ailevel-val.sat:0.56 tooltip.text:"Higher values result in an AI that will drive faster."
+onblur = ailevel-bar.opacity:0 ailevel-bg.opacity:0 ailevel-val.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.26
+height = 0.04
+
+[ ailevel-bar ]
+slider-max = game.ai_level.norm
+slider-min = 0
+image = white.png
+opacity = 0.0
+left = 0.31
+width = 0.28
+top = 0.266
+height = 0.028
+layer = 1
+
+[ ailevel-bg ]
+image = white.png
+val = 0.3
+opacity = 0.0
+left = 0.31
+width = 0.28
+top = 0.266
+height = 0.028
+
+
+[ widget-08a ]
+text = Car
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.30
+height = 0.04
+
+[ widget-08b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = gui.page:Cars
+onmoveleft = game.car.prev
+onmoveright = game.car.next
+onmoveup = ailevel-val
+onmovedown = var-prv
+onfocus = widget-08b.opacity:1 widget-08c.opacity:1 widget-08d.sat:0.56 tooltip.text:"Choose the car to drive."
+onblur = widget-08b.opacity:0 widget-08c.opacity:0 widget-08d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.30
+height = 0.04
+
+[ widget-08c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = gui.page:Cars
+onmoveleft = game.car.prev
+onmoveright = game.car.next
+onmoveup = ailevel-val
+onmovedown = var-prv
+onfocus = widget-08b.opacity:1 widget-08c.opacity:1 widget-08d.sat:0.56 tooltip.text:"Choose the car to drive."
+onblur = widget-08b.opacity:0 widget-08c.opacity:0 widget-08d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.30
+height = 0.04
+
+[ widget-08d ]
+text = game.car.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.30
+height = 0.04
+
+
+[ var-lbl ]
+text = Variant
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.34
+height = 0.04
+
+[ var-prv ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.car_variant.prev
+onmoveleft = game.car_variant.prev
+onmoveright = game.car_variant.next
+onmoveup = widget-08b
+onmovedown = wheel-prv
+onfocus = var-prv.opacity:1 var-nxt.opacity:1 var-val.sat:0.56 tooltip.text:"Choose the car variant."
+onblur = var-prv.opacity:0 var-nxt.opacity:0 var-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.34
+height = 0.04
+
+[ var-nxt ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.car_variant.next
+onmoveleft = game.car_variant.prev
+onmoveright = game.car_variant.next
+onmoveup = widget-08b
+onmovedown = wheel-prv
+onfocus = var-prv.opacity:1 var-nxt.opacity:1 var-val.sat:0.56 tooltip.text:"Choose the car variant."
+onblur = var-prv.opacity:0 var-nxt.opacity:0 var-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.34
+height = 0.04
+
+[ var-val ]
+text = game.car_variant.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.34
+height = 0.04
+
+
+[ tire-lbl ]
+text = Tire
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.38
+height = 0.04
+
+[ tire-prv ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.car_tire.prev
+onmoveleft = game.car_tire.prev
+onmoveright = game.car_tire.next
+onmoveup = var-prv
+onmovedown = wheel-prv
+onfocus = tire-prv.opacity:1 tire-nxt.opacity:1 tire-val.sat:0.56 tooltip.text:"Choose the car tire type."
+onblur = tire-prv.opacity:0 tire-nxt.opacity:0 tire-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.38
+height = 0.04
+
+[ tire-nxt ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.car_tire.next
+onmoveleft = game.car_tire.prev
+onmoveright = game.car_tire.next
+onmoveup = var-nxt
+onmovedown = wheel-nxt
+onfocus = tire-prv.opacity:1 tire-nxt.opacity:1 tire-val.sat:0.56 tooltip.text:"Choose the car tire type."
+onblur = tire-prv.opacity:0 tire-nxt.opacity:0 tire-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.38
+height = 0.04
+
+[ tire-val ]
+text = game.car_tire.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.38
+height = 0.04
+
+
+[ wheel-lbl ]
+text = Wheel
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.42
+height = 0.04
+
+[ wheel-prv ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.car_wheel.prev
+onmoveleft = game.car_wheel.prev
+onmoveright = game.car_wheel.next
+onmoveup = tire-prv
+onmovedown = widget-09b
+onfocus = wheel-prv.opacity:1 wheel-nxt.opacity:1 wheel-val.sat:0.56 tooltip.text:"Choose the car wheel type."
+onblur = wheel-prv.opacity:0 wheel-nxt.opacity:0 wheel-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.42
+height = 0.04
+
+[ wheel-nxt ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.car_wheel.next
+onmoveleft = game.car_wheel.prev
+onmoveright = game.car_wheel.next
+onmoveup = tire-nxt
+onmovedown = widget-09b
+onfocus = wheel-prv.opacity:1 wheel-nxt.opacity:1 wheel-val.sat:0.56 tooltip.text:"Choose the car wheel type."
+onblur = wheel-prv.opacity:0 wheel-nxt.opacity:0 wheel-val.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.42
+height = 0.04
+
+[ wheel-val ]
+text = game.car_wheel.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.42
+height = 0.04
+
+
+[ widget-09a ]
+text = Paint
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.46
+height = 0.04
+
+[ widget-09b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.car_paint.prev
+onmoveleft = game.car_paint.prev
+onmoveright = game.car_paint.next
+onmoveup = wheel-prv
+onmovedown = widget-10b
+onfocus = widget-09b.opacity:1 widget-09c.opacity:1 widget-09d.sat:0.56 tooltip.text:"Choose the paint job for the car."
+onblur = widget-09b.opacity:0 widget-09c.opacity:0 widget-09d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.46
+height = 0.04
+
+[ widget-09c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.car_paint.next
+onmoveleft = game.car_paint.prev
+onmoveright = game.car_paint.next
+onmoveup = wheel-nxt
+onmovedown = widget-10b
+onfocus = widget-09b.opacity:1 widget-09c.opacity:1 widget-09d.sat:0.56 tooltip.text:"Choose the paint job for the car."
+onblur = widget-09b.opacity:0 widget-09c.opacity:0 widget-09d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.46
+height = 0.04
+
+[ widget-09d ]
+text = game.car_paint.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.46
+height = 0.04
+
+
+[ widget-10a ]
+text = Hue
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.50
+height = 0.04
+
+[ widget-10b ]
+onselectx = game.car_color_hue
+onmoveleft = game.car_color_hue.prev
+onmoveright = game.car_color_hue.next
+onmoveup = widget-09b
+onmovedown = widget-11b
+onfocus = widget-10c.sat:0.56 tooltip.text:"Choose the hue for the car."
+onblur = widget-10c.sat:0.0
+focus = false
+left = 0.31
+width = 0.28
+top = 0.50
+height = 0.04
+
+[ widget-10c ]
+slider = game.car_color_hue
+image = white.png
+opacity = 0.7
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.505
+height = 0.03
+layer = 1
+
+[ widget-10d ]
+image = color_hue.png
+left = 0.31
+width = 0.28
+top = 0.506
+height = 0.028
+
+
+[ widget-11a ]
+text = Saturation
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.54
+height = 0.04
+
+[ widget-11b ]
+onselectx = game.car_color_sat
+onmoveleft = game.car_color_sat.prev
+onmoveright = game.car_color_sat.next
+onmoveup = widget-10b
+onmovedown = widget-12b
+onfocus = widget-11c.sat:0.56 tooltip.text:"Choose the saturation for the car."
+onblur = widget-11c.sat:0.0
+focus = false
+left = 0.31
+width = 0.28
+top = 0.54
+height = 0.04
+
+[ widget-11c ]
+slider = game.car_color_sat
+image = white.png
+opacity = 0.7
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.545
+height = 0.03
+layer = 1
+
+[ widget-11d ]
+image = color_saturation.png
+hue = game.car_color_hue
+sat = 1.0
+val = game.car_color_val
+left = 0.31
+width = 0.28
+top = 0.546
+height = 0.028
+
+[ widget-11e ]
+image = white.png
+left = 0.31
+width = 0.28
+top = 0.546
+height = 0.028
+layer = -1
+
+
+[ widget-12a ]
+text = Brightness
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.58
+height = 0.04
+
+[ widget-12b ]
+onselectx = game.car_color_val
+onmoveleft = game.car_color_val.prev
+onmoveright = game.car_color_val.next
+onmoveup = widget-11b
+onmovedown = widget-13b
+onfocus = widget-12c.sat:0.56 tooltip.text:"Choose the brightness for the car."
+onblur = widget-12c.sat:0.0
+focus = false
+left = 0.31
+width = 0.28
+top = 0.58
+height = 0.04
+
+[ widget-12c ]
+slider = game.car_color_val
+image = white.png
+opacity = 0.7
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.585
+height = 0.03
+layer = 1
+
+[ widget-12d ]
+image = color_value.png
+hue = game.car_color_hue
+sat = game.car_color_sat
+val = 1.0
+left = 0.31
+width = 0.28
+top = 0.586
+height = 0.028
+
+
+[ widget-13a ]
+text = Antilock Brakes
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.62
+height = 0.04
+
+[ widget-13b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.antilock.prev
+onmoveleft = game.antilock.prev
+onmoveright = game.antilock.next
+onmoveup = widget-12b
+onmovedown = widget-14b
+onfocus = widget-13b.opacity:1 widget-13c.opacity:1 widget-13d.sat:0.56 tooltip.text:"Help reduce wheel lockup on heavy braking (driver aid)."
+onblur = widget-13b.opacity:0 widget-13c.opacity:0 widget-13d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.62
+height = 0.04
+
+[ widget-13c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.antilock.next
+onmoveleft = game.antilock.prev
+onmoveright = game.antilock.next
+onmoveup = widget-12b
+onmovedown = widget-14b
+onfocus = widget-13b.opacity:1 widget-13c.opacity:1 widget-13d.sat:0.56 tooltip.text:"Help reduce wheel lockup on heavy braking (driver aid)."
+onblur = widget-13b.opacity:0 widget-13c.opacity:0 widget-13d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.62
+height = 0.04
+
+[ widget-13d ]
+text = game.antilock.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.62
+height = 0.04
+
+
+[ widget-14a ]
+text = Traction Control
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.66
+height = 0.04
+
+[ widget-14b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.traction_control.prev
+onmoveleft = game.traction_control.prev
+onmoveright = game.traction_control.next
+onmoveup = widget-13b
+onmovedown = widget-16b
+onfocus = widget-14b.opacity:1 widget-14c.opacity:1 widget-14d.sat:0.56 tooltip.text:"Prevents wheels from spinning during acceleration (driver aid)."
+onblur = widget-14b.opacity:0 widget-14c.opacity:0 widget-14d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.14
+top = 0.66
+height = 0.04
+
+[ widget-14c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.traction_control.next
+onmoveleft = game.traction_control.prev
+onmoveright = game.traction_control.next
+onmoveup = widget-13b
+onmovedown = widget-16b
+onfocus = widget-14b.opacity:1 widget-14c.opacity:1 widget-14d.sat:0.56 tooltip.text:"Prevents wheels from spinning during acceleration (driver aid)."
+onblur = widget-14b.opacity:0 widget-14c.opacity:0 widget-14d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.45
+width = 0.14
+top = 0.66
+height = 0.04
+
+[ widget-14d ]
+text = game.traction_control.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.28
+top = 0.66
+height = 0.04
+
+
+[ widget-16b ]
+text = Race
+fontsize = 0.03
+#align = left
+onselect = SyncSettings gui.page:SingleRace
+onmoveup = widget-14b
+onmovedown = widget-17b
+onfocus = widget-16b.sat:0.56 tooltip.text:"Start a race."
+onblur = widget-16b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.29
+top = 0.70
+height = 0.04
+
+[ widget-16e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.701
+height = 0.038
+layer = -1
+
+
+[ widget-17b ]
+text = Back
+fontsize = 0.03
+#align = left
+onselect = SyncSettings gui.page:Main
+onmoveup = widget-16b
+onmovedown = startpos-prv
+onfocus = widget-17b.sat:0.56 tooltip.text:"Return to previous menu."
+onblur = widget-17b.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.29
+top = 0.74
+height = 0.04
+
+[ widget-17e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.30
+top = 0.741
+height = 0.038
+layer = -1
+
+
+[ specs-bg ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+right = 0.008
+width = 0.30
+top = 0.18
+height = 0.32
+layer = -1
+
+[ specs-labels ]
+text = game.car_specs.str
+fontsize = 0.03
+align = left
+list = game.car_specs
+rows = 8
+cols = 1
+right = 0.10
+width = 0.20
+top = 0.18
+height = 0.32
+
+[ specs-values ]
+text = game.car_specs
+fontsize = 0.03
+align = right
+list = game.car_specs
+rows = 8
+cols = 1
+right = 0.02
+width = 0.09
+top = 0.18
+height = 0.32

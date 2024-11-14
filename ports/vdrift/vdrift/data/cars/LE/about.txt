@@ -1,0 +1,12 @@
+LE
+
+model by Ny Dedes
+settings adapted from xs, sound from xs as well.
+
+
+giving the headlights and interior some treatment atm.
+roof and wiper intended as prototypes for multiple-meshes per car.
+side mirrors intended as prototypes for damage.
+
+tried to get the mass and torque curve correct.  doesn't drive well yet though.
+those more knowledgeable should change/tune to get it to groove.

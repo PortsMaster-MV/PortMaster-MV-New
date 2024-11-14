@@ -1,0 +1,192 @@
+name = Replays
+oncancel = SyncSettings gui.page:Main
+
+
+[ bg-top ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+top = 0
+height = 0.14
+layer = -1
+
+
+[ bg-bottom ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0
+right = 0
+bottom = 0
+height = 0.08
+layer = -1
+
+
+[ tooltip ]
+text = none
+fontsize = 0.03
+left = 0
+right = 0
+bottom = 0.04
+height = 0.04
+
+
+[ bg-labels ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.008
+width = 0.29
+top = 0.181
+height = 0.038
+layer = -1
+
+
+[ bg-options ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.38
+top = 0.181
+height = 0.038
+layer = -1
+
+
+[ widget-00 ]
+text = Replays
+fontsize = 0.06
+align = left
+left = 0.29
+width = 0.20
+top = 0.07
+height = 0.06
+
+
+[ widget-01a ]
+text = Select Replay
+fontsize = 0.03
+align = right
+left = 0.01
+width = 0.28
+top = 0.18
+height = 0.04
+
+[ widget-01b ]
+text = <
+fontsize = 0.03
+align = left
+onselect = game.selected_replay.prev
+onmoveleft = game.selected_replay.prev
+onmoveright = game.selected_replay.next
+onmoveup = widget-03
+onmovedown = widget-02
+onfocus = widget-01b.opacity:1 widget-01c.opacity:1 widget-01d.sat:0.56 tooltip.text:"Select the replay to watch."
+onblur = widget-01b.opacity:0 widget-01c.opacity:0 widget-01d.sat:0.0
+focus = true
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.31
+width = 0.18
+top = 0.18
+height = 0.04
+
+[ widget-01c ]
+text = >
+fontsize = 0.03
+align = right
+onselect = game.selected_replay.next
+onmoveleft = game.selected_replay.prev
+onmoveright = game.selected_replay.next
+onmoveup = widget-03
+onmovedown = widget-02
+onfocus = widget-01b.opacity:1 widget-01c.opacity:1 widget-01d.sat:0.56 tooltip.text:"Select the replay to watch."
+onblur = widget-01b.opacity:0 widget-01c.opacity:0 widget-01d.sat:0.0
+focus = false
+hue = 0.56
+sat = 0.56
+val = 1.0
+opacity = 0.0
+left = 0.49
+width = 0.18
+top = 0.18
+height = 0.04
+
+[ widget-01d ]
+text = game.selected_replay.str
+fontsize = 0.03
+hue = 0.56
+left = 0.31
+width = 0.36
+top = 0.18
+height = 0.04
+
+
+[ widget-02 ]
+text = Start Replay
+fontsize = 0.03
+#align = left
+onselect = SyncSettings StartReplay
+onmoveup = widget-01b
+onmovedown = widget-03
+onfocus = widget-02.sat:0.56 tooltip.text:"Begin playing the last recorded replay."
+onblur = widget-02.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.36
+top = 0.22
+height = 0.04
+
+[ widget-02e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.38
+top = 0.221
+height = 0.038
+layer = -1
+
+
+[ widget-03 ]
+text = Back
+fontsize = 0.03
+#align = left
+onselect = gui.page:Main
+onmoveup = widget-02
+onmovedown = widget-01b
+onfocus = widget-03.sat:0.56 tooltip.text:"Return to the Main menu."
+onblur = widget-03.sat:0.0
+focus = false
+hue = 0.56
+left = 0.31
+width = 0.36
+top = 0.26
+height = 0.04
+
+[ widget-03e ]
+image = white.png
+hue = 0.889
+sat = 0.068
+val = 0.173
+opacity = 0.5
+left = 0.30
+width = 0.38
+top = 0.261
+height = 0.038
+layer = -1

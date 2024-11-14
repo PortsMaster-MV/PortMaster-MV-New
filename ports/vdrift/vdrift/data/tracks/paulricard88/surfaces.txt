@@ -1,0 +1,60 @@
+# asphalt and track objects
+[surface-00]
+Type = asphalt
+BumpWaveLength = 2.0
+BumpAmplitude = 0
+FrictionNonTread = 1.0
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+# some garage stuff, weird
+[surface-01]
+Type = asphalt
+BumpWaveLength = 2.0
+BumpAmplitude = 0
+FrictionNonTread = 0.8
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+# rough asphalt, concrete maybe?
+[surface-02]
+Type = concrete
+BumpWaveLength = 2.0
+BumpAmplitude = 0.01
+FrictionNonTread = 0.8
+FrictionTread = 0.9
+RollResistanceCoefficient = 5.0
+RollingDrag = 5.0
+
+# curbs
+[surface-03]
+Type = asphalt
+BumpWaveLength = 2.0
+BumpAmplitude = 0.03
+FrictionNonTread = 1.0
+FrictionTread = 0.9
+RollResistanceCoefficient = 1.0
+RollingDrag = 0.0
+
+# dirt hard
+[surface-04]
+Type = gravel
+BumpWaveLength = 2.0
+BumpAmplitude = 0.05
+FrictionNonTread = 0.8
+FrictionTread = 0.9
+RollResistanceCoefficient = 25.0
+RollingDrag = 100.0
+
+# sand
+[surface-05]
+Type = sand
+BumpWaveLength = 2.0
+BumpAmplitude = 0.05
+FrictionNonTread = 0.7
+FrictionTread = 0.9
+RollResistanceCoefficient = 35.0
+RollingDrag = 150.0
+

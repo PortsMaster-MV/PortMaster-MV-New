@@ -1,0 +1,64 @@
+reference equations:
+hp = torque * rpm / 5252
+torque = 5252 * HP / rpm
+
+
+
+
+0-60 should be about 6 seconds normally.  some review zine did it in 5.2
+
+engine: 3s-gte (2.0L turbocharged, water cooler, inline 4 cylinder)
+4000rpm	torque=305Nm, hp=232
+6000rpm	torque=211Nm, hp=242
+
+
+Laden weight: 1380Kg (3036 lbs.)
+
+
+
+Engine Power @ 6000
+178kW
+242PS
+239bhp
+
+Engine Torque @ 4000
+302Nm
+223lb-ft
+
+
+===========================================
+1995 celica gt4 *wheel* dynamometer results
+rpm	t(Nm)
+=========================
+1500	125
+2000	165
+2500	215
+3000	255
+3500	245
+4000	258
+4500	250
+5000	265
+5500	255
+6000	245
+6200	230
+
+
+===========================================
+estimated engine torque curve
+wheel torque curve + 17% for drivetrain loss
+dropped peak that occurs at 5000 from 310
+added 1 to peak that occurs at 4000
+rpm	t(Nm)
+=========================
+1500	146
+2000	193
+2500	251
+3000	298
+3500	286
+4000	302
+4500	292
+5000	300
+5500	298
+6000	286
+6200	269
+

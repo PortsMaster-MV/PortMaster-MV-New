@@ -1,0 +1,31 @@
+#-------------#
+# Import Vars #
+#-------------#
+Import('*')
+
+import glob
+
+#---------#
+# Sources #
+#---------#
+src = ["about.txt",
+       "engine.wav",
+       "XS.car",
+       glob.glob("*.joe")]
+
+#---------------------------------#
+# Distribute to src_dir & bin_dir #
+#---------------------------------#
+dist_files = ['SConscript'] + src
+
+env.Distribute (src_dir, dist_files)
+env.Distribute (bin_dir, src)
+
+#--------------------#
+# Install data files #
+#--------------------#
+Export(['env', 'src_dir', 'bin_dir'])
+install = env.Install(Dir(env.subst('$data_directory/cars/XS')), src)
+env.Alias('install', install)
+
+SConscript("textures/SConscript")

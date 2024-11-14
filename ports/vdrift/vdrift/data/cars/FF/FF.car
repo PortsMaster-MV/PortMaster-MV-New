@@ -1,0 +1,304 @@
+
+[engine]
+position = 0.0, -1.10, -0.45
+mass = 84.0
+displacement = 1.6E-3
+max-power = 85755
+peak-engine-rpm = 7000.0
+rpm-limit = 7800
+inertia = 0.1
+idle = 0.02
+start-rpm = 1000
+stall-rpm = 400
+fuel-consumption = 1e-9
+torque-curve-00 = 1000, 132.78
+torque-curve-01 = 2000, 134.59
+torque-curve-02 = 2500, 136.59
+torque-curve-03 = 3000, 138.21
+torque-curve-04 = 3500, 141.47
+torque-curve-05 = 4000, 147.15
+torque-curve-06 = 4500, 153.56
+torque-curve-07 = 5000, 159.78
+torque-curve-08 = 5500, 165.23
+torque-curve-09 = 6000, 164.37
+torque-curve-10 = 6500, 163.89
+torque-curve-11 = 7000, 163.01
+torque-curve-12 = 7500, 162.43
+torque-curve-13 = 7800, 161.95
+
+[clutch]
+sliding = 0.27
+radius = 0.1
+area = 0.75
+max-pressure = 10000.00
+
+[transmission]
+gears = 4
+gear-ratio-r = -4.5
+gear-ratio-1 = 2.8
+gear-ratio-2 = 1.7
+gear-ratio-3 = 1.35
+gear-ratio-4 = 1.15
+shift-time = 0.1
+
+[differential-rear]
+final-drive = 3.32
+anti-slip = 100.0
+
+[fuel-tank]
+position = -0.1, -0.8, -0.26
+capacity = 41.0
+volume = 21.0
+fuel-density = 1.0
+
+[wing-front]
+position = 0.0, 0.0, 0.2
+frontal-area = 2
+drag-coefficient = 0.3
+
+[wheel.fl.coilover]
+spring-constant = 30000
+bounce = 1250
+rebound = 3750
+travel = 0.05
+anti-roll = 5000
+
+[wheel.fr.coilover]
+spring-constant = 30000
+bounce = 1250
+rebound = 3750
+travel = 0.05
+anti-roll = 5000
+
+[wheel.rl.coilover]
+spring-constant = 30000
+bounce = 1250
+rebound = 3750
+travel = 0.05
+anti-roll = 2000
+
+[wheel.rr.coilover]
+spring-constant = 30000
+bounce = 1250
+rebound = 3750
+travel = 0.05
+anti-roll = 2000
+
+[wheel.fl.brake]
+friction = 0.3
+max-pressure = 2.5e6
+bias = 0.65
+radius = 0.19
+area = 0.015
+
+[wheel.fr.brake]
+friction = 0.3
+max-pressure = 2.5e6
+bias = 0.65
+radius = 0.19
+area = 0.015
+
+[wheel.rl.brake]
+friction = 0.3
+max-pressure = 2.5e6
+bias = 0.35
+radius = 0.18
+area = 0.015
+handbrake = 1.5
+
+[wheel.rr.brake]
+friction = 0.3
+max-pressure = 2.5e6
+bias = 0.35
+radius = 0.18
+area = 0.015
+handbrake = 1.5
+
+[wheel.fl.tire]
+texture = tire/touring.png
+size = 185, 55, 13
+type = tire/racing.tire
+
+[wheel.fr.tire]
+texture = tire/touring.png
+size = 185, 55, 13
+type = tire/racing.tire
+
+[wheel.rl.tire]
+texture = tire/touring.png
+size = 185, 55, 13
+type = tire/racing.tire
+
+[wheel.rr.tire]
+texture = tire/touring.png
+size = 185, 55, 13
+type = tire/racing.tire
+
+[wheel.fl.double-wishbone]
+upper-chassis-rear = -0.16, 0.64, -0.46
+upper-chassis-front = -0.16, 1.37, -0.46
+upper-hub = -0.62, 1.18, -0.33
+lower-chassis-rear = -0.14, 0.64, -0.64
+lower-chassis-front = -0.14, 1.35, -0.64
+lower-hub = -0.66, 1.21, -0.55
+
+[wheel.fr.double-wishbone]
+upper-chassis-rear = 0.16, 0.64, -0.46
+upper-chassis-front = 0.16, 1.37, -0.46
+upper-hub = 0.62, 1.18, -0.33
+lower-chassis-rear = 0.14, 0.64, -0.64
+lower-chassis-front = 0.14, 1.35, -0.64
+lower-hub = 0.66, 1.21, -0.55
+
+[wheel.rl.double-wishbone]
+upper-chassis-rear = -0.06, -1.35, -0.35
+upper-chassis-front = -0.18, -0.73, -0.35
+upper-hub = -0.61, -1.18, -0.33
+lower-chassis-rear = -0.04, -1.28, -0.55
+lower-chassis-front = -0.04, -0.91, -0.55
+lower-hub = -0.63, -1.18, -0.55
+
+[wheel.rr.double-wishbone]
+upper-chassis-rear = 0.06, -1.35, -0.35
+upper-chassis-front = 0.18, -0.73, -0.35
+upper-hub = 0.61, -1.18, -0.33
+lower-chassis-rear = 0.04, -1.28, -0.55
+lower-chassis-front = 0.04, -0.91, -0.55
+lower-hub = 0.63, -1.18, -0.55
+
+[wheel.fl]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+position = -0.74, 1.20, -0.45
+camber = -1.0
+caster = 0.0
+toe = 0.5
+ackermann = 8.64	# 50% ackermann
+steering = 20
+
+[wheel.fr]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+scale = -1, 1, 1
+position = 0.74, 1.20, -0.45
+camber = 1.0
+caster = 0.0
+toe = -0.5
+ackermann = -8.64
+steering = 20
+
+[wheel.rl]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+position = -0.74, -1.18, -0.45
+camber = -0.5
+caster = 0.0
+toe = -1.0
+
+[wheel.rr]
+texture = wheel/5_spoke_m.png
+mesh = wheel/5_spoke_m.joe
+scale = -1, 1, 1
+position = 0.74, -1.18, -0.45
+camber = 0.5
+caster = 0.0
+toe = 1.0
+
+[wheel.fl.link]
+plastic-limit = 5000
+elastic-limit = 3000
+
+[wheel.fr.link]
+plastic-limit = 5000
+elastic-limit = 3000
+
+[wheel.rl.link]
+plastic-limit = 5000
+elastic-limit = 3000
+
+[wheel.rr.link]
+plastic-limit = 5000
+elastic-limit = 3000
+
+[steering]
+texture = steering_wheel.png
+mesh = steering_wheel.joe
+position = 0.00, 0.67, -0.41
+rotation = 87.5, 0.0, 0.0
+max-angle = 320
+
+[driver]
+texture = driver2.png, driver-misc1.png
+mesh = driver.joe
+position = 0, 0.3, -0.35
+mass = 80.0
+scale = 0.72
+
+[body]
+texture = body00.png, body-misc1.png
+mesh = body.joe
+
+[body.box]
+center = 0.0, 0.3, -0.5
+size = 1.4, 3.4, 0.3
+
+[center.box]
+center = 0.0, 0.0, -0.15
+size = 0.5, 3.0, 0.8
+
+[interior]
+texture = interior.png
+mesh = interior.joe
+
+# these are used to calculate the weight distribution and balance
+# car median -0.4 z-axis
+[particle-00]
+mass = 17.0
+position = 0.0, 0.5, -0.45
+
+[particle-01]
+mass = 35.0
+position = 0.4, -1.06, -0.4
+
+[particle-02]
+mass = 35.0
+position = -0.4, -1.06, -0.4
+
+[particle-03]
+mass = 56.0
+position = 0.4, 1.35, -0.4
+
+[particle-04]
+mass = 56.0
+position = -0.4, 1.35, -0.4
+
+[camera.0]
+name = hood
+type = mount
+position = 0.0, 0.6, 0.0
+
+[camera.1]
+name = driver
+type = mount
+position = 0.0, 0.3, 0.15
+
+[camera.2]
+name = chase rigid
+type = mount
+position = 0.0, -6.0, 1.5
+lookat = 0, 0, 0
+
+[camera.3]
+name = chase loose
+type = chase
+position = 0.0, -6.0, 2.0
+
+[camera.4]
+name = orbit
+type = orbit
+position = 0.0, -6.0, 2.0
+
+[camera.5]
+name = free
+type = free
+position = 0.0, -8.0, 2.0
