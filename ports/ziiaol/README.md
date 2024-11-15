@@ -1,5 +1,5 @@
 ## Installation
-Download the .zip from https://hoverbat.itch.io/ziiaol and put in the port folder.
+Download the .zip from https://hoverbat.itch.io/ziiaol and put in the `ports/ziiaol/assets` folder.
 
 ## Controls
 | Button | Action |
