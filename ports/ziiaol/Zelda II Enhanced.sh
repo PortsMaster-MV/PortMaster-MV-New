@@ -21,14 +21,10 @@ get_controls
 GAMEDIR="/$directory/ports/ziiaol"
 
 # Exports
-export LD_LIBRARY_PATH="/usr/lib32:$GAMEDIR/libs32:$GAMEDIR/libs":$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/lib:$GAMEDIR/libs:$LD_LIBRARY_PATH"
 export PATCHER_FILE="$GAMEDIR/tools/patchscript"
 export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
 export PATCHER_TIME="2 to 5 minutes"
-
-export GMLOADER_DEPTH_DISABLE=1
-export GMLOADER_SAVEDIR="$GAMEDIR/gamedata/"
-export GMLOADER_PLATFORM="os_linux"
 
 # CD and set permissions
 cd $GAMEDIR
@@ -52,11 +48,17 @@ else
     echo "Patching process already completed. Skipping."
 fi
 
+# Display loading splash
+if [ -f "$GAMEDIR/patchlog.txt" ]; then
+    $ESUDO ./lib/splash "splash.png" 1 
+    $ESUDO ./lib/splash "splash.png" 3000
+fi
+
 # Run game
 echo "Loading, please wait..." > $CUR_TTY
-$GPTOKEYB "gmloader" -c "zelda.gptk" &
-pm_platform_helper "$GAMEDIR/gmloader"
-./gmloader game.apk
+$GPTOKEYB "gmloader.armhf" -c "zelda.gptk" &
+pm_platform_helper "gmloader.armhf"
+./gmloader.armhf -c gmloader.json
 
 # Cleanup
-pm_finish &
+pm_finish
