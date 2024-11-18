@@ -1,0 +1,275 @@
+#!/bin/bash
+
+# The rom version we are dealing with
+VERSION="us"  # at the moment only US is supported and has been tested in Portmaster
+
+# Set GAMEDIR to the current directory and set logfile
+GAMEDIR="${PWD}"
+LOGFILE="${GAMEDIR}/patchlog.txt"
+
+RESTOOL_ZIP="restool.zip"
+
+# TOOLBOX PATHS
+RESTOOL_ROOT="${GAMEDIR}/restool"
+RESTOOL_BIN="${RESTOOL_ROOT}/bin"
+RESTOOL_LIBS="${RESTOOL_ROOT}/libs"
+
+# Main sources for building and assembling the ressources
+MAIN_DIR="main"
+
+# This is were the ressources will be built and assembled
+BUILD_DIR="${RESTOOL_ROOT}/${MAIN_DIR}/build/us_pc"
+
+# Path to compressed packages (zip / mp3)
+PACKAGES_DIR="packages"
+
+# Ressources stuffs
+BASEZIP="base.zip"
+DEMOS_DIR="demos"
+TEXTS_DIR="texts"
+RESSOURCES_LST="${BASEZIP} ${DEMOS_DIR} ${TEXTS_DIR}"
+
+# This is the ressource folder name
+RES_DIR="res"
+
+# Dynos stuffs
+DYNOS_DIR="dynos"
+PACKS_DIR="packs"
+
+# Redirect output and error to the log file
+exec > >(tee -a "$LOGFILE") 2>&1
+echo "GAMEDIR is set to: $GAMEDIR"
+
+echo "Unpacking ${RESTOOL_ZIP}"
+unzip "${RESTOOL_ZIP}"
+
+if [ ! $? -eq 0 ];then
+  echo "Unpacking ${RESTOOL_ZIP} has failed"
+  echo "Patching process failed!"
+  exit 1
+fi
+
+cd restool
+
+# Ensure execution permissions are set
+chmod a+x "${RESTOOL_BIN}"/*
+
+# Create res folder
+echo "(EXEC) mkdir -p \"${GAMEDIR}/${RES_DIR}\""
+mkdir -p "${GAMEDIR}/${RES_DIR}"
+
+# Create dynos folders
+echo "(EXEC) mkdir -p \"${GAMEDIR}/${DYNOS_DIR}\""
+mkdir -p "${GAMEDIR}/${DYNOS_DIR}"
+echo "(EXEC) mkdir -p \"${GAMEDIR}/${DYNOS_DIR}/${PACKS_DIR}\""
+mkdir -p "${GAMEDIR}/${DYNOS_DIR}/${PACKS_DIR}"
+
+# Setup bin and library paths
+export PATH="${RESTOOL_BIN}:$PATH"
+export LD_LIBRARY_PATH="${RESTOOL_LIBS}:${LD_LIBRARY_PATH}"
+
+date
+
+cd "${MAIN_DIR}"
+
+# We make a copy of the ROM
+echo "(EXEC) cp \"${GAMEDIR}/baserom.${VERSION}.z64\" ."
+cp "${GAMEDIR}/baserom.${VERSION}.z64" .
+
+# We run manually the asset extraction script (Makefile can do it) because we 
+# want to watch the result of this step before going any further
+echo "(EXEC) ./extract_assets.py us"
+./extract_assets.py us
+
+if [ ! $? -eq 0 ]
+then
+
+  # Extracting assets from the ROM has failed. The installation script will exit.
+  echo "Oh, no! Extraction of the assets from the rom has failed"
+  romsha1=`cat sm64.us.sha1 | cut -d' ' -f1`
+  echo -n "$0: check that sha1 of baserom.us.z64 is ${romsha1}"
+
+  echo "Game over! Will stop here"
+
+  echo "Error" -m "Oh, no! Asset extraction from baserom.${VERSION}.z64 has failed. Please check that SHA1 of baserom.${VERSION}.z64 is ${romsha1} and see log for details."
+  echo "Patching process failed!"
+  exit 1
+fi
+
+echo "Yahoo! Assets have been extracted from the rom, let's build and assemble the ressources"
+echo "(EXEC) make res"
+
+make res
+
+if [ ! $? -eq 0 ]
+then
+
+  # Something went wrong during the building of the ressources. The installation script will exit.
+
+  echo "Oh, no! An error occured while building and assembling the ressources"
+
+  echo "Game over! Will stop here"
+  echo "Patching process failed!"
+  exit 1
+fi
+
+# The ressources have been built.
+echo "ressources are ready, let's install them"
+
+cd "${RESTOOL_ROOT}"
+
+# suffix that will be added to the backup names
+TS=$(date +%s)
+
+for ressource in ${RESSOURCES_LST}
+do
+
+  if [ -f "$GAMEDIR/$RES_DIR/$ressource" ] || [ -d "$GAMEDIR/$RES_DIR/$ressource" ]
+  then
+
+    # The ressource is already present so we backup before we install it
+    echo "ressource ${ressource} is already present, let's backup it first";
+    echo "(EXEC) mv \"${GAMEDIR}/${RES_DIR}/${ressource}\" \"${GAMEDIR}/${RES_DIR}/${ressource}-backup-${TS}\"";
+    mv "${GAMEDIR}/${RES_DIR}/${ressource}" "${GAMEDIR}/${RES_DIR}/${ressource}-backup-${TS}"
+  fi
+
+  # The ressource is copied into res folder
+  echo "(EXEC) mv \"${BUILD_DIR}/${RES_DIR}/${ressource}\" \"${GAMEDIR}/${RES_DIR}/\""
+  mv "${BUILD_DIR}/${RES_DIR}/${ressource}" "${GAMEDIR}/${RES_DIR}/"
+
+  if [ ! $? -eq 0 ]
+  then
+    echo "Oh, no! An error occured while installing ${ressource}"
+
+    echo "Game over! Will stop here"
+    echo "Patching process failed!"
+    exit 1
+  fi
+
+done
+
+echo "let's see if we have zip ressource packages to install"
+
+for respack in ${PACKAGES_DIR}/${RES_DIR}/*.zip
+do
+
+  ressource="$(basename ${respack} .zip)"
+
+  if [ -f "$GAMEDIR/$RES_DIR/$ressource" ] || [ -d "$GAMEDIR/$RES_DIR/$ressource" ]
+  then
+
+    # the pack is already present so we make a backup before we install it
+
+    echo "ressource ${ressource} is already present, let's backup it first";
+    echo "(EXEC) mv \"${GAMEDIR}/${RES_DIR}/${ressource}\" \"${GAMEDIR}/${RES_DIR}/${ressource}-backup-${TS}\"";
+    mv "${GAMEDIR}/${RES_DIR}/${ressource}" "${GAMEDIR}/${RES_DIR}/${ressource}-backup-${TS}"
+  fi
+
+  # The pack is extracted in the res folder
+
+  echo "(EXEC) unzip \"${PACKAGES_DIR}/${RES_DIR}/${ressource}.zip\" -d \"${GAMEDIR}/${RES_DIR}/\""
+  unzip "${PACKAGES_DIR}/${RES_DIR}/${ressource}.zip" -d  "${GAMEDIR}/${RES_DIR}/"
+
+  if [ ! $? -eq 0 ]
+  then
+    echo "Oh, no! An error occured while unpacking ${respack}"
+    echo "Game over! Will stop here"
+    echo "Patching process failed!"
+  fi
+done
+
+echo "let's see if we have zip or mp3 dynos packages to install"
+
+for dynospack in ${PACKAGES_DIR}/${DYNOS_DIR}/*
+do
+
+  zip=`[[ "$dynospack" =~ ".zip" ]] && echo 1 || echo 0`
+  mp3=`[[ "$dynospack" =~ ".mp3" ]] && echo 1 || echo 0`
+  audio=`[[ "$dynospack" =~ "audio" ]] && echo 1 || echo 0`
+
+  if [ $audio -eq 1 ]
+  then
+    # This is a dynos audio pack
+
+    dynospack="$(basename ${dynospack} .mp3)"
+
+    if [ -d "$GAMEDIR/$DYNOS_DIR/$dynospack" ]
+    then
+
+      # the pack is already present so we make a backup before we install it
+
+      echo "Dynos pack $dynospack is already present, let's backup it first";
+      echo "(EXEC) mv \"${GAMEDIR}/${DYNOS_DIR}/${dynospack}\" \"${GAMEDIR}/${DYNOS_DIR}/${dynospack}-backup-${TS}\"";
+      mv "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" "${GAMEDIR}/${DYNOS_DIR}/${dynospack}-backup-${TS}"
+    fi
+
+    if [ $mp3 -eq 1 ]
+    then
+
+      # The pack comes in mp3 format we need to convert the file to wav format into the dynos folder
+
+      mkdir -p "${GAMEDIR}/${DYNOS_DIR}/${dynospack}"
+      cd "${PACKAGES_DIR}/${DYNOS_DIR}/${dynospack}.mp3"
+      rm -f mp3.nok
+      find . -iname '*.txt' -exec cp {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}/{}" \;
+      find . -type d -exec mkdir -p "${GAMEDIR}/${DYNOS_DIR}/${dynospack}/{}" \;
+      find . -iname '*.mp3' -exec sh -c 'mpg123 -q -w "$2/${1%.*}.wav" "$1" || touch mp3.nok' sh {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" \;
+      
+      if [ -f "mp3.nok" ]
+      then
+        rm -f mp3.nok
+        echo "Oh, no! An error occured while unpacking ${dynospack}.mp3"
+        echo "Patching process failed!"
+      fi
+
+      cd ${RESTOOL_ROOT}
+
+    else
+      
+      # The pack comes in wav format so we just copy the folder into the dynos folder
+
+      echo "(EXEC) cp -R \"${PACKAGES_DIR}/${dynospack}\" \"${GAMEDIR}/${DYNOS_DIR}/${dynospack}\""
+      cp -R "${PACKAGES_DIR}/${dynospack}" "${GAMEDIR}/${DYNOS_DIR}/${dynospack}"
+
+      if [ ! $? -eq 1 ]
+      then
+        echo "Oh, no! An error occured while installing ${dynospack}"
+      fi
+
+    fi
+
+  else
+
+    if [ $zip -eq 1 ]
+    then
+
+      # The pack is packed in a zip file
+
+      dynospack="$(basename ${dynospack} .zip)"
+
+      if [ -d "$GAMEDIR/$DYNOS_DIR/$PACKS_DIR/$dynospack" ]
+      then
+
+        # The pack is already present so we make a backup before we install it
+
+        echo "Dynos pack $dynospack is already present, let's backup it first";
+        echo "(EXEC) mv \"${GAMEDIR}/${DYNOS_DIR}/${PACK_DIR}/${dynospack}\" \"${GAMEDIR}/${DYNOS_DIR}/${PACK_DIR}/${dynospack}-backup-${TS}\"";
+        mv "${GAMEDIR}/${DYNOS_DIR}/${PACK_DIR}/${dynospack}" "${GAMEDIR}/${DYNOS_DIR}/${PACK_DIR}/${dynospack}-backup-${TS}"
+      fi
+
+      # The pack is extracted in the dynos folder
+      echo "(EXEC) unzip \"${PACKAGES_DIR}/${DYNOS_DIR}/${dynospack}.zip\" -d \"${GAMEDIR}/${DYNOS_DIR}/${PACKS_DIR}/\""
+      unzip "${PACKAGES_DIR}/${DYNOS_DIR}/${dynospack}.zip" -d  "${GAMEDIR}/${DYNOS_DIR}/${PACKS_DIR}/"
+
+      if [ ! $? -eq 0 ]
+      then
+        echo "Oh, no! An error occured while unpacking ${pack}.zip"
+      fi
+    fi
+  
+  fi
+
+done
+
+echo "Yahoo! The ressources and packs have been installed. Let's-a go!"
+exit 0
