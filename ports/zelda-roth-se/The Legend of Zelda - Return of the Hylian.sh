@@ -13,6 +13,7 @@ else
 fi
 
 source $controlfolder/control.txt
+[ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 get_controls
 
 # Set variables
@@ -22,7 +23,7 @@ solarus_dir="$HOME/portmaster-solarus"
 solarus_file="$controlfolder/libs/${runtime}.squashfs"
 
 # Exports
-export LD_LIBRARY_PATH="$GAMEDIR/libs:$solarus_dir"
+export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/libs:$solarus_dir:$LD_LIBRARY_PATH"
 
 cd $GAMEDIR
 
@@ -53,7 +54,6 @@ $GPTOKEYB "$runtime" -c "zroth.gptk" &
 echo "Loading, please wait... (might take a while!)" > /dev/tty0
 "$runtime" $GAMEDIR/*.solarus 2>&1 | tee -a ./"log.txt"
 $ESUDO kill -9 $(pidof gptokeyb)
-$ESUDO umount "$solarus_file" || true
-$ESUDO systemctl restart oga_events & 
-printf "\033c" >> /dev/tty1
-printf "\033c" > /dev/tty0
+
+# Cleanup
+pm_finish
