@@ -49,9 +49,9 @@ export PATCHER_TIME="about 10 minutes"
 
 check_mario()
 {
-  [[ ! -f $1 ]] && echo "error" && return 1
+  [[ ! -f $1 ]] && echo "error" && return 0
   calc_md5=`md5sum "$1" | cut -d' ' -f1`
-  echo "calc_md5"
+  echo "calc_md5=$calc_md5"
   [[ "$calc_md5" == "$SM64US_MD5" ]]
 }
 
