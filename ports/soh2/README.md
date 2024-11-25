@@ -1,5 +1,5 @@
 ## Information
-2Ship2Harkinian binaries were built from the develop branch (bleeding edge) on 08/14/2024. You can build your own binaries by following the [BUILDING.md guide](soh2/BUILDING.md).
+2Ship2Harkinian binaries were built from the develop branch (bleeding edge) on 08/14/2024. You can build your own binaries by following the [BUILDING.md guide](https://github.com/PortsMaster-MV/PortMaster-MV-New/blob/main/ports/soh2/soh2/BUILDING.md).
 
 ## Installation
 You must generate your `mm.o2r` file with a rom that has one of the following SHAs:
