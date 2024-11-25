@@ -21,4 +21,9 @@ Special thank you goes to [**Justin Bohemier**](https://github.com/KScl) for cre
 
 N/A.
 
-This port uses GMLoader Next.
+## Thanks
+
+Justin Bohemier - The game and distribution permission
+JohnnyOnFlame, PortMaster Team - [GMLoader]()
+t0bi0, Shallow - Communications, initial port development
+Jeod, JanTrueno - Port testing, refinement, and structure
