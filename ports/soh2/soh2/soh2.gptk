@@ -1,20 +1,4 @@
-###########################
-#DEFAULT KEYBOARD CONTROLS#
-###########################
-# A = X
-# B = C
-# L = E
-# R = R
-# Z = Z
-# D-PAD UP = T
-# D-PAD DOWN = G
-# D-PAD LEFT = F
-# D-PAD RIGHT = H
-# ANALOG = WASD
-# C-BUTTONS = UP/DOWN/LEFT/RIGHT
-# START = SPACE
-
-guide = \"
+guide = f1
 back = \"
 start = \"
 up = \"
