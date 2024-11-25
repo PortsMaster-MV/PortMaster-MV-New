@@ -89,6 +89,7 @@ fi
 # Run the game
 echo "Loading, please wait... (might take a while!)" > $CUR_TTY
 $GPTOKEYB "2s2h.elf" -c "soh2.gptk" & 
+pm_platform_helper "$GAMEDIR/2s2h.elf"
 ./2s2h.elf
 
 # Cleanup
