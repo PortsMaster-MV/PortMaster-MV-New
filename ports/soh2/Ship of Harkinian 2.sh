@@ -93,6 +93,6 @@ $GPTOKEYB "2s2h.elf" -c "soh2.gptk" &
 
 # Cleanup
 rm -rf "$GAMEDIR/logs/"
-$ESUDO systemctl restart oga_events & 
+pm_finish
 printf "\033c" >> /dev/tty1
 printf "\033c" > /dev/tty0
