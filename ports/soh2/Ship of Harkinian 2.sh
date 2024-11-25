@@ -94,4 +94,3 @@ $GPTOKEYB "2s2h.elf" -c "soh2.gptk" &
 # Cleanup
 rm -rf "$GAMEDIR/logs/"
 pm_finish
-printf "\033c" > /dev/tty0
