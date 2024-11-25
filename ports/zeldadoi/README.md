@@ -23,7 +23,7 @@ N/A.
 
 ## Thanks
 
-Justin Bohemier - The game and distribution permission
-JohnnyOnFlame, PortMaster Team - [GMLoader]()
-t0bi0, Shallow - Communications, initial port development
-Jeod, JanTrueno - Port testing, refinement, and structure
+* Justin Bohemier - The game and distribution permission
+* JohnnyOnFlame, PortMaster Team - [GMLoader]()
+* t0bi0, Shallow - Communications, initial port development
+* Jeod, JanTrueno - Port testing, refinement, and structure
