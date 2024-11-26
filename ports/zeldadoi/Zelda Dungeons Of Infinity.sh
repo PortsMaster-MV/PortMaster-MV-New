@@ -29,10 +29,7 @@ export LD_LIBRARY_PATH="$GAMEDIR/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 # Display loading splash
-if [ -f "$GAMEDIR/patchlog.txt" ]; then
-    $ESUDO ./tools/splash "splash.png" 1 
-    $ESUDO ./tools/splash "splash.png" 5000
-fi
+$ESUDO ./tools/splash "splash.png" 5000
 
 # Assign configs and load the game
 $GPTOKEYB "gmloader.aarch64" &
