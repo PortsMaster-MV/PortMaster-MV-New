@@ -22,6 +22,8 @@ GAMEDIR=/$directory/ports/thextech
 cd $GAMEDIR/
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
+export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
+
 $GPTOKEYB "thextech" &
 pm_platform_helper "$GAMEDIR/thextech"
 ./thextech
