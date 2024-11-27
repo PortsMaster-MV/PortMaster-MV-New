@@ -11,17 +11,9 @@ For better compatibility TheXTech was build in Ubuntu 20.04 arm64 chroot.
 
 ```
 git clone --recurse-submodules https://github.com/TheXTech/TheXTech.git
-```
-
-then edit CMakeLists.txt (or else it will not build inside such old environment) and add line:
-```
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-```
-then we start to build:
-```
 mkdir build
 cd ./build
-cmake -DCMAKE_BUILD_TYPE=MinSizeRel -DUSE_SYSTEM_SDL2=ON -DTHEXTECH_BUILD_GL_DESKTOP_MODERN=OFF -DTHEXTECH_BUILD_GL_DESKTOP_LEGACY=OFF -DTHEXTECH_BUILD_GL_ES_LEGACY=OFF ..
+cmake -DCMAKE_BUILD_TYPE=MinSizeRel -DPORTMASTER=ON ..
 make
 ```
 
@@ -47,13 +39,6 @@ Additional downloaded worlds and episodes can be put into
 
 Game uses GameController API for all inputs exept cursor movement.  
 Adjust controls in OPTIONS - > CONTROLS -> GAMEPAD  
-Cursor is mapped to right analog stick with the help of gptokeyb tool.  
-R2 is left button mouse click  
-L2 is right button mouse click  
-
-To avoid problems with simultaneous cursor control from a gamepad and mouse, go to the  
-OPTIONS -> CONTROLS -> Gamepad (In Use) -> Chose your gamepad -> Cursor controls  
-and remove any mappings to real buttons.
 
 
 ## PERFORMANCE FIX
@@ -72,9 +57,9 @@ inside
 
 ## ROCKNIX Powkiddy X55 gamepad fix
 
-There are reports that TheXTech has problems detecting gamepad for this particular device. Solution is to edit TheXTech.sh line#34
+There are reports that TheXTech may have problems detecting gamepad for this particular device. Solution is to edit TheXTech.sh line#34
 ```
-$GPTOKEYB "thextech" -c "$GAMEDIR/thextech.gptk" &
+$GPTOKEYB "thextech" &
 ```
 replace with 
 ```
