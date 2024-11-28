@@ -123,10 +123,10 @@ $GPTOKEYB "sm64.us.f3dex2e.${DEVICE_ARCH}" &
 pm_platform_helper "$GAMEDIR/sm64.us.f3dex2e.${DEVICE_ARCH}"
 
 # use hacksdl to create a virtual analog stick from the dpad
-if [[ -f "${GAMEDIR}/hacksdl.${ANALOGSTICKS}.conf" ]]; then
+if [[ -f "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf" ]]; then
   export LD_PRELOAD="hacksdl.so"
   export HACKSDL_VERBOSE=1
-  export HACKSDL_CONFIG_FILE="${GAMEDIR}/hacksdl.${ANALOGSTICKS}.conf"
+  export HACKSDL_CONFIG_FILE="${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf"
 fi
 
 ./sm64.us.f3dex2e.${DEVICE_ARCH} --savepath ./conf/
