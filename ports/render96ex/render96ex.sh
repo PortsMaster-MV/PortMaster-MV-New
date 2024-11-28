@@ -92,7 +92,7 @@ then
   if [ ! $? -eq 0 ]
   then
     echo "No compatible rom file has been found, can not proceed to the installation of the ressources"
-    text_viewer -e -f 25 -w -t "Error" -m "Oh, no! Ressources are missing. Install them first: put ${BASEROM} (md5sum ${SM64US_MD5}) in ${GAMEDIR}."
+    text_viewer -e -f 25 -w -t "Error" -m "Oh, no! Ressources are missing. Install them first: put ${BASEROM} (md5sum ${SM64US_MD5}) in ${GAMEDIR}.\n\nPress SELECT to close this window."
     exit 1
   fi
 
@@ -106,7 +106,7 @@ then
 
   else
       echo "This port requires the latest version of PortMaster."
-      text_viewer -e -f 25 -w -t "PortMaster needs to be updated" -m "This port requires the latest version of PortMaster. Please update PortMaster first."
+      text_viewer -e -f 25 -w -t "PortMaster needs to be updated" -m "This port requires the latest version of PortMaster. Please update PortMaster first.\n\nPress SELECT to close this window."
       exit 0
   fi
 
@@ -118,15 +118,16 @@ then
   cp sm64config.default.txt $CONFDIR/sm64config.txt
 fi
 
+$GPTOKEYB "sm64.us.f3dex2e.${DEVICE_ARCH}" &
+
+pm_platform_helper "$GAMEDIR/sm64.us.f3dex2e.${DEVICE_ARCH}"
+
 # use hacksdl to create a virtual analog stick from the dpad
 if [[ -f "${GAMEDIR}/hacksdl.${ANALOGSTICKS}.conf" ]]; then
   export LD_PRELOAD="hacksdl.so"
   export HACKSDL_VERBOSE=1
   export HACKSDL_CONFIG_FILE="${GAMEDIR}/hacksdl.${ANALOGSTICKS}.conf"
 fi
-
-$GPTOKEYB "sm64.us.f3dex2e.${DEVICE_ARCH}" &
-pm_platform_helper "$GAMEDIR/sm64.us.f3dex2e.${DEVICE_ARCH}"
 
 ./sm64.us.f3dex2e.${DEVICE_ARCH} --savepath ./conf/
 
