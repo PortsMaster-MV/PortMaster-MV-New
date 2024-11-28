@@ -20,7 +20,6 @@ get_controls
 
 GAMEDIR="/$directory/ports/render96ex"
 CONFDIR="$GAMEDIR/conf/"
-BASEROM="baserom.us.z64"
 RESTOOL_DIR="restool"
 RESTOOL_ZIP="restool.zip"
 RES_DIR="res"
@@ -28,6 +27,7 @@ BASEZIP="base.zip"
 DEMOS_DIR="demos"
 TEXTS_DIR="texts"
 VERSION="us"  # at the moment only US is supported and has been tested in Portmaster
+BASEROM="baserom.${VERSION}.z64"
 SM64US_MD5="20b854b239203baf6c961b850a4a51a2"
 
 mkdir -p "$CONFDIR"
@@ -45,33 +45,33 @@ export PATCHER_FILE="$GAMEDIR/tools/install_mario64"
 export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
 export PATCHER_TIME="about 10 minutes"
 
-# -------------------- BEGIN FUNCTIONS --------------------
+# execution flag
+$ESUDO chmod a+x "$GAMEDIR/sm64.us.f3dex2e.aarch64"
+$ESUDO chmod a+x "$GAMEDIR/bin.aarch64/text_viewer"
 
-check_mario()
-{
-  [[ ! -f $1 ]] && echo "error" && return 0
-  calc_md5=`md5sum "$1" | cut -d' ' -f1`
-  echo "calc_md5=$calc_md5"
-  [[ "$calc_md5" == "$SM64US_MD5" ]]
-}
+# -------------------- BEGIN FUNCTIONS --------------------
 
 find_mario()
 {
   echo "Searching rom file (expecting md5sum = $SM64US_MD5)"
   find $1 -iname "*.z64" -print0 |
   while IFS= read -r -d '' line; do
+    [[ ! -f "$line" ]] && continue
+
     echo -n "Checking $line "
-    calc_md5=`check_mario "$line"`
-    if [[ $? -eq 0 ]];then
+    calc_md5=`md5sum "$line" | cut -d' ' -f1`
+
+    if [[ "$calc_md5" == "$SM64US_MD5" ]];then
       echo "- OK"
-      mv "${line}" "${GAMEDIR}/baserom.${VERSION}.z64"
-      return 0
+      cp "${line}" "${GAMEDIR}/${RESTOOL_DIR}/baserom.${VERSION}.z64"
+      break
     fi
+
+    mv "${line}" "${line}.incompatible"
     echo "- WRONG md5sum ($calc_md5)"
   done
 
-  [[ -f "${GAMEDIR}/baserom.${VERSION}.z64" ]] && return 0
-  echo "No rom found"
+  [[ -f "${GAMEDIR}/${RESTOOL_DIR}/baserom.${VERSION}.z64" ]] && return 0
   sleep 10
   return 1
 }
@@ -83,14 +83,16 @@ if [ ! -f $GAMEDIR/$RES_DIR/$BASEZIP ] || [ ! -d $GAMEDIR/$RES_DIR/$DEMOS_DIR ] 
 then
   echo "Ressources are missing."
 
+  mkdir -p "${RESTOOL_DIR}"
+
   echo "Looking for the rom"
   # Check if a rom file is present
-  check_mario "${GAMEDIR}/baserom.${VERSION}.z64" || find_mario "${GAMEDIR}/"
+  find_mario "${GAMEDIR}/"
 
   if [ ! $? -eq 0 ]
   then
-    echo "No baserom.${VERSION}.z64 file is present, can not proceed to the installation of the ressources"
-    text_viewer -e -f 25 -w -t "Error" -m "Oh, no! Ressources are missing. Install them first (put ${BASEROM} in ${GAMEDIR})."
+    echo "No compatible rom file has been found, can not proceed to the installation of the ressources"
+    text_viewer -e -f 25 -w -t "Error" -m "Oh, no! Ressources are missing. Install them first: put ${BASEROM} (md5sum ${SM64US_MD5}) in ${GAMEDIR}."
     exit 1
   fi
 
@@ -100,7 +102,7 @@ then
 
     source "$controlfolder/utils/patcher.txt"
 
-    rm -rf ${RESTOOL_DIR}
+    rm -rf "${RESTOOL_DIR}"
 
   else
       echo "This port requires the latest version of PortMaster."
@@ -114,6 +116,13 @@ fi
 if [ ! -f $CONFDIR/sm64config.txt ]
 then
   cp sm64config.default.txt $CONFDIR/sm64config.txt
+fi
+
+# use hacksdl to create a virtual analog stick from the dpad
+if [[ -f "${GAMEDIR}/hacksdl.${ANALOGSTICKS}.conf" ]]; then
+  export LD_PRELOAD="hacksdl.so"
+  export HACKSDL_VERBOSE=1
+  export HACKSDL_CONFIG_FILE="${GAMEDIR}/hacksdl.${ANALOGSTICKS}.conf"
 fi
 
 $GPTOKEYB "sm64.us.f3dex2e.${DEVICE_ARCH}" &
