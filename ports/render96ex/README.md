@@ -34,6 +34,8 @@ The extraction of the assets from the rom will temporary uses up to 1 GB of extr
 
 **If you are using muOS** you need at least the banana version to run this port.
 
+R36S with ArkOS can only run the game after disabling the audio pack, otherwise the game crashes just after launching it. To disable the audio pack rename the `audio` folder in `render96ex/dynos` to `audio.disable`. The game will run with limited sounds effects and no music.
+
 The Dynos 3D model pack is installed but not enabled by default because on most handheld the game will be choppy when combined with the 60 fps feature. You have to enable it in the dynos menu.
 
 The 60 fps feature is enabled by default. If your device can not handle it and the game is running choppy you can try to disable it in the display options in the option menu. Then wait few seconds to let the framerate stabilize.
@@ -56,49 +58,53 @@ If you did something wrong in the dynos configuration (dynos menu) and the game 
 
 ## Controls
 
+### 2 sticks devices
+
 | Button | Action |
 |--|--| 
-|DPAD|Movement|
-|LSTICK|Movement|
+|DPAD|Movement (walk)|
+|LSTICK|Movement (run)|
 |RSTICK|Camera|
 |L1|Duck (Z)|
 |R1|Change camera mode (R)|
 |R2|Camera right|
 |L2|Camera left|
 |A|Camera zoom out|
-|X|Camera zoom in|
+|X|Camera zoom in/Make mario run/walk slower|
 |B|Jump|
 |Y|Action|
 |Start|Start/Pause|
 
-### Control hacking (mario walking, use external controller)
+### 1 stick devices
 
-You can use [hacksdl](https://github.com/cdeletre/hacksdl) to hack the controls in Render96ex. First you'll need to install it:
-1. update the `render96ex.sh` by adding after line 40 (after `export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"`) this 3 lines:
-```
-export LD_PRELOAD="hacksdl.so"
-export HACKSDL_VERBOSE=1
-export HACKSDL_CONFIG_FILE="$PWD/hacksdl.conf"
-```
-2. copy `hacksdl.so` in `render96ex/libs.aarch64` folder (download [hacksdl-aarch64 v1.0](https://github.com/cdeletre/hacksdl/releases/download/v1.0/hacksdl-aarch64.v1.0.zip))
+| Button | Action |
+|--|--| 
+|DPAD|Movement (walk)|
+|LSTICK|Movement (run)|
+|L1|Duck (Z)|
+|R1|Change camera mode (R)|
+|R2|Camera right|
+|L2|Camera left|
+|A|Camera zoom out|
+|X|Camera zoom in/Make mario run/walk slower|
+|B|Jump|
+|Y|Action|
+|Start|Start/Pause|
 
-Then use this configuration if you want to make it easier to get mario walking by pressing X (it won't work for dpad, only for analog sticks):
-- hacksdl.conf (must be located in `render96ex` folder)
-```
-HACKSDL_VERBOSE="1";
-HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
-HACKSDL_MODIFIER_BUTTON="X";
-HACKSDL_MODIFIER_SHIFT_LEFTX="2";
-HACKSDL_MODIFIER_SHIFT_LEFTY="2";
-```
+### 0 stick devices
 
-Use this configuration (configurations can be merged) if you want to use an external gamepad controller (bluetooth or USB):
-- hacksdl.conf (must be located in `render96ex` folder)
-```
-HACKSDL_VERBOSE="1";
-HACKSDL_LIBSDL_NAME="libSDL2-2.0.so.0";
-HACKSDL_DISABLE_DEVICE_0="1";
-```
+| Button | Action |
+|--|--| 
+|DPAD|Movement (run)|
+|L1|Duck (Z)|
+|R1|Change camera mode (R)|
+|R2|Camera right|
+|L2|Camera left|
+|A|Camera zoom out|
+|X|Camera zoom in/Make mario walk|
+|B|Jump|
+|Y|Action|
+|Start|Start/Pause|
 
 ## Compile
 

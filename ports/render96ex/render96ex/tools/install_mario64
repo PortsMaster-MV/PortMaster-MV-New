@@ -73,8 +73,8 @@ date
 cd "${MAIN_DIR}"
 
 # We make a copy of the ROM
-echo "(EXEC) cp \"${GAMEDIR}/baserom.${VERSION}.z64\" ."
-cp "${GAMEDIR}/baserom.${VERSION}.z64" .
+echo "(EXEC) mv \"${GAMEDIR}/restool/baserom.${VERSION}.z64\" ."
+mv "${GAMEDIR}/restool/baserom.${VERSION}.z64" .
 
 # We run manually the asset extraction script (Makefile can do it) because we 
 # want to watch the result of this step before going any further
