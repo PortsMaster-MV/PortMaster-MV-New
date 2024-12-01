@@ -23,7 +23,7 @@
         "adventure",
         "rpg"
       ],
-      "image": "screenshot.png",
+      "image": null,
       "rtr": true,
       "exp": false,
       "runtime": null,

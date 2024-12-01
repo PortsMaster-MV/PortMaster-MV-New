@@ -16,11 +16,6 @@ Special thank you goes to [**Justin Bohemier**](https://github.com/KScl) for cre
 |D-Pad|Movement|
 |Left Analog|Movement|
 
-
-## Compile
-
-N/A.
-
 ## Thanks
 
 * Justin Bohemier - The game and distribution permission
