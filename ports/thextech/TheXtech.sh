@@ -14,22 +14,17 @@ else
 fi
 
 source $controlfolder/control.txt
-source $controlfolder/device_info.txt
 
 get_controls
 
 GAMEDIR=/$directory/ports/thextech
 
-export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
+cd $GAMEDIR/
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
+
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
-$ESUDO chmod 666 /dev/uinput
-
-cd $GAMEDIR/
-
-
-$GPTOKEYB "thextech" -c "$GAMEDIR/thextech.gptk" &
-./thextech  2>&1 | tee -a ./log.txt
-$ESUDO kill -9 $(pidof gptokeyb)
-$ESUDO systemctl restart oga_events &
-printf "\033c" >> /dev/tty0
+$GPTOKEYB "thextech" &
+pm_platform_helper "$GAMEDIR/thextech"
+./thextech
+pm_finish
