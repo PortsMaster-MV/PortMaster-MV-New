@@ -18,18 +18,21 @@ get_controls
 
 # Variables
 GAMEDIR="/$directory/ports/zeldadoi"
+SPLASHFILE="splash.png"
 
 # CD and set permissions
-cd $GAMEDIR
-> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
+cd "$GAMEDIR" > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 $ESUDO chmod +x -R $GAMEDIR/*
 
 # Exports
-export LD_LIBRARY_PATH="$GAMEDIR/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$GAMEDIR/libs.${DEVICE_ARCH}:$GAMEDIR/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 # Display loading splash
-$ESUDO ./tools/splash "splash.png" 5000
+if [ "$CFW_NAME" == "muOS" ]; then
+  $ESUDO ./tools/splash $SPLASHFILE 1 
+fi
+$ESUDO ./tools/splash $SPLASHFILE 5000
 
 # Assign configs and load the game
 $GPTOKEYB "gmloader.aarch64" &
