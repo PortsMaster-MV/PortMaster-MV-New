@@ -122,6 +122,12 @@ $GPTOKEYB "sm64.us.f3dex2e.${DEVICE_ARCH}" &
 
 pm_platform_helper "$GAMEDIR/sm64.us.f3dex2e.${DEVICE_ARCH}"
 
+# 1:1 display hack
+if [[ ${DISPLAY_WIDTH} -eq ${DISPLAY_HEIGHT} ]]; then
+  grep "# patch for 1:1 display" "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf" 2>&1 >/dev/null
+  [[ $? -eq 0 ]] || cat "${GAMEDIR}/hacksdl.${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}.conf" >> "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf"
+fi
+
 # use hacksdl to create a virtual analog stick from the dpad
 if [[ -f "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf" ]]; then
   export LD_PRELOAD="hacksdl.so"
