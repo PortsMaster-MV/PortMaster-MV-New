@@ -8,6 +8,7 @@
   "items_opt": [],
   "attr": {
     "title": "Ship of Harkinian",
+	"min_glibc": 2.36,
     "porter": [
       "Jeod"
     ],

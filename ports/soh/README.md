@@ -1,8 +1,11 @@
 ## Information
-Ship of Harkinian binaries were built from the develop branch (bleeding edge) on 08/14/2024. You can build your own by following the [BUILDING.md guide](BUILDING.md).
+Ship of Harkinian 8.0.6 was built from the develop branch (bleeding edge) on 08/14/2024.
+
+#### Where is the compatibility version?
+The compatibility.elf version of this port was retired due to being too slow. Previous versions were tested, including fpasteau's R36S v8.0.4 binary. There is simply no point in maintaining it.
 
 ## Installation
-You need to provide your own roms. See the [Shipwright](https://github.com/HarbourMasters/Shipwright/blob/8.0.5/docs/supportedHashes.json) repository for a list of supported rom hashes. Gather your roms and put them in the `ports/soh` folder. Start the port, and on first run, your .otr files will be generated from the roms you provide. Note that only one `oot.otr` and `oot-mq.otr` will be made--if you provide more than one rom per game, strange things may occur. You *can* use pregenerated `.otr` files from elsewhere, but you may experience crashes.
+You need to provide your own roms. See the [Shipwright](https://github.com/HarbourMasters/Shipwright/blob/develop/docs/supportedHashes.json) repository for a list of supported rom hashes. Gather your roms and put them in the `ports/soh` folder. Start the port, and on first run, your .otr files will be generated from the roms you provide. Note that only one `oot.otr` and `oot-mq.otr` will be made--if you provide more than one rom per game, strange things may occur. You *can* use pregenerated `.otr` files from elsewhere, but you may experience crashes.
 
 Texture pack files and mods can be added to the `ports/soh/mods` folder. 
 
@@ -13,7 +16,7 @@ There is a `soh.gptk` file you can use to change which button emulates F1 (defau
 
 ![menubar](https://github.com/JeodC/PortMaster-ShipOfHarkinian/assets/47716344/82b1de1d-11a9-49da-8500-61bc26902cbe)
 
-The GUI may be too large or small. Navigate to Settings->Graphics->IMGUI Menu Scale to change it.
+The GUI may be too large or small. Navigate to `Settings->Graphics->IMGUI Menu Scale` to change it.
 
 ## Default Gameplay Controls
 The port uses SDL controller mapping and controls can be remapped from the menu bar.
@@ -39,7 +42,7 @@ I prefer the OoT 3DS look along with a studio ghibli style skybox:
 ## Thanks
 Nintendo for the game  
 HarbourMasters for the native pc port  
-fpasteau for the initial build  
+fpasteau for the 8.0.4 compatibility build  
 AkerHasReawakened for the cover art  
 IanSantos for the ghibli skybox mod  
 Testers and Devs from the PortMaster Discord  

@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# Function to handle a single ROM file
+process_rom() {
+    local romfile=$1
+
+    # Compute SHA-1 hash of the file
+    ROMHASH=$(sha1sum -b "$romfile" 2>> log.txt | awk '{ print $1 }') || { echo "Error: Failed to compute SHA-1 hash" >> log.txt; return 1; }
+
+    # Remap v64 and n64 hashes to their z64 hash equivalent
+    case "$ROMHASH" in
+    a9059b56e761c9034fbe02fe4c24985aaa835dac) ROMHASH=cee6bc3c2a634b41728f2af8da54d9bf8cc14099 ;;
+    24708102dc504d3f375a37f4ae4e149c167dc515) ROMHASH=cee6bc3c2a634b41728f2af8da54d9bf8cc14099 ;;
+    580dd0bd1b6d2c51cc20a764eece84dba558964c) ROMHASH=0227d7c0074f2d0ac935631990da8ec5914597b4 ;;
+    d6342c59007e57c1194661ec6880b2f078403f4e) ROMHASH=0227d7c0074f2d0ac935631990da8ec5914597b4 ;;
+    d0bdc2eb320668b4ba6893b9aefe4040a73123ff) ROMHASH=328a1f1beba30ce5e178f031662019eb32c5f3b5 ;;
+    4946ab250f6ac9b32d76b21f309ebb8ebc8103d2) ROMHASH=328a1f1beba30ce5e178f031662019eb32c5f3b5 ;;
+    663c34f1b2c05a09e5beffe4d0dcd440f7d49dc7) ROMHASH=cfbb98d392e4a9d39da8285d10cbef3974c2f012 ;;
+    24c73d378b0620a380ce5ef9f2b186c6c157a68b) ROMHASH=cfbb98d392e4a9d39da8285d10cbef3974c2f012 ;;
+    8ebf2e29313f44f2d49e5b4191971d09919e8e48) ROMHASH=f46239439f59a2a594ef83cf68ef65043b1bffe2 ;;
+    4264bf7b875737b8fae77d52322a5099d051fc11) ROMHASH=f46239439f59a2a594ef83cf68ef65043b1bffe2 ;;
+    973bc6fe56010a8d646166a1182a81b4f13b8cf9) ROMHASH=50bebedad9e0f10746a52b07239e47fa6c284d03 ;;
+    d327752c46edc70ff3668b9514083dbbee08927c) ROMHASH=50bebedad9e0f10746a52b07239e47fa6c284d03 ;;
+    ecdeb1747560834e079c22243febea7f6f26ba3b) ROMHASH=079b855b943d6ad8bd1eb026c0ed169ecbdac7da ;;
+    f19f8662ec7abee29484a272a6fda53e39efe0f1) ROMHASH=079b855b943d6ad8bd1eb026c0ed169ecbdac7da ;;
+    ab519ce04a33818ce2c39b3c514a751d807a494a) ROMHASH=cfecfdc58d650e71a200c81f033de4e6d617a9f6 ;;
+    c19a34f7646305e1755249fca2071e178bd7cd00) ROMHASH=cfecfdc58d650e71a200c81f033de4e6d617a9f6 ;;
+    25e8ae79ea0839ca5c984473f7460d8040c36f9c) ROMHASH=517bd9714c73cb96c21e7c2ef640d7b55186102f ;;
+    166c02770d67fcc3954c443eb400a6a3573d3fc0) ROMHASH=517bd9714c73cb96c21e7c2ef640d7b55186102f ;;
+    esac
+
+    case "$ROMHASH" in
+    cee6bc3c2a634b41728f2af8da54d9bf8cc14099) ROM=GC_NMQ_D; OTRNAME="oot.otr" ;;
+    0227d7c0074f2d0ac935631990da8ec5914597b4) ROM=GC_NMQ_PAL_F; OTRNAME="oot.otr" ;;
+    328a1f1beba30ce5e178f031662019eb32c5f3b5) ROM=N64_PAL_10; OTRNAME="oot.otr" ;;
+    cfbb98d392e4a9d39da8285d10cbef3974c2f012) ROM=N64_PAL_11; OTRNAME="oot.otr" ;;
+    f46239439f59a2a594ef83cf68ef65043b1bffe2) ROM=GC_MQ_PAL_F; OTRNAME="oot-mq.otr" ;;
+    50bebedad9e0f10746a52b07239e47fa6c284d03) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
+    079b855b943d6ad8bd1eb026c0ed169ecbdac7da) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
+    cfecfdc58d650e71a200c81f033de4e6d617a9f6) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
+    517bd9714c73cb96c21e7c2ef640d7b55186102f) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
+    *)
+        echo "$ROMHASH rom hash does not match" | tee -a log.txt
+        return 1
+        ;;
+    esac
+
+    if [ ! -e "$GAMEDIR/$OTRNAME" ]; then
+        echo "Generating $OTRNAME from $romfile..."
+        ./assets/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b ./$romfile -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "8.0.6"
+        if [ $? -eq 0 ]; then
+            echo "Successfully generated $OTRNAME"
+        else
+            echo "Error: Failed to generate $OTRNAME"
+            return 1
+        fi
+    fi
+}
+
+# Count the number of ROM files
+rom_count=0
+for romfile in *.*64; do
+    if [ -f "$romfile" ]; then
+        rom_count=$((rom_count + 1))
+    fi
+done
+
+sleep 1
+echo "Found $rom_count ROM files!"
+
+# Process them all
+counter=1
+for romfile in *.*64; do
+    if [ -f "$romfile" ]; then
+        echo "Processing ${romfile}..."
+        mv "$romfile" "rom${counter}.z64"
+        if [ $? -eq 0 ]; then
+            process_rom "rom${counter}.z64"
+        counter=$((counter + 1))
+        fi
+    fi
+done
+
+# Cleanup
+echo "Finished processing all ROM files."
+rm -rf ./placeholder
+rm -rf *.*64
+echo "Patching process complete!"
