@@ -35,8 +35,8 @@ I prefer the OoT 3DS look along with a studio ghibli style skybox:
 </p>
 
 - [Djipi's 3DS Experience](https://gamebanana.com/mods/477979)
+    - delete `Djipi's 3DE - 02.otr` if using the 3ds link models below
 - [3DS Adult & Young Link (just the models)](https://gamebanana.com/mods/475743)
-- [OOT3D Link Textures](https://gamebanana.com/mods/478711)
 - [Studio Ghibli Skybox](https://github.com/JeodC/PortMaster-ShipOfHarkinian/tree/main/external-mods/)
 
 ## Thanks
