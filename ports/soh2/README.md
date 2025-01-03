@@ -18,6 +18,22 @@ Logs are recorded automatically as `ports/soh/log.txt`. Please provide a log if 
 ## Graphics Adjustments
 You can open `2ship2harkinan.json` in a text editor and modify the values as you wish. If you mess up the syntax, the game will regenerate this file and your settings will be reverted to default. Please create a backup before modification.
 
+If you wish to modify the viewport aspect ratio for your device you can add a section into the gSettings block on line 92 like so:
+
+```json
+"gSettings": {
+    "AdvancedResolution": {
+        "Enabled": 1,
+        "AspectRatioX": 4.0,
+        "AspectRatioY": 3.0
+    },
+    "ControlNav": 1,
+    ... other stuff
+}
+```
+
+Adjust the X and Y values to pick whatever aspect ratio you wish.
+
 ## Menu Navigation
 There is a `soh2.gptk` file you can use to change which button emulates F1 (default is L3). Some devices have a special button called `guide` that makes for a good F1 mapping.
 
