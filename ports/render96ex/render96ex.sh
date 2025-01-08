@@ -128,6 +128,11 @@ if [[ ${DISPLAY_WIDTH} -eq ${DISPLAY_HEIGHT} ]]; then
   [[ $? -eq 0 ]] || cat "${GAMEDIR}/hacksdl.${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}.conf" >> "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf"
 fi
 
+# 3:2 (RG34XXH) display config
+if  [[ ${DISPLAY_WIDTH} == 720 && ${DISPLAY_HEIGHT} == 480 ]]; then
+  sed -i 's/window_w 640/window_w 720/g' "$GAMEDIR/conf/sm64config.txt"
+fi
+
 # use hacksdl to create a virtual analog stick from the dpad
 if [[ -f "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf" ]]; then
   export LD_PRELOAD="hacksdl.so"
