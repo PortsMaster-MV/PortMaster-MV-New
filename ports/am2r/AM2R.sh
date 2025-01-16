@@ -29,7 +29,7 @@ $ESUDO chmod +x -R $GAMEDIR/*
 export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib:/usr/lib32:$LD_LIBRARY_PATH"
 
 # Config
-bind_directories "~/.config/am2r" "$GAMEDIR/conf/am2r"
+bind_directories ~/".config/am2r" "$GAMEDIR/conf/am2r"
 
 # Run game
 $GPTOKEYB "gmloader" -c "$GAMEDIR/am2r.gptk" &
