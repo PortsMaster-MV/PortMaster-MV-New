@@ -59,7 +59,7 @@ if [ -f "$GAMEDIR/patchlog.txt" ]; then
 fi
 
 # Assign gptokeyb and load the game
-$GPTOKEYB "gmloadernext.armhf" -c "deltarune.gptk" &
+$GPTOKEYB "gmloadernext.armhf" -c "zelda.gptk" &
 pm_platform_helper "$GAMEDIR/gmloadernext.armhf"
 ./gmloadernext.armhf -c gmloader.json
 
