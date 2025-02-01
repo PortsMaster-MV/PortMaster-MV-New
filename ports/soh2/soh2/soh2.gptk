@@ -1,3 +1,19 @@
+###########################
+#DEFAULT KEYBOARD CONTROLS#
+###########################
+# A = X
+# B = C
+# L = E
+# R = R
+# Z = Z
+# D-PAD UP = T
+# D-PAD DOWN = G
+# D-PAD LEFT = F
+# D-PAD RIGHT = H
+# ANALOG = WASD
+# C-BUTTONS = UP/DOWN/LEFT/RIGHT
+# START = SPACE
+
 guide = f1
 back = \"
 start = \"
@@ -5,10 +21,16 @@ up = \"
 down = \"
 left = \"
 right = \"
+
 a = \"
+a_hk = right
 b = \"
+b_hk =down
 y = \"
+y_hk = left
 x = \"
+x_hk = up
+
 l1 = \"
 l2 = \"
 r1 = \"
