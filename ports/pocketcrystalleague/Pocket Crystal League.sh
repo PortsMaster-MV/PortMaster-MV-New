@@ -13,40 +13,19 @@ else
 fi
 
 source $controlfolder/control.txt
-source $controlfolder/device_info.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 get_controls
 
-# Setup permissions
-$ESUDO chmod 666 /dev/tty1
-$ESUDO chmod 666 /dev/uinput
-echo "Loading, please wait... (might take a while!)" > /dev/tty0
-
 # Variables
 GAMEDIR="/$directory/ports/pocketcrystalleague"
-BIG_SCALE=4000
-BIG_DELAY=8
-SMALL_SCALE=6000
-SMALL_DELAY=16
 
-# Set current virtual screen
-if [ "$CFW_NAME" == "muOS" ]; then
-  /opt/muos/extra/muxlog & CUR_TTY="/tmp/muxlog_info"
-else
-    CUR_TTY="/dev/tty0"
-fi
-
+# CD and set permissions
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-
-$ESUDO chmod 777 "$GAMEDIR/gmloadernext"
+$ESUDO chmod +x -R $GAMEDIR/*
 
 # Exports
-export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
-
-if [ -f "data.win" ]; then
-    mv data.win game.droid
-fi
+export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/lib:$GAMEDIR/libs:$LD_LIBRARY_PATH"
 
 # Apply mouse scaling according to screen size
 if [ $DISPLAY_WIDTH -gt 480 ]; then
@@ -58,10 +37,9 @@ else
 fi
 
 # Assign gptokeyb and load the game
-$GPTOKEYB "gmloadernext" -c "control.gptk" &
-./gmloadernext game.apk
+$GPTOKEYB "gmloadernext.aarch64" -c "pcl.gptk" &
+pm_platform_helper "$GAMEDIR/gmloadernext.aarch64" >/dev/null
+./gmloadernext.aarch64 -c gmloader.json
 
 # Kill processes
-$ESUDO kill -9 $(pidof gptokeyb)
-$ESUDO systemctl restart oga_events &
-printf "\033c" > /dev/tty0
+pm_finish
