@@ -60,7 +60,7 @@
     // Game window is resizable
     // (default: enabled)
     //
-    // "winResizable": true,
+    // "winResizable": false,
 
 
     // Start game in fullscreen (this can
@@ -74,7 +74,7 @@
     // as opposed to stretch-to-fill
     // (default: enabled)
     //
-    // "fixedAspectRatio": true,
+    // "fixedAspectRatio": false,
 
 
     // Apply smooth interpolation when game screen
@@ -86,7 +86,7 @@
     // 4: xBRZ
     // (default: 0)
     //
-     "smoothScaling": 0,
+     "smoothScaling": 1,
 
 
     // Apply smooth interpolation when game screen
@@ -175,7 +175,7 @@
     // in RGSS2 or higher).
     // (default: 0)
     //
-    // "defScreenW": 640,
+    // "defScreenW": 0,
 
 
     // Specify the window height on startup. If set to 0,
@@ -184,7 +184,7 @@
     // in RGSS2 or higher).
     // (default: 0)
     //
-    // "defScreenH": 480,
+    // "defScreenH": 0,
 
 
     // Override the game window title
@@ -242,7 +242,7 @@
     // the Steam overlay.
     // (default: true if Apple Silicon, false if Intel)
     //
-    // "preferMetalRenderer": true,
+    // "preferMetalRenderer": false,
     
     
     // Work around buggy graphics drivers which don't
@@ -251,7 +251,7 @@
     // tileset doesn't render at all
     // (default: disabled)
     //
-    // "subImageFix": false,
+    // "subImageFix": true,
 
 
     // Enable framebuffer blitting if the driver is
@@ -263,7 +263,7 @@
     // Nearest-Neighbor or Bilinear.
     // (default: disabled)
     //
-     "enableBlitting": true,
+     "enableBlitting": false,
 
 
     // Limit the maximum size (width, height) of
