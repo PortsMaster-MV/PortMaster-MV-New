@@ -18,6 +18,10 @@ get_controls
 
 # Variables
 GAMEDIR="/$directory/ports/pocketcrystalleague"
+BIG_SCALE=4000
+BIG_DELAY=8
+SMALL_SCALE=6000
+SMALL_DELAY=16
 
 # CD and set permissions
 cd $GAMEDIR
