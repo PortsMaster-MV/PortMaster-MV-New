@@ -18,6 +18,10 @@ get_controls
 
 # Variables
 GAMEDIR="/$directory/ports/pocketcrystalleague"
+BIG_SCALE=4000
+BIG_DELAY=8
+SMALL_SCALE=6000
+SMALL_DELAY=16
 
 # CD and set permissions
 cd $GAMEDIR
@@ -29,11 +33,11 @@ export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/lib:$GAMEDIR/libs:$LD_LIBRARY_PATH"
 
 # Apply mouse scaling according to screen size
 if [ $DISPLAY_WIDTH -gt 480 ]; then
-    sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $BIG_SCALE/" "$GAMEDIR/control.gptk"
-    sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $BIG_DELAY/" "$GAMEDIR/control.gptk"
+    sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $BIG_SCALE/" "$GAMEDIR/pcl.gptk"
+    sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $BIG_DELAY/" "$GAMEDIR/pcl.gptk"
 else
-    sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $SMALL_SCALE/" "$GAMEDIR/control.gptk"
-    sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $SMALL_DELAY/" "$GAMEDIR/control.gptk"
+    sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $SMALL_SCALE/" "$GAMEDIR/pcl.gptk"
+    sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $SMALL_DELAY/" "$GAMEDIR/pcl.gptk"
 fi
 
 # Assign gptokeyb and load the game
