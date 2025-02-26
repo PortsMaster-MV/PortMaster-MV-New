@@ -24,8 +24,11 @@ JAR_PACKAGE="${GAMEDIR}/bin/app/pokewilds.jar"
 # Logging
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
+# Permissions
 $ESUDO chmod +x "$GAMEDIR/tools/7za"
 $ESUDO chmod +x "$GAMEDIR/tools/splash"
+$ESUDO chmod +x "$GAMEDIR/tools/zramctl"
+
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
@@ -34,6 +37,24 @@ export LANG=en_US.utf8
 export TEXTINPUTINTERACTIVE="Y"
 
 cd "$GAMEDIR"/bin || exit
+
+# Check RAM requirements
+if [[ "$DEVICE_RAM" -lt "2" ]]; then
+    pm_message "Pokewilds will not work without at least 2GB of memory."
+    sleep 5
+    exit 1
+elif [[ "$DEVICE_RAM" -lt "3" ]]; then
+    pm_message "Pokewilds may crash due to low memory. Proceed with caution."
+    sleep 5
+    # Setup zram if none is present (knulli might setup one)
+    zram_count=`$ESUDO "$GAMEDIR/tools/zramctl" -n | wc -l`
+    if [[ $zram_count -eq 0 ]]; then
+        zram_device=`$ESUDO "$GAMEDIR/tools/zramctl" -f` && \
+		$ESUDO "$GAMEDIR/tools/zramctl" $zram_device --size 1024M && \
+		$ESUDO mkswap $zram_device && \
+		$ESUDO swapon --discard --priority 20000 $zram_device
+	fi
+fi
 
 # Check for the jar
 if [[ ! -f $JAR_PACKAGE ]]; then
