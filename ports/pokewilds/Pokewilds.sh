@@ -24,6 +24,8 @@ JAR_PACKAGE="${GAMEDIR}/bin/app/pokewilds.jar"
 # Logging
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
+$ESUDO chmod +x "$GAMEDIR/tools/7za"
+$ESUDO chmod +x "$GAMEDIR/tools/splash"
 # Exports
 export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
