@@ -135,4 +135,8 @@ else
 fi
 
 # Cleanup
+if [[ ! -z $zram_device ]]; then
+  $ESUDO swapoff $zram_device
+  $ESUDO "$GAMEDIR/tools/zramctl" -r $zram_device
+fi
 pm_finish

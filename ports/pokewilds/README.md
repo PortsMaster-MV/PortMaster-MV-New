@@ -27,7 +27,7 @@ Mods can enhance the look and gameplay. Some notable mods:
 More mods can be found on the [Pokewilds Discord Server](https://discord.gg/jdkV7F3AjA).
 
 ## Notes
-This game has a large RAM footprint and uses more memory over time. Therefore it has been classified as an `ultra` port and will only run efficiently on Retroid Pocket 5, Retroid Pocket Mini, RetroDeck, etc. However, it *should* also run well on any device with more than `2GB` of memory like the Anbernic RG552.
+This game has a large RAM footprint and uses more memory over time. Therefore it has been classified as an `ultra` port and will only run efficiently on Retroid Pocket 5, Retroid Pocket Mini, RetroDeck, etc. However, it *should* also run well on any device with more than `2GB` of memory like the Anbernic RG552. `2GB` devices may also work with the use of included zram tool, but it's untested.
 
 Documentation: https://github.com/SheerSt/pokewilds/issues/476.
 
