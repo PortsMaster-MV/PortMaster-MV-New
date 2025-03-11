@@ -51,7 +51,7 @@ mv preset/mkxp.json ./mkxp.json
 
 # Gptk and run port
 $GPTOKEYB "mkxp-z.${DEVICE_ARCH}" -c "./rejuvenation.gptk" &
-pm_platform_helper $GAMEDIR/mkxp-z.${DEVICE_ARCH}
+pm_platform_helper "$GAMEDIR/mkxp-z.${DEVICE_ARCH}" >/dev/null
 ./mkxp-z.${DEVICE_ARCH}
 
 # Cleanup
