@@ -1,5 +1,5 @@
 ## Information
-Ship of Harkinian 8.0.6 was built from the develop branch (bleeding edge) on 03/10/2025.
+Ship of Harkinian 8.0.6 was built from the develop branch (bleeding edge) with checkout commit https://github.com/HarbourMasters/Shipwright/commit/651348d2a94f6bfa5f7e7f89800908e9e8a4a3e5 on 03/12/2025.
 
 ## Compatibility
 This build can run on firmwares with older GLIBC (where previously 2.36+ was required) thanks to new build steps by beniamino. TrimUI devices have a render bug where the PVR driver doesn't support NPOT (non-power-of-two) textures and therefore won't render them. The game is still playable, but several textures will be invisible.
