@@ -42,6 +42,16 @@ if [ ! -f "$GAMEDIR/baserom.us.z64" ]; then
   exit 1
 fi
 
+if [ ! -f "$GAMEDIR/baserom.us.z64" ]; then
+	pm_message "Error: missing files.tar.gzz"
+	sleep 5
+	exit 1
+fi
+
+if [ ! -d "$GAMEDIR/mods" ]; then
+	tar -xvf files.tar.gz
+fi
+
 # Run the game
 pm_message "Starting game."
 $GPTOKEYB "sm64coopdx.${DEVICE_ARCH}" &
