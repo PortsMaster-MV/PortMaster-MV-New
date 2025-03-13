@@ -1,6 +1,6 @@
 {
   "version": 4,
-  "name": "sm64coopdx",
+  "name": "sm64coopdx.zip",
   "items": [
     "sm64coopdx.sh",
     "sm64coopdx"
@@ -23,7 +23,7 @@
     "exp": false,
     "runtime": [],
     "store": [],
-    "availability": "free",
+    "availability": "paid",
     "reqs": [
       "hires"
     ],
