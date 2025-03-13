@@ -1,0 +1,42 @@
+diff --git a/Makefile b/Makefile
+index c40330e..d13b7be 100644
+--- a/Makefile
++++ b/Makefile
+@@ -925,6 +925,9 @@ endif
+ # Zlib
+ LDFLAGS += -lz
+ 
++# Requiered to compile
++LDFLAGS += -lrt
++
+ # Update checker library
+ ifeq ($(WINDOWS_BUILD),1)
+   LDFLAGS += -lwininet
+@@ -1425,11 +1428,12 @@ $(GLOBAL_ASM_DEP).$(NON_MATCHING):
+ # Compilation Recipes                                                          #
+ #==============================================================================#
+ 
++# -std=c++17 is needed to compile
+ # Compile C++ code
+ $(BUILD_DIR)/%.o: %.cpp
+ 	$(call print,Compiling:,$<,$@)
+-	$(V)$(CXX) $(PROF_FLAGS) -fsyntax-only $(EXTRA_CPP_FLAGS) $(EXTRA_CPP_INCLUDES) $(CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+-	$(V)$(CXX) $(PROF_FLAGS) -c $(EXTRA_CPP_FLAGS) $(EXTRA_CPP_INCLUDES) $(CFLAGS) -o $@ $<
++	$(V)$(CXX) $(PROF_FLAGS) -std=c++17 -fsyntax-only $(EXTRA_CPP_FLAGS) $(EXTRA_CPP_INCLUDES) $(CFLAGS) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
++	$(V)$(CXX) $(PROF_FLAGS) -std=c++17 -c $(EXTRA_CPP_FLAGS) $(EXTRA_CPP_INCLUDES) $(CFLAGS) -o $@ $<
+ 
+ # Compile C code
+ $(BUILD_DIR)/%.o: %.c
+diff --git a/src/pc/djui/djui_panel_host_mods.c b/src/pc/djui/djui_panel_host_mods.c
+index 74390a7..d170f4f 100644
+--- a/src/pc/djui/djui_panel_host_mods.c
++++ b/src/pc/djui/djui_panel_host_mods.c
+@@ -179,7 +179,7 @@ static void djui_panel_on_categories_change(UNUSED struct DjuiBase* caller) {
+     djui_paginated_calculate_height(sModPaginated);
+ }
+ 
+-static void* threaded_mod_refresh(void*) {
++static void* threaded_mod_refresh(void* dummy) {
+     mods_refresh_local();
+ 
+     if (gModRefreshThread.state == RUNNING) { join_thread(&gModRefreshThread); }
