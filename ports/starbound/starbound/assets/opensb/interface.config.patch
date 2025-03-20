@@ -1,0 +1,54 @@
+{
+  "font" : {
+    "defaultFont" : "hobo",
+    "fallbackFont" : "unifont",
+    "emojiFont" : "twemoji"
+  },
+  "nametag" : {
+    "showMasterNames" : true,
+    // outline is double here as it otherwise fades out near the end
+    // (could just the end to opaque too, but then diagonals are more jaggy)
+    "textStyle" : { "backDirectives" : "border=1;fff;fff4?border=1;fff;fff4?multiply=222" },
+    "inspectOpacityRate" : 0.15,
+    "movementThreshold" : 0.5,
+    "offset" : [0, 13]
+  },
+  "specialDamageBar" : {
+    "nameStyle" : {
+      "fontSize" : 18
+    }
+  },
+  "textStyle" : {},
+  "buttonTextStyle" : {
+    "shadow" : "black"
+  },
+  "labelTextStyle" : {},
+  "paneTextStyle" : {},
+  "textBoxTextStyle" : {},
+  "itemSlotTextStyle" : {
+    "backDirectives" : "border=1;fff;fff4?multiply=444"
+  },
+  "teamBarNameStyle" : {},
+  "cursorTooltip" : { "textStyle" : {} },
+
+  "debugTextStyle" : {
+    "font" : "iosevka-semibold",
+    "fontSize" : 7,
+    "backDirectives" : "border=1;fff;fff7?multiply=333a"
+  },
+  "debugSpatialClearTime" : 0.0,
+  "debugOffset" : [80, 130],
+
+  // Change planet name to support the new internal string formatting.
+  "planetNameFormatString" : "- {} -",
+  "planetTextOffset" : [0, 120],
+  "planetTextStyle" : {
+    "backDirectives" : "border=5;fff;fff?border=1;fff;fff7?multiply=000",
+    "fontSize" : 24
+  },
+
+  "buttonClickSound" : [ "/sfx/interface/button/click.wav" ],
+  "buttonReleaseSound" : [ "/sfx/interface/button/release.wav" ],
+  "buttonHoverSound" : [ "/sfx/interface/button/hover.wav" ],
+  "buttonHoverOffSound" : [ "/sfx/interface/button/hover_off.wav" ]
+}

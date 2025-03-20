@@ -1,0 +1,23 @@
+{
+	"createCharButton": {
+		"type": "button",
+		"base": "/interface/title/createcharacter.png",
+		"hover": "/interface/title/createcharacterover.png",
+		"position": [ 23, 241 ],
+		"pressedOffset": [ 0, 0 ]
+	},
+	"searchCharacter": {
+		"type": "textbox",
+		"hint": "Search...",
+		"position": [ 130, 244 ],
+		"maxWidth": 68
+	},
+	"clearSearch": {
+		"type": "button",
+		"base": "/interface/x.png",
+		"hover": "/interface/xhover.png",
+		"pressed": "/interface/xpress.png",
+		"position": [ 200, 242 ],
+  		"pressedOffset": [0, 0]
+	}
+}

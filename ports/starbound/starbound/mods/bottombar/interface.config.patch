@@ -1,0 +1,22 @@
+[
+  {
+    "op": "replace",
+    "path": "/message/textContainerOffset/1",
+    "value": 28
+  },
+  {
+    "op": "replace",
+    "path": "/specialDamageBar/backgroundOffset/1",
+    "value": 40
+  },
+  {
+    "op": "replace",
+    "path": "/specialDamageBar/fillOffset/1",
+    "value": 43
+  },
+  {
+    "op": "replace",
+    "path": "/specialDamageBar/nameOffset/1",
+    "value": 50
+  }
+]
