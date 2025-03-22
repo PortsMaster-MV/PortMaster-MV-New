@@ -36,7 +36,19 @@ install to the **`starbound/assets`** directory before playing.
 |B| f | enable Distortion Sphere tech or honk the mech horn |
 |X| open crafting menu |
 |Y| throw current item |
-|start| toggle alternate hotbar |
+|start| text entry mode |
+|select| toggle alternate hotbar |
+
+| Text Entry Mode ||
+|--|--|
+|up| previous letter |
+|down| next letter |
+|left| backspace |
+|right| accept letter |
+|A| accept letter |
+|B| backspace |
+|select| toggle upper/lower case |
+|start| exit text entry mode |
 
 ## High-End Systems
 
