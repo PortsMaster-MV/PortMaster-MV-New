@@ -1,0 +1,43 @@
+{
+  "version": 4,
+  "name": "starbound.zip",
+  "items": [
+    "Starbound.sh",
+    "starbound"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Starbound",
+    "porter": [
+      "bmdhacks"
+    ],
+    "desc": "Starbound is an extraterrestrial sandbox adventure game! You’ve fled your home, only to find yourself lost in space with a damaged ship. Your only option is to beam down to the planet below and gather the resources you need to repair your ship and set off to explore the vast, infinite universe…",
+    "desc_md": null,
+    "inst": "Copy the game assets packed.pak from your normal Starbound\ninstall to the starbound/assets directory before playing.\n",
+    "inst_md": "### Install\n\nCopy the game assets **`packed.pak`** from your normal Starbound\ninstall to the **`starbound/assets`** directory before playing.\n\n## High-End Systems\n\nIf you are running on high-end aarch64 systems such as the Retroid\nPocket 5 or the Odin 2, you can delete the mods/speedup folder in\norder to gain extra rendering quality at the expense of cpu.\n",
+    "genres": [
+      "adventure",
+      "platformer",
+      "rpg"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [
+      {
+        "name": "Starbound on Steam",
+        "url": "https://store.steampowered.com/app/211820/Starbound/"
+      }
+    ],
+    "availability": "paid",
+    "reqs": [
+      "!lowres",
+      "2gb"
+    ],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
