@@ -1,0 +1,38 @@
+{
+  "version": 4,
+  "name": "donkeykongredux.zip",
+  "items": [
+    "Donkey Kong Redux.sh",
+    "donkeykongredux"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Donkey Kong Redux",
+    "porter": [
+      "NotYourAveragePaladin"
+    ],
+    "desc": "With this project I am willing to replicate the behaviour of the original Donkey Kong by Nintendo.\nI tried to simulate the game logic and timing spending multiple hours watching videos of the original game.\nGame programming is now completed with four brand new levels added on the top of the 4 original ones.",
+    "desc_md": null,
+    "inst": "Go here, https://80s-arcade-games.itch.io/donkey-kong-redux and download the\nDonkeyKongRedux_200.zip\nuse 7zip or whatever to extract the contents, and copy them all into the assets folder.\nLaunch and Enjoy! ",
+    "inst_md": null,
+    "genres": [
+      "arcade"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [
+      {
+        "name": "itch.io",
+        "url": "https://80s-arcade-games.itch.io/donkey-kong-redux"
+      }
+    ],
+    "availability": "free",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
