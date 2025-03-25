@@ -11,9 +11,9 @@
     "porter": [
       "NotYourAveragePaladin"
     ],
-    "desc": "When I was 10 years old I got a C64 and thought it could be programmed in natural language. I literally wrote something like:\n\n\"I want a game where I am a plumber who needs to avoid barrels that Kong launches,  by jumping them. I need to reach the top of the screen, I can get a hammer etc...\"\n\nUnfortunately I only got a syntax error in exchange of my passionate description of the game.\n\n35 years later I found the will to try it again and this time things have gone a bit better.\n\nWith this project I am willing to replicate the behaviour of the original Donkey Kong by Nintendo.\nI tried to simulate the game logic and timing spending multiple hours watching videos of the original game.\n\nGame copyrights belong entirely to Nintendo.\n\nAs a Nintendo's games lover I wanted to express my tribute to the Mario/Donkey Kong serie and to game designer Shigeru Miyamoto.\n\nGame programming is now completed with four brand new levels added on the top of the 4 original ones.",
+    "desc": "With this project I am willing to replicate the behaviour of the original Donkey Kong by Nintendo.\nI tried to simulate the game logic and timing spending multiple hours watching videos of the original game.\nGame programming is now completed with four brand new levels added on the top of the 4 original ones.",
     "desc_md": null,
-    "inst": "Download the zip. Place .sh and portfolder where they belong for your CFW.\nGo here, https://80s-arcade-games.itch.io/donkey-kong-redux and download the\nDonkeyKongRedux_200.zip\nuse 7zip or whatever to extract the contents, and copy them all into the assets folder.\nLaunch and Enjoy! ",
+    "inst": "Go here, https://80s-arcade-games.itch.io/donkey-kong-redux and download the\nDonkeyKongRedux_200.zip\nuse 7zip or whatever to extract the contents, and copy them all into the assets folder.\nLaunch and Enjoy! ",
     "inst_md": null,
     "genres": [
       "arcade"
