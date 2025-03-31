@@ -1,0 +1,35 @@
+{
+  "version": 4,
+  "name": "sm64coopdx.zip",
+  "items": [
+    "sm64coopdx.sh",
+    "sm64coopdx"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "sm64coopdx",
+    "porter": [
+      "CODEHEX4EVER"
+    ],
+    "desc": "sm64coopdx is a game based on the Super Mario 64 engine and modified to have multiplayer and mods.",
+    "desc_md": null,
+    "inst": "You will have to copy your own rom legally obtained to the port directory with the name “baserom.us.z64”.",
+    "inst_md": null,
+    "genres": [
+      "platformer"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "paid",
+    "reqs": [
+      "hires"
+    ],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
