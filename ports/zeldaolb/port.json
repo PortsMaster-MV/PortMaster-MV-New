@@ -1,29 +1,33 @@
 {
-    "version": 2,
-    "name": "zeldaolb.zip",
-    "items": [
-        "zeldaolb",
-        "zeldaolb.sh"
+  "version": 5,
+  "name": "zeldaolb.zip",
+  "items": [
+    "zeldaolb",
+    "zeldaolb.sh"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Zelda Oni Link Begins",
+    "porter": [
+      "Tekkenfede"
     ],
-    "items_opt": [],
-    "attr": {
-        "title": "Zelda Oni Link Begins",
-        "porter": [
-            "Tekkenfede"
-        ],
-        "desc": "Brought down by a terrible curse since his recent victory on the Dark Lord, Link is changing, day by day, into a powerful creature with a destructive nature named Oni-Link. Bannished from Hyrule, the young hylian asks the princess Zelda some help. She shows him his last hope: a portal to a secret world.",
-        "inst": "RTR\nTo continue dialogues you need to press accept. \nAlso to go after the boot image \n",
-        "genres": [
-            "action",
-            "adventure"
-        ],
-        "image": null,
-        "rtr": true,
-        "exp": false,
-        "runtime": null,
-        "reqs": [],
-        "arch": [
-            "aarch64"
-        ]
-    }
+    "desc": "Brought down by a terrible curse since his recent victory on the Dark Lord, Link is changing, day by day, into a powerful creature with a destructive nature named Oni-Link. Bannished from Hyrule, the young hylian asks the princess Zelda some help. She shows him his last hope: a portal to a secret world.",
+    "desc_md": null,
+    "inst": "RTR\nTo continue dialogues you need to press accept. \nAlso to go after the boot image \n",
+    "inst_md": null,
+    "genres": [
+      "action",
+      "adventure"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "igdb_id": 202978
+  }
 }

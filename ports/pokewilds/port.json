@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "name": "pokewilds.zip",
   "items": [
     "Pokewilds.sh",
@@ -12,20 +12,24 @@
       "Jeod",
       "JanTrueno"
     ],
-    "desc": "PokéWilds is an open-world Pokémon fan game with survival and exploration elements. Built on Gen 2-style graphics, it features procedurally generated worlds, base-building, and freeform gameplay. Catch, train, and battle Pokémon while exploring diverse biomes, crafting shelters, and uncovering hidden secrets.",
+    "desc": "Pokewilds is an open-world Pokemon fan game with survival and exploration elements. Built on Gen 2-style graphics, it features procedurally generated worlds, base-building, and freeform gameplay. Catch, train, and battle Pokemon while exploring diverse biomes, crafting shelters, and uncovering hidden secrets.",
     "desc_md": null,
     "inst": "After installing the port, download the Windows game from https://github.com/SheerSt/pokewilds/releases and extract the `mods` and `app` folders, as well as `settings.txt`, into `ports/pokewilds/bin`.",
     "inst_md": null,
     "genres": [
-      "rpg"
+      "rpg",
+      "adventure"
     ],
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": "zulu17.54.21-ca-jre17.0.13-linux.aarch64.squashfs",
+    "runtime": [
+      "zulu17.54.21-ca-jre17.0.13-linux.aarch64.squashfs"
+    ],
+    "availability": "free",
     "reqs": [
-	  "ultra"
-	],
+      "ultra"
+    ],
     "arch": [
       "aarch64"
     ]

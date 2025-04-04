@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "name": "vdrift.zip",
   "items": [
     "VDrift.sh",
@@ -16,12 +16,14 @@
     "inst": "Ready to run!",
     "inst_md": null,
     "genres": [
-      "racing"
+      "racing",
+      "simulation"
     ],
     "image": null,
     "rtr": true,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "availability": "full",
     "reqs": [],
     "arch": [
       "aarch64"

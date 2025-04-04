@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "name": "render96ex.zip",
   "items": [
     "render96ex.sh",
@@ -16,17 +16,20 @@
     "inst": "Copy your Super Mario 64 USA rom in the render96ex folder and rename it to baserom.us.z64 (md5sum 20b854b239203baf6c961b850a4a51a2)",
     "inst_md": null,
     "genres": [
-      "platformer"
+      "platformer",
+      "adventure"
     ],
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "availability": "paid",
     "reqs": [
       "!lowres"
     ],
     "arch": [
       "aarch64"
-    ]
+    ],
+    "igdb_id": 1074
   }
 }

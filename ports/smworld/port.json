@@ -1,25 +1,37 @@
 {
-    "version": "2",
-    "name": "smworld.zip",
-    "items": [
-        "smworld.sh",
-        "smworld"
+  "version": 5,
+  "name": "smworld.zip",
+  "items": [
+    "smworld.sh",
+    "smworld"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Super Mario World (and All Stars)",
+    "porter": [
+      "Tekkenfede"
     ],
-    "items_opt": null,
-    "attr": {
-        "title": "Super Mario World (and All Stars)",
-        "porter": [
-            "Tekkenfede"
-        ],
-        "desc": "Super Mario World is a 2D side-scrolling platform game in which the player controls Mario or Luigi, the protagonists of the game. The game has similar gameplay to earlier games in the Super Mario series – Super Mario Bros., Super Mario Bros. 2, and Super Mario Bros. 3 – but introduces new elements. As well as dashing and jumping, the player can also fly or float with the aid of the Cape Feather and P-Balloon and can execute the new Spin Jump move.[",
-        "inst": "See Wiki",
-        "genres": [
-            "platformer"
-        ],
-        "image": null,
-        "rtr": false,
-        "runtime": null,
-        "reqs": [],
-        "arch": ["aarch64"]
-    }
+    "desc": "Super Mario World is a 2D side-scrolling platform game in which the player controls Mario or Luigi, the protagonists of the game. The game has similar gameplay to earlier games in the Super Mario series â Super Mario Bros., Super Mario Bros. 2, and Super Mario Bros. 3 â but introduces new elements. As well as dashing and jumping, the player can also fly or float with the aid of the Cape Feather and P-Balloon and can execute the new Spin Jump move.[",
+    "inst": "See Wiki",
+    "genres": [
+      "platformer",
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "availability": "paid",
+    "store": [
+      {
+        "name": "Nintendo eShop",
+        "url": "https://www.nintendo.com/store/products/super-mario-world-3ds/"
+      }
+    ],
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "igdb_id": 1070
+  }
 }

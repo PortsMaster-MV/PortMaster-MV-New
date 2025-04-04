@@ -1,30 +1,42 @@
 {
-    "version": 2,
-    "name": "gtavc.zip",
-    "items": [
-        "Grand Theft Auto Vice City.sh",
-        "gtavc/"
+  "version": 5,
+  "name": "gtavc.zip",
+  "items": [
+    "Grand Theft Auto Vice City.sh",
+    "gtavc/"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Grand Theft Auto Vice City",
+    "porter": [
+      "Orson"
     ],
-    "items_opt": null,
-    "attr": {
-        "title": "Grand Theft Auto Vice City",
-        "porter": [
-            "Orson"
-        ],
-        "desc": "Welcome to the 1980s. From the decade of big hair, excess, and pastel suits comes a story of one man's rise to the top of the criminal pile as Grand Theft Auto returns.",
-        "inst": "Copy all files from the original game to roms/ports/gtavc. The game requires assets from the classic version released in 2002 (not the Definitive Edition, 2021). Versions from Steam and Rockstar Store are confirmed to work fine.\n\nIf needed, readjust analog sticks sensitivity by changing LeftStickSens/RightStickSens values in reVC.ini.",
-        "genres": [
-            "action"
-        ],
-        "image": {
-            "screenshot": "gtavc.screenshot.jpg",
-            "cover": null,
-            "thumbnail": null,
-            "video": null
-        },
-        "rtr": false,
-        "runtime": null,
-        "reqs": [],
-        "arch": ["aarch64"]
-    }
+    "desc": "Welcome to the 1980s. From the decade of big hair, excess, and pastel suits comes a story of one man's rise to the top of the criminal pile as Grand Theft Auto returns.",
+    "inst": "Copy all files from the original game to roms/ports/gtavc. The game requires assets from the classic version released in 2002 (not the Definitive Edition, 2021). Versions from Steam and Rockstar Store are confirmed to work fine.\n\nIf needed, readjust analog sticks sensitivity by changing LeftStickSens/RightStickSens values in reVC.ini.",
+    "genres": [
+      "action",
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [
+      {
+        "name": "Steam",
+        "url": "https://store.steampowered.com/app/12110/Grand_Theft_Auto_Vice_City/"
+      },
+      {
+        "name": "Rockstar Store",
+        "url": "https://store.rockstargames.com/game/buy-grand-theft-auto-vice-city"
+      }
+    ],
+    "availability": "paid",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "igdb_id": 733,
+    "steam_id": 12110
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 5,
   "name": "soh2.zip",
   "items": [
     "Ship of Harkinian 2.sh",
@@ -16,15 +16,18 @@
     "inst": "Follow the guide in the readme to generate your mm.o2r file.",
     "genres": [
       "action",
-      "adventure"
+      "adventure",
+      "rpg"
     ],
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "availability": "paid",
     "reqs": [],
     "arch": [
       "aarch64"
-    ]
+    ],
+    "igdb_id": 1030
   }
 }

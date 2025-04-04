@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "name": "rejuvenation.zip",
   "items": [
     "Pokemon Rejuvenation.sh",
@@ -16,12 +16,14 @@
     "inst": "Download the Windows version of the game here: https://www.rebornevo.com/rejuvdown/. Install the game and copy all assets within the \"Pokemon Rejuvenation\" folder to the \"rejuvenation\" portfolder. Version 13.5.0 is known to work, future updates may be incompatible.",
     "inst_md": "Download the Windows version of the game [here](https://www.rebornevo.com/rejuvdown/). Install the game and copy all assets within the \"Pokemon Rejuvenation\" folder to the \"rejuvenation\" portfolder. Version 13.5.0 is known to work, future updates may be incompatible.",
     "genres": [
+      "rpg",
       "adventure"
     ],
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "availability": "free",
     "reqs": [
       "power"
     ],

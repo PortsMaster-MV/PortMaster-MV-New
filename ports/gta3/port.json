@@ -1,25 +1,42 @@
 {
-    "version": 2,
-    "name": "gta3.zip",
-    "items": [
-        "Grand Theft Auto 3.sh",
-        "gta3"
+  "version": 5,
+  "name": "gta3.zip",
+  "items": [
+    "Grand Theft Auto 3.sh",
+    "gta3"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Grand Theft Auto 3",
+    "porter": [
+      "Orson"
     ],
-    "items_opt": null,
-    "attr": {
-        "title": "Grand Theft Auto 3",
-        "porter": [
-            "Orson"
-        ],
-        "desc": "Welcome to Liberty City. Where it all began. The critically acclaimed blockbuster Grand Theft Auto III brings to life the dark and seedy underworld of Liberty City. With a massive and diverse open world, a wild cast of characters from every walk of life, and the freedom to explore at will, Grand Theft Auto III puts the dark, intriguing, and ruthless world of crime at your fingertips.",
-        "inst": "Copy all files from the original game to roms/ports/gta3. The game requires assets from the classic version released in 2001 (not the Definitive Edition, 2021). Versions from Steam and Rockstar Store are confirmed to work fine.\n\nIf needed, readjust analog sticks sensitivity by changing LeftStickSens/RightStickSens values in re3.ini.",
-        "genres": [
-            "action"
-        ],
-        "image": null,
-        "rtr": false,
-        "runtime": null,
-        "reqs": [],
-        "arch": ["aarch64"]
-    }
+    "desc": "Welcome to Liberty City. Where it all began. The critically acclaimed blockbuster Grand Theft Auto III brings to life the dark and seedy underworld of Liberty City. With a massive and diverse open world, a wild cast of characters from every walk of life, and the freedom to explore at will, Grand Theft Auto III puts the dark, intriguing, and ruthless world of crime at your fingertips.",
+    "inst": "Copy all files from the original game to roms/ports/gta3. The game requires assets from the classic version released in 2001 (not the Definitive Edition, 2021). Versions from Steam and Rockstar Store are confirmed to work fine.\n\nIf needed, readjust analog sticks sensitivity by changing LeftStickSens/RightStickSens values in re3.ini.",
+    "genres": [
+      "action",
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": null,
+    "store": [
+      {
+        "name": "Steam",
+        "url": "https://store.steampowered.com/app/12100/Grand_Theft_Auto_III/"
+      },
+      {
+        "name": "Rockstar Store",
+        "url": "https://store.rockstargames.com/game/buy-grand-theft-auto-iii"
+      }
+    ],
+    "availability": "paid",
+    "reqs": null,
+    "arch": [
+      "aarch64"
+    ],
+    "igdb_id": 730,
+    "steam_id": 12100
+  }
 }

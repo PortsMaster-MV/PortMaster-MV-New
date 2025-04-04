@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 5,
   "name": "loderunneronline.zip",
   "items": [
     "Lode Runner Online.sh",
@@ -21,7 +21,12 @@
     "image": null,
     "rtr": true,
     "exp": false,
-    "runtime": "mono-6.12.0.122-aarch64.squashfs",
-    "reqs": []
+    "runtime": [
+      "mono-6.12.0.122-aarch64.squashfs"
+    ],
+    "availability": "free",
+    "reqs": [],
+    "arch": [],
+    "igdb_id": 72299
   }
 }

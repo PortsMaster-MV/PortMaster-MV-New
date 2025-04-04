@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "name": "reborn.zip",
   "items": [
     "Pokemon Reborn.sh",
@@ -16,12 +16,14 @@
     "inst": "Download the legacy Windows version of the game here: https://www.rebornevo.com/pr/download/. Install the game and copy all assets within the \"Pokemon Reborn\" folder to the \"reborn\" portfolder. The version has to be 19.16 or 19.17, this can be checked with the version file included with the game.",
     "inst_md": "Download the legacy Windows version of the game [here](https://www.rebornevo.com/pr/download/). Install the game and copy all assets within the \"Pokemon Reborn\" folder to the \"reborn\" portfolder. The version has to be 19.16 or 19.17, this can be checked with the version file included with the game.",
     "genres": [
+      "rpg",
       "adventure"
     ],
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "availability": "free",
     "reqs": [
       "power"
     ],

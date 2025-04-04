@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "name": "thextech.zip",
   "items": [
     "TheXtech.sh",
@@ -21,10 +21,12 @@
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "availability": "free",
     "reqs": [],
     "arch": [
       "aarch64"
-    ]
+    ],
+    "igdb_id": 87816
   }
 }

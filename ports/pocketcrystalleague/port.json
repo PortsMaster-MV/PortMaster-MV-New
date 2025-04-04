@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "name": "pocketcrystalleague.zip",
   "items": [
     "Pocket Crystal League.sh",
@@ -16,16 +16,18 @@
     "inst": "Game is ready to run!",
     "inst_md": null,
     "genres": [
-      "casino/card"
+      "casino/card",
+      "strategy"
     ],
     "image": null,
     "rtr": true,
     "exp": false,
-    "runtime": null,
-    "reqs": [
-    ],
+    "runtime": [],
+    "availability": "full",
+    "reqs": [],
     "arch": [
       "aarch64"
-    ]
+    ],
+    "itchio_url": "https://moodytail.itch.io/pocket-crystal-league"
   }
 }
