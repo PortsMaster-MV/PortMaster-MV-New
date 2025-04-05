@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Donkey Kong Redux.sh</path>
+    <name>Donkey Kong Redux</name>
+    <desc>With this project I am willing to replicate the behaviour of the original Donkey Kong by Nintendo.
+      I tried to simulate the game logic and timing spending multiple hours watching videos of the original game.
+      Game programming is now completed with four brand new levels added on the top of the 4 original ones.</desc>
+    <releasedate>20230510T000000</releasedate>
+    <developer>80s Arcade Games</developer>
+    <publisher>80s Arcade Games</publisher>
+    <genre>Arcade</genre>
+    <image>./donkeykongredux/screenshot.png</image>
+  </game>
+</gameList>
