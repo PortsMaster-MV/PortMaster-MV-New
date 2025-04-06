@@ -32,6 +32,9 @@ cd $GAMEDIR
 $ESUDO chmod +xwr 2s2h.elf
 $ESUDO chmod +xwr $PATCHER_FILE
 
+# Close the menu if open
+sed -i 's/"Menu": *1/"Menu": 0/' 2ship2harkinian.json
+
 # -------------------- BEGIN FUNCTIONS --------------------
 
 # Check imgui.ini and modify if needed
