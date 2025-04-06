@@ -19,7 +19,7 @@ Logs are recorded automatically as `ports/soh/log.txt`. Please provide a log if 
 You can open `2ship2harkinan.json` in a text editor and modify the values as you wish. If you mess up the syntax, the game will regenerate this file and your settings will be reverted to default. Please create a backup before modification.
 
 ## Menu Navigation
-There is a `soh2.gptk` file you can use to change which button emulates F1 (default is L3). Some devices have a special button called `guide` that makes for a good F1 mapping.
+2Ship2Harkinian has built-in controller navigation for the imgui menu. Press `SELECT` to open the menu and use the `D-PAD` to choose a submenu, then press `A` to switch focus to it. Press `B` to back out of a submenu.
 
 ## Default Gameplay Controls
 The port uses SDL controller mapping and controls can be remapped from the menu bar. For devices without a right analog stick, the gptk file allows for the `HOTKEY + ABXY` button combo to use the C-Buttons.
