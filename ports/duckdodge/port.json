@@ -1,0 +1,39 @@
+{
+  "version": 4,
+  "name": "duckdodge.zip",
+  "items": [
+    "Duck Dodge.sh",
+    "duckdodge"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Duck Dodge",
+    "porter": [
+      "Slobters"
+    ],
+    "desc": "Have you ever wanted to play Duck Hunt, but as the poor defenseless duck? Avoid the hunter's shots and fly away! Be careful, the hunter gets progressively better with each round!",
+    "desc_md": null,
+    "inst": "Ready to run! Thanks to the Diego Escalante for providing source code and MIT license on his GitHub.",
+    "inst_md": null,
+    "genres": [
+      "action"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": [
+      "weston_pkg_0.2.squashfs"
+    ],
+    "store": [
+      {
+        "name": "Itch.io",
+        "gameurl": "https://diego-escalante.itch.io/duck-dodge",
+        "developerurl": "https://diego-escalante.itch.io/"
+      }
+    ],
+    "availability": "full",
+    "reqs": [],
+    "arch": [],
+    "min_glibc": ""
+  }
+}
