@@ -13,6 +13,7 @@ else
 fi
 
 source $controlfolder/control.txt
+source $controlfolder/runtimes/"love_11.5"/love.txt
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 
 get_controls
@@ -20,12 +21,11 @@ get_controls
 GAMEDIR="/$directory/ports/mari0ae"
 BINARY="mari0ae"
 
-export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
-
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 cd $GAMEDIR
 
-$GPTOKEYB "love" -c "$BINARY.gptk" &
-./bin/love "$BINARY.love"
+$GPTOKEYB "$LOVE_GPTK" -c "$BINARY.gptk" &
+pm_platform_helper "$LOVE_BINARY"
+$LOVE_RUN "$BINARY.love"
 
 pm_finish
