@@ -21,7 +21,9 @@
     "image": null,
     "rtr": true,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "store": [],
+    "availability": "full",
     "reqs": [],
     "arch": [
       "aarch64"
