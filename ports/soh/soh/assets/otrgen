@@ -1,13 +1,15 @@
 #!/bin/bash
 
 # Function to handle a single ROM file
+# Partially sourced from https://github.com/HarbourMasters/Shipwright/blob/develop/scripts/linux/appimage/soh.sh.in
 process_rom() {
-    local romfile=$1
+    local romfile="$1"
 
     # Compute SHA-1 hash of the file
     ROMHASH=$(sha1sum -b "$romfile" 2>> log.txt | awk '{ print $1 }') || { echo "Error: Failed to compute SHA-1 hash" >> log.txt; return 1; }
 
     # Remap v64 and n64 hashes to their z64 hash equivalent
+    # ZAPD will handle converting the data into z64 format
     case "$ROMHASH" in
     a9059b56e761c9034fbe02fe4c24985aaa835dac) ROMHASH=cee6bc3c2a634b41728f2af8da54d9bf8cc14099 ;;
     24708102dc504d3f375a37f4ae4e149c167dc515) ROMHASH=cee6bc3c2a634b41728f2af8da54d9bf8cc14099 ;;
@@ -27,6 +29,28 @@ process_rom() {
     c19a34f7646305e1755249fca2071e178bd7cd00) ROMHASH=cfecfdc58d650e71a200c81f033de4e6d617a9f6 ;;
     25e8ae79ea0839ca5c984473f7460d8040c36f9c) ROMHASH=517bd9714c73cb96c21e7c2ef640d7b55186102f ;;
     166c02770d67fcc3954c443eb400a6a3573d3fc0) ROMHASH=517bd9714c73cb96c21e7c2ef640d7b55186102f ;;
+    79a4f053d34018e59279e6d4b83c7daccd985c87) ROMHASH=ad69c91157f6705e8ab06c79fe08aad47bb57ba7 ;;
+    82fafee9c6ac7946739282958364ce606077ac65) ROMHASH=ad69c91157f6705e8ab06c79fe08aad47bb57ba7 ;;
+    18cd0eb65914a21d8fa08dfe71c29d865e9d728a) ROMHASH=d3ecb253776cd847a5aa63d859d8c89a2f37b364 ;;
+    07940d5609e04b7caac63570731e01189129212e) ROMHASH=d3ecb253776cd847a5aa63d859d8c89a2f37b364 ;;
+    3ac86253e0c0d55486d212e647350c1527b9c92d) ROMHASH=41b3bdc48d98c48529219919015a1af22f5057c2 ;;
+    70bf30a9980026e615a1ae8d2735a773cf9fcc94) ROMHASH=41b3bdc48d98c48529219919015a1af22f5057c2 ;;
+    f9e2b6840b9103e9707ea390089a7b6943592a98) ROMHASH=c892bbda3993e66bd0d56a10ecd30b1ee612210f ;;
+    2fae1601aa7ae8d3e03ba3f4dcdfca3a36002ac5) ROMHASH=c892bbda3993e66bd0d56a10ecd30b1ee612210f ;;
+    1181034d5f9533f53ebe8e1c781badbee115f5aa) ROMHASH=dbfc81f655187dc6fefd93fa6798face770d579d ;;
+    07477067943abe8d0c50285eb4a6cb9ece99e79b) ROMHASH=dbfc81f655187dc6fefd93fa6798face770d579d ;;
+    2d8fb7140a9c5d11ce614561e5a36ffef0c17540) ROMHASH=fa5f5942b27480d60243c2d52c0e93e26b9e6b86 ;;
+    d90bbe422ac728ac54ac6a2c9fec942f7ff04df9) ROMHASH=fa5f5942b27480d60243c2d52c0e93e26b9e6b86 ;;
+    44c75962911e13bdfdc31b35e0b8e3be6a6a49ab) ROMHASH=b82710ba2bd3b4c6ee8aa1a7e9acf787dfc72e9b ;;
+    5d47025581060af5ba19e6719c25fea7398e87cf) ROMHASH=b82710ba2bd3b4c6ee8aa1a7e9acf787dfc72e9b ;;
+    e1d070ad7b017de9f992b362164dcd9d7f820f7e) ROMHASH=8b5d13aac69bfbf989861cfdc50b1d840945fc1d ;;
+    a8c04cd5aa94a6a32198f36ff2069d43342d18a8) ROMHASH=8b5d13aac69bfbf989861cfdc50b1d840945fc1d ;;
+    245410280d152f28d5b1c0c0fc37f384db0020cd) ROMHASH=0769c84615422d60f16925cd859593cdfa597f84 ;;
+    fbdc9e444807f9b881e3432cedf66f38746b81d8) ROMHASH=0769c84615422d60f16925cd859593cdfa597f84 ;;
+    b6d33d6bf5d6700c64b6a873ab8b06ff039619bc) ROMHASH=2ce2d1a9f0534c9cd9fa04ea5317b80da21e5e73 ;;
+    2c7113d20044f93c82ec888c19aa09ea7797396d) ROMHASH=2ce2d1a9f0534c9cd9fa04ea5317b80da21e5e73 ;;
+    06c3c098f0e14ed61811dfaf0e8e4519d7d7a826) ROMHASH=dd14e143c4275861fe93ea79d0c02e36ae8c6c2f ;;
+    bb3f85bfaad9ae7a20afbf618fc9fe126c8c1b4f) ROMHASH=dd14e143c4275861fe93ea79d0c02e36ae8c6c2f ;;
     esac
 
     case "$ROMHASH" in
@@ -34,11 +58,19 @@ process_rom() {
     0227d7c0074f2d0ac935631990da8ec5914597b4) ROM=GC_NMQ_PAL_F; OTRNAME="oot.otr" ;;
     328a1f1beba30ce5e178f031662019eb32c5f3b5) ROM=N64_PAL_10; OTRNAME="oot.otr" ;;
     cfbb98d392e4a9d39da8285d10cbef3974c2f012) ROM=N64_PAL_11; OTRNAME="oot.otr" ;;
+    ad69c91157f6705e8ab06c79fe08aad47bb57ba7 | c892bbda3993e66bd0d56a10ecd30b1ee612210f) ROM=N64_NTSC_10; OTRNAME="oot.otr" ;;
+    d3ecb253776cd847a5aa63d859d8c89a2f37b364 | dbfc81f655187dc6fefd93fa6798face770d579d) ROM=N64_NTSC_11; OTRNAME="oot.otr" ;;
+    41b3bdc48d98c48529219919015a1af22f5057c2 | fa5f5942b27480d60243c2d52c0e93e26b9e6b86) ROM=N64_NTSC_12; OTRNAME="oot.otr" ;;
     f46239439f59a2a594ef83cf68ef65043b1bffe2) ROM=GC_MQ_PAL_F; OTRNAME="oot-mq.otr" ;;
     50bebedad9e0f10746a52b07239e47fa6c284d03) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
     079b855b943d6ad8bd1eb026c0ed169ecbdac7da) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
     cfecfdc58d650e71a200c81f033de4e6d617a9f6) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
     517bd9714c73cb96c21e7c2ef640d7b55186102f) ROM=GC_MQ_D; OTRNAME="oot-mq.otr" ;;
+    b82710ba2bd3b4c6ee8aa1a7e9acf787dfc72e9b) ROM=GC_NMQ_NTSC_U; OTRNAME="oot.otr" ;;
+    8b5d13aac69bfbf989861cfdc50b1d840945fc1d) ROM=GC_MQ_NTSC_U; OTRNAME="oot-mq.otr" ;;
+    0769c84615422d60f16925cd859593cdfa597f84) ROM=GC_NMQ_NTSC_J; OTRNAME="oot.otr" ;;
+    2ce2d1a9f0534c9cd9fa04ea5317b80da21e5e73) ROM=GC_NMQ_NTSC_J_CE; OTRNAME="oot.otr" ;;
+    dd14e143c4275861fe93ea79d0c02e36ae8c6c2f) ROM=GC_MQ_NTSC_J; OTRNAME="oot-mq.otr" ;;
     *)
         echo "$ROMHASH rom hash does not match" | tee -a log.txt
         return 1
@@ -47,9 +79,10 @@ process_rom() {
 
     if [ ! -e "$GAMEDIR/$OTRNAME" ]; then
         echo "Generating $OTRNAME from $romfile..."
-        ./assets/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b ./$romfile -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "8.0.6"
+        ./assets/ZAPD.out ed -eh -i ./assets/extractor/xmls/$ROM -b "$romfile" -fl ./assets/extractor/filelists -o placeholder -osf placeholder -gsf 1 -rconf ./assets/extractor/Config_$ROM.xml -se OTR --otrfile "$OTRNAME" --portVer "9.0.0"
         if [ $? -eq 0 ]; then
             echo "Successfully generated $OTRNAME"
+            return 0
         else
             echo "Error: Failed to generate $OTRNAME"
             return 1
@@ -57,32 +90,50 @@ process_rom() {
     fi
 }
 
-# Count the number of ROM files
-rom_count=0
-for romfile in *.*64; do
-    if [ -f "$romfile" ]; then
-        rom_count=$((rom_count + 1))
-    fi
-done
+# Set GAMEDIR to the current directory and set logfile
+GAMEDIR="$PWD"
+LOGFILE="$GAMEDIR/patchlog.txt"
 
-sleep 1
+# Redirect output and error to the log file
+exec > >(tee -a "$LOGFILE") 2>&1
+echo "GAMEDIR is set to: $GAMEDIR"
+
+# Exports
+export LD_LIBRARY_PATH="$GAMEDIR/libs:$LD_LIBRARY_PATH"
+
+# Extract extractor directory
+if [ -f assets/extractor.zip ]; then
+  echo Extracting xml files...
+  cd assets
+  rm -rf extractor
+  unzip extractor.zip
+  rm extractor.zip
+  cd ..
+fi
+
+# Count the number of ROM files
+rom_count=`find $GAMEDIR -maxdepth 1 -name "*.*64" | wc -l`
 echo "Found $rom_count ROM files!"
 
 # Process them all
-counter=1
-for romfile in *.*64; do
-    if [ -f "$romfile" ]; then
-        echo "Processing ${romfile}..."
-        mv "$romfile" "rom${counter}.z64"
-        if [ $? -eq 0 ]; then
-            process_rom "rom${counter}.z64"
-        counter=$((counter + 1))
-        fi
+rm -rf .success
+find $GAMEDIR -maxdepth 1 -name "*.*64" | while read romfile
+do
+    echo "Processing ${romfile}..."
+    process_rom "${romfile}"
+    if [ $? == 0 ]; then
+        echo "$romfile" >> .success
     fi
 done
 
 # Cleanup
 echo "Finished processing all ROM files."
 rm -rf ./placeholder
-rm -rf *.*64
-echo "Patching process complete!"
+
+success_count=`wc -l .success |cut -d" " -f1`
+if [[ "${success_count}" == "${rom_count}" ]]; then
+    rm -r *.*64
+    echo "Patching process complete!"
+else
+    echo "Error during patching!"
+fi

@@ -1,5 +1,19 @@
 #!/bin/bash
 
+XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
+
+if [ -d "/opt/system/Tools/PortMaster/" ]; then
+  controlfolder="/opt/system/Tools/PortMaster"
+elif [ -d "/opt/tools/PortMaster/" ]; then
+  controlfolder="/opt/tools/PortMaster"
+elif [ -d "$XDG_DATA_HOME/PortMaster/" ]; then
+  controlfolder="$XDG_DATA_HOME/PortMaster"
+else
+  controlfolder="/roms/ports/PortMaster"
+fi
+
+source $controlfolder/control.txt
+
 # The rom version we are dealing with
 VERSION="us"  # at the moment only US is supported and has been tested in Portmaster
 
@@ -41,7 +55,7 @@ exec > >(tee -a "$LOGFILE") 2>&1
 echo "GAMEDIR is set to: $GAMEDIR"
 
 echo "Unpacking ${RESTOOL_ZIP}"
-unzip "${RESTOOL_ZIP}"
+$ESUDO unzip "${RESTOOL_ZIP}"
 
 if [ ! $? -eq 0 ];then
   echo "Unpacking ${RESTOOL_ZIP} has failed"
@@ -52,7 +66,7 @@ fi
 cd restool
 
 # Ensure execution permissions are set
-chmod a+x "${RESTOOL_BIN}"/*
+$ESUDO  chmod a+x "${RESTOOL_BIN}"/*
 
 # Create res folder
 echo "(EXEC) mkdir -p \"${GAMEDIR}/${RES_DIR}\""
@@ -213,7 +227,14 @@ do
       rm -f mp3.nok
       find . -iname '*.txt' -exec cp {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}/{}" \;
       find . -type d -exec mkdir -p "${GAMEDIR}/${DYNOS_DIR}/${dynospack}/{}" \;
-      find . -iname '*.mp3' -exec sh -c 'mpg123 -q -w "$2/${1%.*}.wav" "$1" || touch mp3.nok' sh {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" \;
+
+      if [[ "$DEVICE_RAM" -lt "2" ]]; then
+        # on 1GB device use lower audio quality to avoid a crash
+        # with CFW that don't have swap or zram
+      	find . -iname '*.mp3' -exec sh -c 'mpg123 -2 -q -w "$2/${1%.*}.wav" "$1" || touch mp3.nok' sh {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" \;
+      else
+      	find . -iname '*.mp3' -exec sh -c 'mpg123 -q -w "$2/${1%.*}.wav" "$1" || touch mp3.nok' sh {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" \;
+      fi
       
       if [ -f "mp3.nok" ]
       then

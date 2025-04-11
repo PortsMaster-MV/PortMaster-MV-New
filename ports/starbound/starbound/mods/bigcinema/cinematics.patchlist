@@ -1,0 +1,30 @@
+[
+  {
+    "paths": [
+      "/cinematics/intro/introstage.cinematic",
+      "/cinematics/intro/introstart.cinematic",
+      "/cinematics/peacekeeper/peacekeeper.cinematic",
+      "/cinematics/prison/prison.cinematic",
+      "/cinematics/respawn/apex/respawncasual.cinematic",
+      "/cinematics/respawn/apex/respawnsurvival.cinematic",
+      "/cinematics/respawn/avian/respawncasual.cinematic",
+      "/cinematics/respawn/avian/respawnsurvival.cinematic",
+      "/cinematics/respawn/floran/respawncasual.cinematic",
+      "/cinematics/respawn/floran/respawnsurvival.cinematic",
+      "/cinematics/respawn/glitch/respawncasual.cinematic",
+      "/cinematics/respawn/glitch/respawnsurvival.cinematic",
+      "/cinematics/respawn/human/respawncasual.cinematic",
+      "/cinematics/respawn/human/respawnsurvival.cinematic",
+      "/cinematics/respawn/hylotl/respawncasual.cinematic",
+      "/cinematics/respawn/hylotl/respawnsurvival.cinematic",
+      "/cinematics/respawn/novakid/respawncasual.cinematic",
+      "/cinematics/respawn/novakid/respawnsurvival.cinematic",
+      "/cinematics/story/esther/esther.cinematic",
+      "/cinematics/story/finale/finale.cinematic",
+      "/cinematics/story/opengate/opengate.cinematic"
+    ],
+    "patches": [
+      "/cinematics-zoom.lua"
+    ]
+  }
+]

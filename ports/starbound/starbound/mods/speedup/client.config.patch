@@ -1,0 +1,5 @@
+[
+{ "op" : "replace", "path" : "/maxFrameSkip", "value" : 5 },
+{ "op" : "replace", "path" : "/windowMonitoringBorder", "value" : 20 },
+{ "op" : "replace", "path" : "/presenceEntityMonitoringBorder", "value" : 5 }
+]

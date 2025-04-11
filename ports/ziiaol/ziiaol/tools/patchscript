@@ -10,7 +10,7 @@ echo "GAMEDIR is set to: $GAMEDIR"
 # Exports
 export DATADIR="$GAMEDIR/assets"
 export DATAFILE="ziiaol.port"
-export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/lib:$GAMEDIR/tools/libs:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$GAMEDIR/lib:$GAMEDIR/tools/libs:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 export TOOLDIR="$GAMEDIR/tools"
 export TMPDIR="$GAMEDIR/tmp"

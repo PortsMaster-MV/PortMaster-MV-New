@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Starbound.sh</path>
+    <name>Starbound</name>
+    <desc>Starbound is an extraterrestrial sandbox adventure game! You’ve fled your home, only to find yourself lost in space with a damaged ship. Your only option is to beam down to the planet below and gather the resources you need to repair your ship and set off to explore the vast, infinite universe…</desc>
+    <releasedate>20160622T000000</releasedate>
+    <developer>Chucklefish</developer>
+    <image>./starbound/cover.png</image>
+  </game>
+</gameList>

@@ -128,12 +128,23 @@ if [[ ${DISPLAY_WIDTH} -eq ${DISPLAY_HEIGHT} ]]; then
   [[ $? -eq 0 ]] || cat "${GAMEDIR}/hacksdl.${DISPLAY_WIDTH}x${DISPLAY_HEIGHT}.conf" >> "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf"
 fi
 
+# 3:2 (RG34XXH) display config
+if  [[ ${DISPLAY_WIDTH} == 720 && ${DISPLAY_HEIGHT} == 480 ]]; then
+  sed -i 's/window_w 640/window_w 720/g' "$GAMEDIR/conf/sm64config.txt"
+fi
+
 # use hacksdl to create a virtual analog stick from the dpad
 if [[ -f "${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf" ]]; then
   export LD_PRELOAD="hacksdl.so"
   export HACKSDL_VERBOSE=1
   export HACKSDL_CONFIG_FILE="${GAMEDIR}/hacksdl.${ANALOG_STICKS}.conf"
 fi
+
+# Trick to get alsa dmix enabled on R36S with ArkOS
+# ~/.asoundrc is removed before and port is started
+# and put back after the port exits.
+# So we put it back
+[[ "$CFW_NAME" =~ ^ArkOS.* ]] && cp "${GAMEDIR}/asoundrc" "${HOME}/.asoundrc"
 
 ./sm64.us.f3dex2e.${DEVICE_ARCH} --savepath ./conf/
 

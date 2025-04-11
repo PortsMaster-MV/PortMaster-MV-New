@@ -1,15 +1,10 @@
 {
     "CVars": {
-        "gEnhancements": {
-            "AltAssets": 1
-        },
-        "gGeneral": {
-            "SelectedPresets": [
-                2
-            ]
-        },
+        "gForceCursorVisibility": 0,
         "gOpenWindows": {
-            "ModalWindow": 1
+            "Menu": 0,
+            "ModalWindow": 1,
+            "Notifications": 1
         },
         "gSettings": {
             "ControlNav": 1,
@@ -18,19 +13,12 @@
             "ZFightingMode": 0
         }
     },
-    "ConfigVersion": 2,
+    "ConfigVersion": 3,
     "Window": {
         "AudioBackend": "sdl",
         "Backend": {
-            "Id": 3,
+            "Id": 1,
             "Name": "OpenGL"
-        },
-        "Fullscreen": {
-            "Enabled": false
-        },
-        "Height": 480,
-        "PositionX": 957,
-        "PositionY": 340,
-        "Width": 640
+        }
     }
 }

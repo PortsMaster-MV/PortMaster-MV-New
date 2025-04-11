@@ -32,10 +32,6 @@ This port comes with 3 optional packages:
 
 The extraction of the assets from the rom will temporary uses up to 1 GB of extra storage. Be sure to have at least this amount of free space before launching the game for the first time or it will fail.
 
-**If you are using muOS** you need at least the banana version to run this port.
-
-R36S with ArkOS can only run the game after disabling the audio pack, otherwise the game crashes just after launching it. To disable the audio pack rename the `audio` folder in `render96ex/dynos` to `audio.disable`. The game will run with limited sounds effects and no music.
-
 The Dynos 3D model pack is installed but not enabled by default because on most handheld the game will be choppy when combined with the 60 fps feature. You have to enable it in the dynos menu.
 
 The 60 fps feature is enabled by default. If your device can not handle it and the game is running choppy you can try to disable it in the display options in the option menu. Then wait few seconds to let the framerate stabilize.

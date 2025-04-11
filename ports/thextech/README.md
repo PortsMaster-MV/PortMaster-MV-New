@@ -5,11 +5,11 @@ It completely reproduces the old SMBX 1.3 engine (aside from its Editor), includ
 This build is packed to be compatible with linux based handhelds that support Portmaster project (https://portmaster.games/)  
 Thanks to TheXTech project, Portmaster Community and @ds-sloth developer who supported me.
 
-This port uses TheXTech v1.3.7-beta branch.
+This port is 1.3.7-stable version with bugfix for rocknix gamepad detection.
 
 ## HOW TO BUILD
 
-For better compatibility TheXTech was build in Ubuntu 20.04 arm64 chroot.
+For better compatibility TheXTech was build in Ubuntu 20.04.
 
 ```
 git clone --recurse-submodules https://github.com/TheXTech/TheXTech.git
@@ -54,16 +54,4 @@ max-players-count=2
 inside 
 ```
 ./thextech/assets/assets_name_folder/gameinfo.ini
-```
-
-
-## ROCKNIX Powkiddy X55 gamepad fix
-
-There are reports that TheXTech may have problems detecting gamepad for this particular device. Solution is to edit TheXTech.sh:
-```
-$GPTOKEYB "thextech" &
-```
-replace with 
-```
-$GPTOKEYB "thextech" xbox360 &
 ```

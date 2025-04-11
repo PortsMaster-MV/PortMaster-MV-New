@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gamelist>
+	<game>
+		<path>./Pokewilds.sh</path>
+		<name>Pokéwilds</name>
+		<desc>Explore a procedurally generated Pokémon world! In this Minecraft-like retro style game, use Pokémon to gather resources and build your home. Explore enough and you might uncover a few mysteries!</desc>
+		<image>./pokewilds/cover.png</image>
+		<releasedate>20240117</releasedate>
+		<developer>Pokéwilds Team</developer>
+		<genre>RPG</genre>
+	</game>
+</gamelist>

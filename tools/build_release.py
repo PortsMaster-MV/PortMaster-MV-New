@@ -812,7 +812,7 @@ def port_info(file_name, ports_json, ports_status):
             # HRMMmmmmm o_o;;;;
             return
 
-        file_md5 = ports_status[clean_name]['md5']
+        file_md5  = ports_status[clean_name]['md5']
         file_size = ports_status[clean_name]['size']
 
     default_status = {
@@ -977,7 +977,11 @@ def generate_ports_json(all_ports, port_status, old_manifest, new_manifest):
         }
 
     for port_dir, port_data in sorted(all_ports.items(), key=lambda k: (k[1]['port_json']['attr']['title'].casefold())):
-        ports_json_output['ports'][port_data['name']] = port_data['port_json']
+        if port_data['port_json']['version'] <= PORT_INFO_ROOT_ATTRS['version']:
+            # Only add port.json files which are within the version specs.
+            ports_json_output['ports'][port_data['name']] = port_data['port_json']
+        else:
+            print(f"- Skipping [{port_dir}] `port.json` version too new.")
 
         port_data['port_json']['attr']['image'] = port_data['image_files']
 
@@ -989,6 +993,7 @@ def generate_ports_json(all_ports, port_status, old_manifest, new_manifest):
 
     ## Jank :|
     if REPO_CONFIG.get('SPLIT_IMAGES', "N") == "Y":
+        print("- Building new images.xxx.zip")
         build_new_images_zip(old_manifest, new_manifest, port_status)
 
     utils = []
@@ -999,7 +1004,7 @@ def generate_ports_json(all_ports, port_status, old_manifest, new_manifest):
     utils.append(RELEASE_DIR / 'gameinfo.zip')
     utils.append(RELEASE_DIR / 'images.zip')
 
-    if SPLIT_IMAGES:
+    if REPO_CONFIG.get('SPLIT_IMAGES', "N") == "Y":
         for img_id in range(1000):
             image_xxx_zip = f"images.{img_id:03d}.zip"
 
@@ -1101,7 +1106,7 @@ def main(argv):
     port_status = {}
     file_cache = None
 
-    if not GITHUB_RUN:
+    if not GITHUB_RUN or CACHE_FILE.is_file():
         file_cache = HashCache(CACHE_FILE)
 
     registered = {

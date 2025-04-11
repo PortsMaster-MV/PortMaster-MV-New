@@ -1,0 +1,302 @@
+[
+  {
+    "op": "replace",
+    "path": "/paneLayout/panefeature/anchor",
+    "value": "CenterBottom"
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1L/position/0",
+    "value": 10
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1L/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1LOverlay/position/0",
+    "value": 10
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1LOverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1R/position/0",
+    "value": 27
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1R/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1ROverlay/position/0",
+    "value": 27
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar1ROverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2L/position/0",
+    "value": 50
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2L/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2LOverlay/position/0",
+    "value": 50
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2LOverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2R/position/0",
+    "value": 67
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2R/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2ROverlay/position/0",
+    "value": 67
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar2ROverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3L/position/0",
+    "value": 90
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3L/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3LOverlay/position/0",
+    "value": 90
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3LOverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3R/position/0",
+    "value": 107
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3R/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3ROverlay/position/0",
+    "value": 107
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar3ROverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4L/position/0",
+    "value": 216
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4L/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4LOverlay/position/0",
+    "value": 216
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4LOverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4R/position/0",
+    "value": 233
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4R/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4ROverlay/position/0",
+    "value": 233
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar4ROverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5L/position/0",
+    "value": 256
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5L/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5LOverlay/position/0",
+    "value": 256
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5LOverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5R/position/0",
+    "value": 273
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5R/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5ROverlay/position/0",
+    "value": 273
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar5ROverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6L/position/0",
+    "value": 296
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6L/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6LOverlay/position/0",
+    "value": 296
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6LOverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6R/position/0",
+    "value": 313
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6R/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6ROverlay/position/0",
+    "value": 313
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/customBar6ROverlay/position/1",
+    "value": 4
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar1/position/0",
+    "value": 133
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar1/position/1",
+    "value": 7
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar2/position/0",
+    "value": 152
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar2/position/1",
+    "value": 7
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar3/position/0",
+    "value": 171
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar3/position/1",
+    "value": 7
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar4/position/0",
+    "value": 190
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/essentialBar4/position/1",
+    "value": 7
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/pickupToActionBar/position/0",
+    "value": 332
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/pickupToActionBar/position/1",
+    "value": 0
+  },
+  {
+    "op": "replace",
+    "path": "/paneLayout/swapCustomBar/position/1",
+    "value": 3
+  }
+]
