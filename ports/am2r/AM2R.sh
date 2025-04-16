@@ -13,29 +13,47 @@ else
 fi
 
 source $controlfolder/control.txt
-export PORT_32BIT="Y"
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 get_controls
 
 # Variables
 GAMEDIR="/$directory/ports/am2r"
 
-# CD and set permissions
+# CD and set log
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-$ESUDO chmod +x -R $GAMEDIR/*
-
-# Exports
-export LD_LIBRARY_PATH="$GAMEDIR/libs:/usr/lib:/usr/lib32:$LD_LIBRARY_PATH"
 
 # Config
+mkdir -p "$GAMEDIR/conf/am2r"
 bind_directories ~/".config/am2r" "$GAMEDIR/conf/am2r"
 
-# Run game
-$GPTOKEYB "gmloader" -c "$GAMEDIR/am2r.gptk" &
-pm_platform_helper "$GAMEDIR/gmloader"
-./gmloader gamedata/am2r.apk
+# Exports
+export PATCHER_FILE="$GAMEDIR/patchscript"
+export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
+export PATCHER_TIME="2 to 5 minutes"
+export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
+export controlfolder
+
+# Check if we need to patch the game
+if [ ! -f "$GAMEDIR/patchlog.txt" ] || [ -f "$GAMEDIR/assets/data.win" ]; then
+    if [ -f "$controlfolder/utils/patcher.txt" ]; then
+        source "$controlfolder/utils/patcher.txt"
+        $ESUDO kill -9 $(pidof gptokeyb)
+    else
+        echo "This port requires the latest version of PortMaster."
+    fi
+fi
+
+# Post patcher setup
+export PORT_32BIT="Y"
+[ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
+export LD_LIBRARY_PATH="/usr/lib32:$GAMEDIR/libs:$LD_LIBRARY_PATH"
+
+
+# Assign gptokeyb and load the game
+$GPTOKEYB "gmloader" xbox360 &
+pm_platform_helper "$GAMEDIR/gmloader" > /dev/null
+./gmloader am2r.port
 
 # Cleanup
 pm_finish
-

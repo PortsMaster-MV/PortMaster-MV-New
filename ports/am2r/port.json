@@ -9,7 +9,7 @@
     "attr": {
         "title": "AM2R",
         "desc": "Another Metroid 2 Remake.  An action-adventure game developed by Argentinian programmer Milton Guasti (also known as DoctorM64).",
-        "inst": "You'll need to provide your own am2r android apk into the ports/am2r/gamedata folder.  Make sure it is named am2r.apk.  The name is case sensitive.",
+        "inst": "Copy your own am2r v1.1 zip file into ports/am2r/assets folder.",
         "genres": [
             "action",
             "adventure",
