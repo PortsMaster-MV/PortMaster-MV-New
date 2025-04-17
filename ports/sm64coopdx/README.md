@@ -3,25 +3,6 @@
 
 [sm64coopdx](https://github.com/coop-deluxe/sm64coopdx) is a game based on the Super Mario 64 engine and modified to have multiplayer and mods.
 
-CFW Tests:
-[✓] AmberELEC
-[✓] ArkOS
-[✓] ROCKNIX
-[✓] MuOS
-[✓] Knulli (Optional)
-[ ] Crossmix (Optional)
-
-GPU driver: 
-[✓] Mali
-[✓] Panfrost (Mainline)
-[✓] Adreno (SM8x50)
-
-Resolutions: 
-[ ] 480x320 (Optional)
-[✓] 640x480
-[✓] 720x720 (RGB30) (Optional)
-[✓] Higher resolutions (e.g., 1280x720)
-
 ## Disclaimer
 
 You must own a legal copy of the Super Mario 64 rom.
