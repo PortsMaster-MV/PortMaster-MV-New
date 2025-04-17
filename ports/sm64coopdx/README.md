@@ -22,7 +22,7 @@ Resolutions:
 [✓] 720x720 (RGB30) (Optional)
 [✓] Higher resolutions (e.g., 1280x720)
 
-# Disclaimer
+## Disclaimer
 
 You must own a legal copy of the Super Mario 64 rom.
 
