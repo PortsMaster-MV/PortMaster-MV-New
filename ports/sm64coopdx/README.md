@@ -9,12 +9,13 @@ You must own a legal copy of the Super Mario 64 rom.
 
 Don't ask Portmaster for help on how to obtain this copy.
 
-# Requirements
+## Build Instruccions
+
+### Requirements
 
 1. A debian bullseye chroot for aarch64 architecture.
 2. An original rom of Super Mario 64 (USA version).
 
-# Build Instruccions
 
 1. Inside the chroot, install these packages:
 
