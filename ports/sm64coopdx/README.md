@@ -52,9 +52,3 @@ additionally you have to modify the binary name to sm64coopdx.aarch64
 
 7. The us_pc folder contains the binary and files, rename the folder to sm64coopdx and you will have your port ready.
 
-# Post install
-
-After installing the port via portmaster you will have to copy your rom to the port directory with the name “baserom.us.z64”.
-
-run the port and enjoy!
-
