@@ -25,7 +25,7 @@
     "store": [],
     "availability": "paid",
     "reqs": [
-      "hires"
+      "!lowres"
     ],
     "arch": [
       "aarch64"
