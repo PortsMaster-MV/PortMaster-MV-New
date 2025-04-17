@@ -51,6 +51,6 @@ fi
 
 # actually run the game
 export TCMALLOC_RELEASE_RATE=0
-LD_PRELOAD=${GAMEDIR}/libtcmalloc_minimal.so.4.5.16 ./starbound
+LD_PRELOAD=${GAMEDIR}/libtcmalloc_minimal.so.4.5.3 ./starbound
 
 pm_finish
