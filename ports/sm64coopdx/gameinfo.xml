@@ -1,8 +1,11 @@
-<?xml version='1.0' encoding='utf-8'?>
-<gameList>
-  <game>
-    <path>./sm64coopdx.sh</path>
-    <name>sm64coopdx</name>
-    <image>./sm64coopdx/screenshot.png</image>
-  </game>
+<?xml version="1.0" encoding="utf-8"?>
+<gamelist>
+	<game>
+        <path>./Super Mario 64 Co-op DX.sh</path>
+        <name>Super Mario 64 Co-op DX</name>
+        <desc></desc>
+        <image>./sm64coopdx/cover.png</image>
+        <developer>Nintendo, Coop-Deluxe Team</developer>
+        <releasedate>20240701</releasedate>
+    </game>
 </gameList>
