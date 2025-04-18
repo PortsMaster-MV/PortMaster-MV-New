@@ -9,7 +9,7 @@ You must own a legal copy of the Super Mario 64 rom.
 
 Don't ask Portmaster for help on how to obtain this copy.
 
-## Build Instruccions
+## Build Instructions
 
 ### Requirements
 
@@ -28,9 +28,11 @@ sudo apt install build-essential git python3 libglew-dev libsdl2-dev libz-dev li
 3. Apply the patch fixsources.patch in the root directory
 
 > [!WARNING]
-> for compatibility reasons some libraries already compiled in the sm64coopdx source have to be recompiled and replaced, be careful when getting the packages and using the libraries not to cause problems on the world servers. (libcoopnet has not released a version, so you will have to get it via git clone or by downloading the package from the last commit, note that if the developers have not changed the library to this new version you will have to stick with the release and fix dates, additionally you will also have to change the headers to not have compatibility problems).
+> for compatibility reasons some libraries already compiled in the sm64coopdx source have to be recompiled and replaced, be careful when getting the packages and using the libraries not to cause problems on the world servers. 
+> (libcoopnet has not released a version, so you will have to get it via git clone or by downloading the package from the last commit, note that if the developers have not changed the library to this new version you will have to stick with the release and fix dates, 
+> additionally you will also have to change the headers to not have compatibility problems).
 
-4. Compile the [libcoopdx](https://github.com/Isaac0-dev/coopnet.git) and [libjuice](https://github.com/paullouisageneau/libjuice) libraries and replace them in the lib/coopnet/linux directory:
+4. Compile the [libcoopdx](https://github.com/Isaac0-dev/coopnet.git) and [libjuice](https://github.com/paullouisageneau/libjuice) libraries and replace them in the `lib/coopnet/linux` directory:
 
 libcoopdx-arm64.a
 libjuice-arm64.a
