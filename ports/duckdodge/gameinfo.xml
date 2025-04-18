@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Duck Dodge.sh</path>
+    <name>Duck Dodge</name>
+    <desc>Have you ever wanted to play Duck Hunt, but as the poor defenseless duck? Avoid the hunter's shots and fly away! Be careful, the hunter gets progressively better with each round!</desc>
+    <releasedate>20230707T000000</releasedate>
+    <developer>Diego Escalante</developer>
+    <publisher>Diego Escalante</publisher>
+    <genre>Action</genre>
+    <image>./duckdodge/cover.png</image>
+  </game>
+</gameList>
