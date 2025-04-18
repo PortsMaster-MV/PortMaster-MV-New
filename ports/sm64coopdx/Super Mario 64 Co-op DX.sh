@@ -61,7 +61,6 @@ if [ -f "$GAMEDIR/files.zip" ]; then
 fi
 
 # Run the game
-pm_message "Starting game."
 $GPTOKEYB "sm64coopdx.${DEVICE_ARCH}" &
 pm_platform_helper "$GAMEDIR/sm64coopdx.${DEVICE_ARCH}"
 ./sm64coopdx.${DEVICE_ARCH} $ARGS
