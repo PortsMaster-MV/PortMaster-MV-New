@@ -1,0 +1,77 @@
+{
+  "paneLayout" : {
+    "panefeature" : {
+      "anchor" : "center"
+    },
+    "voiceLabel" : {
+      "type" : "label",
+      "position" : [119, 202],
+      "hAnchor" : "mid",
+      "value" : "VOICE"
+    },
+    "showVoiceSettings" : {
+      "type" : "button",
+      "position" : [30, 185],
+      "caption" : "Settings",
+      "base" : "/interface/optionsmenu/duocontrolsbutton.png",
+      "hover" : "/interface/optionsmenu/duocontrolsbuttonhover.png"
+    },
+    "showVoicePlayers" : {
+      "type" : "button",
+      "disabled" : true,
+      "position" : [133, 185],
+      "caption" : "^#a0a000,font=iosevka-semiboldoblique;TODO^#aa7;:^reset; Players",
+      "base" : "/interface/optionsmenu/duocontrolsbutton.png",
+      "hover" : "/interface/optionsmenu/duocontrolsbuttonhover.png"
+    },
+    "showKeybindings" : {
+      "type" : "button",
+      "position" : [153, 95],
+      "caption" : "Game Binds",
+      "base" : "/interface/optionsmenu/tricontrolsbutton.png",
+      "hover" : "/interface/optionsmenu/tricontrolsbuttonhover.png"
+    },
+    "showModBindings" : {
+      "type" : "button",
+      "position" : [87, 95],
+      "caption" : "Mod Binds",
+      "base" : "/interface/optionsmenu/tricontrolsbutton.png",
+      "hover" : "/interface/optionsmenu/tricontrolsbuttonhover.png"
+    },
+    "showGraphics" : {
+      "type" : "button",
+      "position" : [21, 95],
+      "caption" : "Graphics",
+      "base" : "/interface/optionsmenu/tricontrolsbutton.png",
+      "hover" : "/interface/optionsmenu/tricontrolsbuttonhover.png"
+    },
+
+    "volumeLabel" : { "position" : [119, 173] },
+    "musicSlider" : { "position" : [62, 126] },
+    
+    "sfxLabel" : { "position" : [32, 142], "value" : "Sound" },
+    "sfxValueLabel" : { "position" : [192, 142] },
+
+    "instrumentSlider" : { "type" : "slider", "position" : [62, 158], "gridImage" : "/interface/optionsmenu/largeselection.png" },
+    "instrumentLabel" : { "type" : "label", "position" : [32, 158], "value" : "Tunes" },
+    "instrumentValueLabel" : { "type" : "label", "position" : [192, 158], "hAnchor" : "mid", "value" : "Replace Me" },
+
+    "headRotationLabel" : {
+      "type" : "label",
+      "position" : [25, 51],
+      "hAnchor" : "left",
+      "value" : "HEAD ROTATION"
+    },
+    "headRotationCheckbox" : {
+      "type" : "button",
+      "pressedOffset" : [0, 0],
+      "position" : [104, 51],
+      "base" : "/interface/optionsmenu/checkboxnocheck.png",
+      "hover" : "/interface/optionsmenu/checkboxnocheckhover.png",
+      "baseImageChecked" : "/interface/optionsmenu/checkboxcheck.png",
+      "hoverImageChecked" : "/interface/optionsmenu/checkboxcheckhover.png",
+      "checkable" : true,
+      "checked" : true
+    }
+  }
+}

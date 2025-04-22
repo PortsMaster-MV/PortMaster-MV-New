@@ -227,7 +227,14 @@ do
       rm -f mp3.nok
       find . -iname '*.txt' -exec cp {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}/{}" \;
       find . -type d -exec mkdir -p "${GAMEDIR}/${DYNOS_DIR}/${dynospack}/{}" \;
-      find . -iname '*.mp3' -exec sh -c 'mpg123 -q -w "$2/${1%.*}.wav" "$1" || touch mp3.nok' sh {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" \;
+
+      if [[ "$DEVICE_RAM" -lt "2" ]]; then
+        # on 1GB device use lower audio quality to avoid a crash
+        # with CFW that don't have swap or zram
+      	find . -iname '*.mp3' -exec sh -c 'mpg123 -2 -q -w "$2/${1%.*}.wav" "$1" || touch mp3.nok' sh {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" \;
+      else
+      	find . -iname '*.mp3' -exec sh -c 'mpg123 -q -w "$2/${1%.*}.wav" "$1" || touch mp3.nok' sh {} "${GAMEDIR}/${DYNOS_DIR}/${dynospack}" \;
+      fi
       
       if [ -f "mp3.nok" ]
       then

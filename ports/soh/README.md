@@ -1,8 +1,8 @@
 ## Information
-Ship of Harkinian 8.0.6 was built from the develop branch (bleeding edge) on 08/14/2024.
+Ship of Harkinian 8.0.6 was built from the develop branch (bleeding edge) with checkout commit https://github.com/HarbourMasters/Shipwright/commit/651348d2a94f6bfa5f7e7f89800908e9e8a4a3e5 on 03/12/2025.
 
-#### Where is the compatibility version?
-The compatibility.elf version of this port was retired due to being too slow. Previous versions were tested, including fpasteau's R36S v8.0.4 binary. There is simply no point in maintaining it.
+## Compatibility
+This build can run on firmwares with older GLIBC (where previously 2.36+ was required) thanks to new build steps by beniamino. TrimUI devices have a render bug where the PVR driver doesn't support NPOT (non-power-of-two) textures and therefore won't render them. The game is still playable, but several textures will be invisible.
 
 ## Installation
 You need to provide your own roms. See the [Shipwright](https://github.com/HarbourMasters/Shipwright/blob/develop/docs/supportedHashes.json) repository for a list of supported rom hashes. Gather your roms and put them in the `ports/soh` folder. Start the port, and on first run, your .otr files will be generated from the roms you provide. Note that only one `oot.otr` and `oot-mq.otr` will be made--if you provide more than one rom per game, strange things may occur. You *can* use pregenerated `.otr` files from elsewhere, but you may experience crashes.
@@ -12,14 +12,10 @@ Texture pack files and mods can be added to the `ports/soh/mods` folder.
 Logs are recorded automatically as `ports/soh/log.txt`. Please provide a log if you report an issue. PortMaster does not maintain the Ship of Harkinian repository and is not responsible for bugs or issues outside of our control. Likewise, HarbourMasters is not affiliated with PortMaster and this distribution is not officially supported by them. *Please come to PortMaster for help before approaching the HarbourMasters!*
 
 ## Menu Navigation
-There is a `soh.gptk` file you can use to change which button emulates F1 (default is L3). Some devices have a special button called `guide` that makes for a good F1 mapping. Once you do so, make the menu bar appear, hold the north button (X or Y), press R, then press the north button again to access the menu bar navigation.
-
-![menubar](https://github.com/JeodC/PortMaster-ShipOfHarkinian/assets/47716344/82b1de1d-11a9-49da-8500-61bc26902cbe)
-
-The GUI may be too large or small. Navigate to `Settings->Graphics->IMGUI Menu Scale` to change it.
+Ship of Harkinian has built-in controller navigation for the imgui menu. Press `SELECT` to open the menu and use the `D-PAD` to choose a submenu, then press `A` to switch focus to it. Press `B` to back out of a submenu.
 
 ## Default Gameplay Controls
-The port uses SDL controller mapping and controls can be remapped from the menu bar.
+The port uses SDL controller mapping and controls can be remapped from the imgui menu. For devices without a right analog stick, the gptk file allows for the `HOTKEY + ABXY` button combo to use the C-Buttons.
 
 ## Suggested Mods
 You can find a ton of mods at [GameBanana](https://gamebanana.com/mods/games/16121?_aFilters%5BGeneric_Name%5D=contains%2C3ds&_sSort=Generic_MostDownloaded).  
@@ -35,14 +31,15 @@ I prefer the OoT 3DS look along with a studio ghibli style skybox:
 </p>
 
 - [Djipi's 3DS Experience](https://gamebanana.com/mods/477979)
-    - delete `Djipi's 3DE - 02.otr` if using the 3ds link models below
 - [3DS Adult & Young Link (just the models)](https://gamebanana.com/mods/475743)
+- [OOT3D Link Textures](https://gamebanana.com/mods/478711)
 - [Studio Ghibli Skybox](https://github.com/JeodC/PortMaster-ShipOfHarkinian/tree/main/external-mods/)
 
 ## Thanks
 Nintendo for the game  
 HarbourMasters for the native pc port  
-fpasteau for the 8.0.4 compatibility build  
+fpasteau for the original 8.0.4 compatibility build  
+beniamino for the updated build steps for develop to work on more devices  
 AkerHasReawakened for the cover art  
 IanSantos for the ghibli skybox mod  
 Testers and Devs from the PortMaster Discord  
