@@ -16,6 +16,8 @@ else
 fi
 
 source $controlfolder/control.txt
+source $controlfolder/device_info.txt
+
 get_controls
 
 CUR_TTY=/dev/tty0
@@ -42,12 +44,23 @@ OPENGL=$(glxinfo | grep "OpenGL version string")
 if [ ! -z "${OPENGL}" ]; then
   LIBS=""
   REVC="reVC_gl"
-  GAMEPAD=$(cat /sys/class/input/js0/device/name)
-  sed -i "/JoystickName/c\JoystickName = ${GAMEPAD}" ${GAMEDIR}/reVC.ini
 else
   LIBS="libs"
   REVC="reVC"
 fi
+
+# Adding support for GAMEPAD across more operating systems.
+# (On Anbernic RG35XX H with ROCKNIX 20250118, the GAMEPAD is sourced from /proc/bus/input/devices.
+# The H700 uses the joypad. The 'js0' device is retained, but it's unclear whether it's used by other devices.)
+case "$CFW_NAME" in
+        "ROCKNIX")
+                GAMEPAD=$(grep -B 4 -E 'js0|joypad' /proc/bus/input/devices | awk 'BEGIN {FS="\""}; /Name/ {printf $2}')
+                ;;
+        *)
+                GAMEPAD=$(cat /sys/class/input/js0/device/name)
+                ;;
+esac
+sed -i "/JoystickName/c\JoystickName = ${GAMEPAD}" ${GAMEDIR}/reVC.ini
 
 cd "$GAMEDIR"
 $ESUDO chmod 666 /dev/uinput
