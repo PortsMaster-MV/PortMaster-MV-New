@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./zeldafop.sh</path>
+    <name>The Legend of Zelda : Fragments of Power</name>
+    <desc>Based on the original Zelda NES game, think of it as a third campaign with a few surprises. Takes place after the second game.</desc>
+    <releasedate>20240420T000000</releasedate>
+    <developer>Venny Hedgie</developer>
+    <publisher>Venny Hedgie</publisher>
+    <genre>Action, Adventure</genre>
+    <image>./zeldafop/cover.png</image>
+  </game>
+</gameList>
