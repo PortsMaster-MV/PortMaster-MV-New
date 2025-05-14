@@ -1,0 +1,33 @@
+{
+  "version": 3,
+  "name": "zeldafop.zip",
+  "items": [
+    "The Legend of Zelda Fragments of Power.sh",
+    "zeldafop"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "The Legend of Zelda: Fragments of Power",
+    "porter": [
+      "Jeod",
+      "MadShmupper"
+    ],
+    "desc": "Based on the original Zelda NES game, think of it as a third campaign with a few surprises. Takes place after the second game. Includes a randomizer mode for extra runs, though it is recommended the original game is played first.",
+    "desc_md": null,
+    "inst": "Download from itch.io https://vennyhedgie.itch.io/fragments-of-power then place data.win, options.ini, and both .dat files into the assets folder.",
+    "inst_md": "Download from [itch.io](https://vennyhedgie.itch.io/fragments-of-power) then place data.win, options.ini, and both .dat files into the assets folder.",
+    "genres": [
+      "action",
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": null,
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
