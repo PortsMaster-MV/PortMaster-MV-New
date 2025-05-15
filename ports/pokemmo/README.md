@@ -30,6 +30,13 @@ PokeMMO is a fan-made multiplayer online game that brings together multiple gene
     -> You only need to manually install PortMaster via ssh
 ~~~
 
+### How do I enter the `security code` in PokeMMO?
+
+- Press: Select + Y to enable virtual keyboard.
+- Press: Select to toggle number/text
+- Dpad Up/Down to select value,  A to add, B to remove.
+- Start to disable virtual keyboard.
+
 ### What is `hack.jar`?
 
 `hack.jar` is a Java package that allows loading optimized shaders into memory for the following custom firmware (CFW).  
