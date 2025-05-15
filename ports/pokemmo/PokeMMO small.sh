@@ -23,6 +23,13 @@ java_runtime="zulu17.54.21-ca-jre17.0.13-linux"
 weston_runtime="weston_pkg_0.2"
 mesa_runtime="mesa_pkg_0.1"
 
+# If /etc/machine-id doesn't exist and /tmp/dbus/machine-id exists, copy it over
+if [ ! -f /etc/machine-id ]; then
+  if [ -f /tmp/dbus/machine-id ]; then
+    $ESUDO cp /tmp/dbus/machine-id /etc/machine-id
+  fi
+fi
+
 if [[ -z "$GPTOKEYB2" ]]; then
   pm_message "This port requires the latest PortMaster to run, please go to https://portmaster.games/ for more info."
   sleep 5
@@ -43,7 +50,10 @@ if [ ! -f "credentials.txt" ]; then
   mv credentials.template.txt credentials.txt
 fi
 
+# Fixed: Home screen freezing
 rm pokemmo_crash_*.log
+rm m hs_err_pid*
+
 cat data/mods/console_mod/dync/theme.small.xml > data/mods/console_mod/console/theme.xml
 
 client_ui_theme=$(grep -E '^client.ui.theme=' config/main.properties | cut -d'=' -f2)
