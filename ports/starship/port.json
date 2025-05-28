@@ -1,0 +1,31 @@
+{
+  "version": 2,
+  "name": "starship.zip",
+  "items": [
+    "Starship.sh",
+    "starship"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Starship",
+    "min_glibc": "2.36",
+    "porter": [
+      "Jeod"
+    ],
+    "desc": "A source port of Star Fox 64. Starship features extensive and significant enhancements over the original game, such as improved performance, increased frame-rate, native ultra-widescreen support, and extensive mod support (especially compared to emulated versions of the original), among other features.",
+    "inst": "Follow the guide in the readme to generate your sf64.otr file.",
+    "genres": [
+      "action",
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": null,
+    "reqs": [
+	],
+    "arch": [
+      "aarch64"
+    ]
+  }
+}
