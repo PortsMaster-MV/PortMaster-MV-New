@@ -1,0 +1,34 @@
+{
+  "version": 4,
+  "name": "starship.zip",
+  "items": [
+    "Starship.sh",
+    "starship"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Starship",
+    "porter": [
+      "Jeod"
+    ],
+    "desc": "A source port of Star Fox 64. Starship features extensive and significant enhancements over the original game, such as improved performance, increased frame-rate, native ultra-widescreen support, and extensive mod support (especially compared to emulated versions of the original), among other features.",
+    "desc_md": null,
+    "inst": "Follow the guide in the readme to generate your sf64.o2r file.",
+    "inst_md": null,
+    "genres": [
+      "action",
+      "simulation"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "free",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
