@@ -1,0 +1,33 @@
+{
+  "version": 4,
+  "name": "minizelda.zip",
+  "items": [
+    "MiniZelda.sh",
+    "minizelda"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "MiniZelda",
+    "porter": [
+      "MadShmupper"
+    ],
+    "desc": "A ZELDA fan game that was made using the Pyxel engine.",
+    "desc_md": null,
+    "inst": "Download at itch.io https://aged99oow.itch.io/zelda and place MiniZelda.pyxapp into minizelda directory",
+    "inst_md": "Download at [itch.io](https://aged99oow.itch.io/zelda) and place MiniZelda.pyxapp into minizelda directory",
+    "genres": [
+      "adventure"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [
+      "pyxel_2.2.8_python_3.11.squashfs"
+    ],
+    "store": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [],
+    "min_glibc": ""
+  }
+}

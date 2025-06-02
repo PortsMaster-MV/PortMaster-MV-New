@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./MiniZelda.sh</path>
+    <name>MiniZelda</name>
+    <desc>A fan game based on The Legend of Zelda, made in Pyxel.</desc>
+    <releasedate>20230312T000000</releasedate>
+    <developer>Aged 99 Out of Work</developer>
+    <publisher>Aged 99 Out of Work</publisher>
+    <genre>Adventure </genre>
+    <image>./minizelda/cover.jpg</image>
+  </game>
+</gameList>

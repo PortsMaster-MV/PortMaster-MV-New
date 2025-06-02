@@ -1,0 +1,9 @@
+**License Disclaimer**
+
+ This package contains only **PortMaster-compatible build files** (e.g., configuration, scripts, and launchers) intended to assist users in running an existing fan game that they have acquired.  
+It does **not** include any original game/fan-game files, assets, or data from Nintendo, nor the "fan game" creator.
+All intellectual property related to **ZELDA** remains the property of **Nintendo Co., Ltd.**  
+This port project is not affiliated with, endorsed by, or sponsored by Nintendo or the original developer of the fan game.
+These build files are provided **free of charge** for **educational and compatibility purposes only**.  
+Users must supply their own copy of the original fan game.
+
