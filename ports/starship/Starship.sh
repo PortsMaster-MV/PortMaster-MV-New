@@ -29,7 +29,7 @@ export PATCHER_TIME="5 to 10 minutes"
 # CD and set permissions
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-$ESUDO chmod +x -R $GAMEDIR/*
+$ESUDO chmod +x -R $GAMEDIR/Starship
 
 # Check imgui.ini and modify if needed
 input_file="imgui.ini"
