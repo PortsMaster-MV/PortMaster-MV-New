@@ -1,0 +1,34 @@
+{
+  "version": 4,
+  "name": "minimetroid.zip",
+  "items": [
+    "MiniMetroid.sh",
+    "minimetroid"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "MiniMetroid",
+    "porter": [
+      "MadShmupper"
+    ],
+    "desc": "A Metroid fan game that was made using the Pyxel engine.",
+    "desc_md": null,
+    "inst": "Download at itch.io https://aged99oow.itch.io/metroid and place MiniMetroid.pyxapp into minimetroid directory",
+    "inst_md": "Download at [itch.io](https://aged99oow.itch.io/metroid) and place MiniMetroid.pyxapp into minimetroid directory",
+    "genres": [
+      "adventure",
+      "platformer"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [
+      "pyxel_2.2.8_python_3.11.squashfs"
+    ],
+    "store": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [],
+    "min_glibc": ""
+  }
+}
