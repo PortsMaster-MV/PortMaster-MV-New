@@ -1,0 +1,33 @@
+{
+  "version": 4,
+  "name": "minimario.zip",
+  "items": [
+    "MiniMario.sh",
+    "minimario"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "MiniMario",
+    "porter": [
+      "MadShmupper"
+    ],
+    "desc": "A Mario fan game that was made using the Pyxel engine.",
+    "desc_md": null,
+    "inst": "Download at itch.io https://aged99oow.itch.io/mario and place MiniMario.pyxapp into minimario directory",
+    "inst_md": "Download at [itch.io](https://aged99oow.itch.io/mario) and place MiniMario.pyxapp into minimario directory",
+    "genres": [
+      "platformer"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [
+      "pyxel_2.2.8_python_3.11.squashfs"
+    ],
+    "store": [],
+    "availability": "free",
+    "reqs": [],
+    "arch": [],
+    "min_glibc": ""
+  }
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./MiniMario.sh</path>
+    <name>MiniMario</name>
+    <desc>A fan made Mario game made using Pyxel.</desc>
+    <releasedate>20220123T000000</releasedate>
+    <developer>Aged 99 Out of Work</developer>
+    <publisher>Aged 99 Out of Work</publisher>
+    <genre>platformer </genre>
+    <image>./minimario/cover.png</image>
+  </game>
+</gameList>
