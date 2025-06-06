@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gamelist>
+	<game>
+		<path>./Starship.sh</path>
+		<name>Starship</name>
+		<desc>A source port of StarFox 64. This port allows new features like widescreen resolution and enhanced texture packs among other customization options.</desc>
+		<image>./starship/cover.png</image>
+		<releasedate>20241223</releasedate>
+		<developer>Nintendo</developer>
+		<publisher>Harbour Masters</publisher>
+		<genre>Action</genre>
+	</game>
+<gamelist>
