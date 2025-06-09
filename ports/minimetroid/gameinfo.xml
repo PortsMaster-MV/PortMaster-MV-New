@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./MiniMetroid.sh</path>
+    <name>MiniMetroid</name>
+    <desc>A metroid fan game made using Pyxel engine.</desc>
+    <releasedate>20240106T000000</releasedate>
+    <developer>Aged 99 Out of Work</developer>
+    <publisher>Aged 99 Out of Work</publisher>
+    <genre>action/platformer</genre>
+    <image>./minimetroid/cover.png</image>
+  </game>
+</gameList>
