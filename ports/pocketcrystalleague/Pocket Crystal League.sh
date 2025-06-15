@@ -32,12 +32,25 @@ $ESUDO chmod +x -R $GAMEDIR/*
 export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/lib:$GAMEDIR/libs:$LD_LIBRARY_PATH"
 
 # Apply mouse scaling according to screen size
-if [ $DISPLAY_WIDTH -gt 480 ]; then
+if [ $DISPLAY_WIDTH -gt 720 ]; then
     sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $BIG_SCALE/" "$GAMEDIR/pcl.gptk"
     sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $BIG_DELAY/" "$GAMEDIR/pcl.gptk"
 else
     sed -i "s/^mouse_scale *= *[0-9]\+/mouse_scale = $SMALL_SCALE/" "$GAMEDIR/pcl.gptk"
     sed -i "s/^mouse_delay *= *[0-9]\+/mouse_delay = $SMALL_DELAY/" "$GAMEDIR/pcl.gptk"
+fi
+
+# If we have analog sticks for mouse controls then we can use the dpad for something else
+if [ $ANALOG_STICKS -gt 1 ]; then
+    sed -i -E 's/^up *= *.*/up = up/' "$GAMEDIR/pcl.gptk"
+    sed -i -E 's/^down *= *.*/down = down/' "$GAMEDIR/pcl.gptk"
+    sed -i -E 's/^left *= *.*/left = left/' "$GAMEDIR/pcl.gptk"
+    sed -i -E 's/^right *= *.*/right = right/' "$GAMEDIR/pcl.gptk"
+else
+    sed -i -E 's/^up *= *.*/up = mouse_movement_up/' "$GAMEDIR/pcl.gptk"
+    sed -i -E 's/^down *= *.*/down = mouse_movement_down/' "$GAMEDIR/pcl.gptk"
+    sed -i -E 's/^left *= *.*/left = mouse_movement_left/' "$GAMEDIR/pcl.gptk"
+    sed -i -E 's/^right *= *.*/right = mouse_movement_right/' "$GAMEDIR/pcl.gptk"
 fi
 
 # Assign gptokeyb and load the game

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Lode Runner Online.sh</path>
+    <name>Lode Runner Online</name>
+    <desc>A fan-made cross-platform clone of Lode Runner Online: The Mad Monks' Revenge.</desc>
+    <releasedate>20240409T000000</releasedate>
+    <developer>Quark Robot (original: Presage Software)</developer>
+    <publisher>Quark Robot (original: Sierra On-Line)</publisher>
+    <genre>Puzzle-platformer</genre>
+    <image>./loderunneronline/screenshot.png</image>
+  </game>
+</gameList>

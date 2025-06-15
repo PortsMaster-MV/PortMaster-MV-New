@@ -24,12 +24,16 @@ from util import *
 #############################################################################
 ROOT_DIR = Path('.')
 
+CACHE_FILE    = ROOT_DIR / '.hash_cache'
 MANIFEST_FILE = ROOT_DIR / 'manifest.json'
-STATUS_FILE = ROOT_DIR / 'ports_status.json'
-PORTS_DIR = ROOT_DIR / 'ports'
+STATUS_FILE   = ROOT_DIR / 'ports_status.json'
+PORTS_DIR     = ROOT_DIR / 'ports'
+RUNTIMES_DIR  = ROOT_DIR / 'runtimes'
+
+GITHUB_RUN = (ROOT_DIR / '.github_check').is_file()
 
 LARGEST_FILE = (1024 * 1024 * 90)
-CHUNK_SIZE = (1024 * 1024 * 50)
+DEFAULT_CHUNK_SIZE = (1024 * 1024 * 50)
 
 #############################################################################
 
@@ -43,16 +47,39 @@ def load_port(port_dir):
 
     git_ignore_file = port_dir / '.gitignore'
     git_ignores = []
+    git_ignores_updates = []
+    allow_files = []
+    update_allow_files = []
     large_files = {}
+
+    chunk_size = DEFAULT_CHUNK_SIZE
 
     if git_ignore_file.is_file():
         with open(git_ignore_file, 'r') as fh:
             for line in fh:
                 line = line.strip()
+
+                if line.startswith('##') and 'CHUNK_SIZE' in line:
+                    new_chunk_size = line.split(':', 1)[-1].strip()
+                    if new_chunk_size.isdigit():
+                        chunk_size = (1024 * 1024 * int(new_chunk_size))
+                    continue
+
+                if line.startswith('##') and 'ALLOW' in line:
+                    allow_file = line.split(':', 1)[-1].strip()
+
+                    if '/' not in allow_file:
+                        update_allow_files.append(allow_file)
+                    else:
+                        allow_files.append(allow_file)
+
+                    continue
+
                 if line == '' or line.startswith('#'):
                     continue
 
-                git_ignores.append(line)
+                if '/' in line:
+                    git_ignores.append(line)
 
     # Create the manifest (an md5sum of all the files in the port, and an md5sum of those md5sums).
     temp = []
@@ -75,11 +102,22 @@ def load_port(port_dir):
             if not file_name.is_file():
                 continue
 
+            rel_name = file_name.relative_to(port_dir)
+
+            if file_name.name in update_allow_files:
+                allow_files.append(str(rel_name))
+                continue
+
+            if str(rel_name) in allow_files:
+                continue
+
             if '.part.' in file_name.name:
                 large_file_name, part_check, part_number = str(file_name).rsplit('.', 2)
 
-                if file_name.name.rsplit('.', 2)[0] not in git_ignores:
-                    git_ignores.append(file_name.name.rsplit('.', 2)[0])
+                rel_name = file_name.relative_to(port_dir)
+
+                if str(rel_name).rsplit('.', 2)[0] not in git_ignores:
+                    git_ignores.append(str(rel_name).rsplit('.', 2)[0])
 
                 if part_check == 'part' and part_number.isdigit():
                     large_files.setdefault(large_file_name, []).append(str(file_name))
@@ -90,36 +128,55 @@ def load_port(port_dir):
             if file_name.stat().st_size < LARGEST_FILE:
                 continue
 
-            if file_name.name not in git_ignores:
-                git_ignores.append(file_name.name)
+            if str(rel_name) not in git_ignores:
+                git_ignores.append(str(rel_name))
 
             large_files.setdefault(str(file_name), [])
 
     git_ignores.sort(key=lambda name: name.casefold())
 
-    if len(git_ignores) > 0 or len(large_files) > 0:
-        print('-' * 40)
+    if len(git_ignores) > 0 or len(large_files) > 0 or len(allow_files) > 0:
+        print('#' * 40)
+        print(f'# {port_dir.name}')
+        print("chunk_sizes = ", chunk_size)
         print("git_ignores = ", json.dumps(git_ignores, indent=4))
         print("large_files = ", json.dumps(large_files, indent=4))
+        print("allow_files = ", json.dumps(allow_files, indent=4))
 
-        with open(git_ignore_file, 'w') as fh:
-            print(GITIGNORE_HEADER, file=fh)
-            for file_name in git_ignores:
-                print(file_name, file=fh)
+        if not GITHUB_RUN:
+            # Do not modify stuff on the github run.
+            with open(git_ignore_file, 'w') as fh:
+                print(GITIGNORE_HEADER, file=fh)
 
-    return large_files
+                if chunk_size != DEFAULT_CHUNK_SIZE:
+                    print(f"## CHUNK_SIZE: {chunk_size // 1024 // 1024}", file=fh)
+
+                for file_name in allow_files:
+                    print(f"## ALLOW: {file_name}", file=fh)
+
+                for file_name in git_ignores:
+                    print(file_name, file=fh)
+
+    return large_files, chunk_size
 
 
-def split_large_files(port_dir, large_file_name, large_file_parts):
+def split_large_files(port_dir, large_file_name, large_file_parts, chunk_size=DEFAULT_CHUNK_SIZE):
     part_number = 0
+    extra_large_file_parts = large_file_parts[:]
     with open(large_file_name, 'rb') as in_fh:
         finished = False
         while not finished:
             part_number += 1
-            with open(f"{large_file_name}.part.{part_number:03d}", 'wb') as out_fh:
+
+            large_file_part = f"{large_file_name}.part.{part_number:03d}"
+            print(f"- Creating {large_file_part}")
+            with open(large_file_part, 'wb') as out_fh:
                 data_amount = 0
 
-                while data_amount < CHUNK_SIZE:
+                if large_file_part in extra_large_file_parts:
+                    extra_large_file_parts.remove(large_file_part)
+
+                while data_amount < chunk_size:
                     data = in_fh.read(1024 * 1024)
 
                     if len(data) == 0:
@@ -130,10 +187,9 @@ def split_large_files(port_dir, large_file_name, large_file_parts):
                     out_fh.write(data)
 
     # Unlink extra files if they exist. :D
-    part_number += 1
-    while Path(f"{large_file_name}.part.{part_number:03d}").is_file():
-        Path(f"{large_file_name}.part.{part_number:03d}").unlink()
-
+    for extra_large_file_part in extra_large_file_parts:
+        print(f"- Unlinking {extra_large_file_part}")
+        Path(extra_large_file_part).unlink()
 
 def combine_large_files(port_dir, large_file_name, large_file_parts):
     with open(large_file_name, 'wb') as out_fh:
@@ -147,39 +203,77 @@ def combine_large_files(port_dir, large_file_name, large_file_parts):
 
                     out_fh.write(data)
 
+            if GITHUB_RUN:
+                # Delete the part files to reduce file system usage.
+                Path(large_file_part).unlink()
 
-def check_large_files(port_dir, large_files):
+
+def check_large_files(port_dir, large_files, hash_cache=None, chunk_size=DEFAULT_CHUNK_SIZE):
+    if hash_cache is not None:
+        files_hash = hash_cache.get_files_hash
+        file_hash = hash_cache.get_file_hash
+    else:
+        files_hash = hash_files
+        file_hash = hash_file
+
     for large_file_name, large_file_parts in large_files.items():
         large_file_name = Path(large_file_name)
 
         parts_md5 = None
         file_md5 = None
 
+        file_chunk_size = chunk_size
+
         if len(large_file_parts) > 0:
-            parts_md5 = hash_files(large_file_parts)
+            parts_md5 = files_hash(large_file_parts)
+
+            # We calculate this from .part.000.
+            file_chunk_size = Path(large_file_parts[0]).stat().st_size
 
         if large_file_name.is_file():
-            file_md5 = hash_file(large_file_name)
+            file_md5 = file_hash(large_file_name)
 
         if file_md5 == None and parts_md5 == None:
             error(port_dir.name, "Wut?")
             continue
 
         print(f"{large_file_name}: {file_md5} == {parts_md5}")
+        print(f"{large_file_name}: {file_chunk_size} == {chunk_size}")
+
         if file_md5 is None:
             combine_large_files(port_dir, large_file_name, large_file_parts)
 
         elif file_md5 != parts_md5:
-            split_large_files(port_dir, large_file_name, large_file_parts)
+            if not GITHUB_RUN:
+                print(f"- Splitting {large_file_name} into {chunk_size} bites!")
+                split_large_files(port_dir, large_file_name, large_file_parts, chunk_size)
+
+        elif file_chunk_size != chunk_size:
+            if not GITHUB_RUN:
+                print(f"- Resplitting {large_file_name} into {chunk_size} bites!")
+                split_large_files(port_dir, large_file_name, large_file_parts, chunk_size)
+
+            else:
+                print(f"::warning file={large_file_name}::{port_dir.name} has a chunk size of {chunk_size // 1024 // 1024} but {large_file_name} has a chunk size of {file_chunk_size // 1024 // 1024}")
 
 
 def main(argv):
+    hash_cache = None
+
+    if not GITHUB_RUN:
+        hash_cache = HashCache(CACHE_FILE)
+
     for port_dir in sorted(PORTS_DIR.iterdir(), key=lambda x: str(x).casefold()):
         if not port_dir.is_dir():
             continue
 
-        large_files = load_port(port_dir)
-        check_large_files(port_dir, large_files)
+        large_files, chunk_size = load_port(port_dir)
+        check_large_files(port_dir, large_files, hash_cache, chunk_size)
+
+    # Build any large runtimes.
+    if RUNTIMES_DIR.is_dir():
+        large_files, chunk_size = load_port(RUNTIMES_DIR)
+        check_large_files(RUNTIMES_DIR, large_files, hash_cache)
 
     errors = 0
     warnings = 0
@@ -197,6 +291,9 @@ def main(argv):
             print("- Errors:")
             print("  " + "\n  ".join(messages['errors']) + "\n")
             errors += 1
+
+    if hash_cache is not None:
+        hash_cache.save_cache()
 
     if '--do-check' in argv:
         if errors > 0:
