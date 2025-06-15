@@ -19,7 +19,7 @@ get_controls
 # Variables
 GAMEDIR="/$directory/ports/sm64coopdx"
 CONFDIR="$GAMEDIR/conf"
-ARGS=""
+ARGS="--fullscreen"
 
 # CD and set permissions
 cd $GAMEDIR
