@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gamelist>
+	<game>
+        <path>./Super Mario 64 Co-op DX.sh</path>
+        <name>Super Mario 64 Co-op DX</name>
+        <desc>sm64coopdx is an online multiplayer project for the Super Mario 64 PC port that supports widescreen, uncapped FPS, and has many toggleable options for customization to fit your desired experience. It has multiplayer up to 16 players and an ever growing powerful Lua modding API that allow modders and players to enjoy Super Mario 64 in more accessible and unique new ways!</desc>
+        <image>./sm64coopdx/cover.png</image>
+        <developer>Nintendo, Coop-Deluxe Team</developer>
+        <releasedate>20240701</releasedate>
+    </game>
+</gameList>
