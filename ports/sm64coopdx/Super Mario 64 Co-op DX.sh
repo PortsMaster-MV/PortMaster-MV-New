@@ -30,10 +30,10 @@ $ESUDO mkdir -p "$CONFDIR"
 bind_directories ~/.local/share/sm64coopdx "$CONFDIR"
 
 # Exports
-export TEXTINPUTPRESET="Name"
-export TEXTINPUTINTERACTIVE="Y"
-export TEXTINPUTNOAUTOCAPITALS="Y"
-export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
+# export TEXTINPUTPRESET="Name"
+# export TEXTINPUTINTERACTIVE="Y"
+# export TEXTINPUTNOAUTOCAPITALS="Y"
+# export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 ## Check for rom
 if [ ! -f "$GAMEDIR/baserom.us.z64" ]; then
