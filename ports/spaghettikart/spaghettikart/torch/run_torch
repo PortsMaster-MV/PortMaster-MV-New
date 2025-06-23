@@ -1,0 +1,21 @@
+#!/bin/bash
+# Set GAMEDIR to the current directory and set logfile
+GAMEDIR="$PWD"
+LOGFILE="$GAMEDIR/patchlog.txt"
+
+# Redirect output and error to the log file
+exec > >(tee -a "$LOGFILE") 2>&1
+echo "GAMEDIR is set to: $GAMEDIR"
+
+cd "$GAMEDIR"
+
+rom=`find . -maxdepth 1 -name "*.z64"`
+rom=`basename "$rom"`
+cd torch
+./torch o2r "../$rom" | awk -v n=200 'NR%n==1'
+mv mk64.o2r ../
+
+cd ..
+if [ -f ./mk64.o2r ]; then
+  rm "./$rom"
+fi
