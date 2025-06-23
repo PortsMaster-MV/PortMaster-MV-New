@@ -35,7 +35,7 @@ if [ ! -f ./mk64.o2r ]; then
     source "$controlfolder/utils/patcher.txt"
     $ESUDO kill -9 $(pidof gptokeyb)
   else
-    echo "This port requires the latest version of PortMaster." > $CUR_TTY
+    pm_message "This port requires the latest version of PortMaster."
   fi
 
   rom=`find . -maxdepth 1 -name "*.z64"`
@@ -64,6 +64,8 @@ else
 fi
 
 $GPTOKEYB "$BINARY" -c "$BINARY.gptk" &
+
+pm_platform_helper "$GAMEDIR/$BINARY"
 
 ./$BINARY
 
