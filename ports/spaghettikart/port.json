@@ -1,0 +1,33 @@
+{
+  "version": 4,
+  "name": "spaghettikart.zip",
+  "items": [
+    "SpaghettiKart.sh",
+    "spaghettikart"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "SpaghettiKart",
+    "porter": [
+      "beniamino"
+    ],
+    "desc": "Mario Kart 64 introduced 3D graphics, 4-player mode, Mirror Mode, Wario and Donkey Kong to the Mario Kart franchise.\n\nSpaghettiKart is the HarbourMasters decompilation and port of the Nintendo 64 classic.",
+    "desc_md": "Mario Kart 64 introduced 3D graphics, 4-player mode, Mirror Mode, Wario and Donkey Kong to the Mario Kart franchise.\n\n[SpaghettiKart](https://github.com/HarbourMasters/SpaghettiKart/tree/main) is the HarbourMasters decompilation and port of the Nintendo 64 classic.\n",
+    "inst": "After installing the port, copy your original Mario Kart 64 .z64 file to ports/spaghettikart. The sha1 sum must be 579C48E211AE952530FFC8738709F078D5DD215E; other versions will not work. ",
+    "inst_md": "After installing the port, copy your original Mario Kart 64 `.z64` file to `ports/spaghettikart`. The sha1 sum must be 579C48E211AE952530FFC8738709F078D5DD215E; other versions will not work. ",
+    "genres": [
+      "racing"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "paid",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}

@@ -1,0 +1,124 @@
+# libzip
+git clone https://github.com/nih-at/libzip.git
+cd libzip
+git checkout 0581df510597b46c28509e9d4b5998cf5fecb636
+mkdir build-kart && cd build-kart
+cmake ..
+make -j8
+make install
+cd ../..
+
+# tinyxml2
+git clone https://github.com/leethomason/tinyxml2.git
+cd tinyxml2
+git checkout 57ec94127bda7979282315b7d4b0059eeb6f3b5d
+git checkout .
+mkdir build-kart && cd build-kart
+cmake -DBUILD_SHARED_LIBS=ON ..
+make -j8
+make install
+
+# prevent this file being found by cmake when SoH is compiled
+cd ..
+mv cmake/tinyxml2-config.cmake cmake/tinyxml2-config.cmake.disabled
+cd ..
+
+# libsdl
+git clone https://github.com/libsdl-org/SDL.git
+cd SDL
+git checkout release-2.32.0
+mkdir -p build-soh && cd build-soh
+cmake ..
+make -j8
+make install
+cd ../..
+
+# libsdl-net
+git clone https://github.com/libsdl-org/SDL_net.git
+cd SDL_net
+git checkout SDL2
+mkdir -p build-kart && cd build-kart
+cmake ..
+make -j8
+make install
+cd ../..
+
+# nlohmann json
+git clone https://github.com/nlohmann/json.git
+cd json
+git checkout f3dc4684b40a124cabc8554967c2cd8db54f15dd
+mkdir build-kart && cd build-kart
+cmake ..
+make -j8
+make install
+cd ../..
+
+# spdlog
+git clone https://github.com/gabime/spdlog.git
+cd spdlog
+mkdir build-kart && cd build-kart
+cmake ..
+make -j8
+make install
+cd ../..
+
+# libvorbis
+git clone https://github.com/xiph/vorbis.git
+cd vorbis
+mkdir build-kart && cd build-kart
+cmake -DBUILD_SHARED_LIBS=1 ..
+make -j8
+make install
+cd ../..
+
+# gsl for torch
+git clone https://github.com/microsoft/GSL.git
+
+
+## SpaghettiKart
+
+# Clone the repo and enter the directory
+git clone https://github.com/HarbourMasters/SpaghettiKart.git
+cd SpaghettiKart
+
+# Clone the submodules
+git submodule update --init
+
+# Get GSL
+cp -r ../../GSL/include/gsl ./torch/
+
+## build for GLES
+# Generate Ninja project
+# Add `-DCMAKE_BUILD_TYPE:STRING=Release` if you're packaging
+# Add `-DPython3_EXECUTABLE=$(which python3)` if you are using non-standard Python installations such as PyEnv
+CC=clang CXX=clang++ cmake -DCMAKE_LINKER_TYPE=LLD -DCMAKE_EXE_LINKER_FLAGS=-ldl -H. -Bbuild-gles -GNinja -DCMAKE_BUILD_TYPE:STRING=Release -DUSE_OPENGLES=1
+
+# Generate spaghetti.o2r only (usually this step builds mk64.o2r too and requires the rom)
+cmake --build build-gles --target GenerateO2R
+
+# Compile the project
+# Add `--config Release` if you're packaging
+cmake --build build-gles --config Release
+
+## build for OpenGL
+# Generate Ninja project
+# Add `-DCMAKE_BUILD_TYPE:STRING=Release` if you're packaging
+# Add `-DPython3_EXECUTABLE=$(which python3)` if you are using non-standard Python installations such as PyEnv
+CC=clang CXX=clang++ cmake -DCMAKE_LINKER_TYPE=LLD -DCMAKE_EXE_LINKER_FLAGS=-ldl -H. -Bbuild-opengl -GNinja -DCMAKE_BUILD_TYPE:STRING=Release
+
+# Generate spaghetti.o2r only (usually this step builds mk64.o2r too and requires the rom)
+cmake --build build-opengl --target GenerateO2R
+
+# Compile the project
+# Add `--config Release` if you're packaging
+cmake --build build-opengl --config Release
+
+# Get libraries
+mkdir libs.aarch64
+cp /usr/local/lib/libSDL2_net-2.0.so.0 ./libs.aarch64
+cp /usr/local/lib/libvorbis.so.0.4.9 ./libs.aarch64
+cp /usr/local/lib/libvorbisenc.so.2.0.12 ./libs.aarch64
+cp /usr/local/lib/libvorbisfile.so.3.3.8 ./libs.aarch64
+cp /usr/local/lib/libzip.so.5 ./libs.aarch64
+cp /usr/local/lib/libtinyxml2.so.10 ./libs.aarch64
+cp /usr/lib/aarch64-linux-gnu/libogg.so.0 ./libs.aarch64

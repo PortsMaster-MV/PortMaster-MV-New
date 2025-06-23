@@ -1,0 +1,23 @@
+#!/bin/bash
+
+SRCDIR=$1
+DESTDIR=$2
+
+cd $DESTDIR
+
+cp $SRCDIR/SpaghettiKart/build-opengl/spaghetti.o2r .
+
+mkdir -p bin
+cp $SRCDIR/SpaghettiKart/build-opengl/Spaghettify bin/Spaghettify-OpenGL
+cp $SRCDIR/SpaghettiKart/build-gles/Spaghettify bin/Spaghettify-GLES
+
+rm -r libs.aarch64
+cp -r $SRCDIR/SpaghettiKart/libs.aarch64 .
+
+cd torch
+rm -r ./include
+rm -r ./yamls
+cp -r $SRCDIR/SpaghettiKart/build-opengl/yamls .
+cp $SRCDIR/SpaghettiKart/build-opengl/*.yml .
+cp -r $SRCDIR/SpaghettiKart/include .
+cp $SRCDIR/SpaghettiKart/build-opengl/TorchExternal/src/TorchExternal-build/torch .

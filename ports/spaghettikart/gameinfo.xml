@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./SpaghettiKart.sh</path>
+    <name>SpaghettiKart</name>
+    <desc>Mario Kart 64 introduced 3D graphics, 4-player mode, Mirror Mode, Wario and Donkey Kong to the Mario Kart franchise.
+
+SpaghettiKart is the HarbourMasters decompilation and port of the Nintendo 64 classic.</desc>
+    <releasedate>20250621T000000</releasedate>
+    <developer>Nintendo</developer>
+    <publisher>HarbourMasters</publisher>
+    <genre>Racing</genre>
+    <image>./spaghettikart/screenshot.png</image>
+  </game>
+</gameList>
