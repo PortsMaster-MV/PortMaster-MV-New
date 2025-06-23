@@ -5,7 +5,7 @@ In addition to the usual controls, the settings menu can be enabled/dismissed wi
 
 ### Performance
 
-This is a prerelease version of the port, and there are likely to be some rough edges. In particular, there are some graphical glitches, e.g. affecting item boxes. On lower-powered devices, there are also some audio glitches in menus and at start of races, though races themselves seem OK. This will hopefully these will be ironed out in future.
+This is a **prerelease** version of the port, and there are likely to be some rough edges. In particular, there are some graphical glitches, e.g. affecting item boxes. On lower-powered devices, there are also some audio glitches in menus and at start of races, though races themselves seem OK. These will hopefully be ironed out in future.
 
 
 ### Acknowledgements
@@ -17,4 +17,4 @@ Thanks to Nintendo for the original game and to [HarbourMasters](https://github.
 
 This is a GLES2 build of the unmodified [source code](https://github.com/HarbourMasters/SpaghettiKart).
 
-See [BUILDING.md](https://github.com/PortsMaster/PortMaster-New/blob/main/ports/spaghettikart/spaghettikart/BUILDING.md) for building instructions.
+See [BUILDING.md](https://github.com/PortsMaster-MV/PortMaster-MV-New/blob/main/ports/spaghettikart/spaghettikart/BUILDING.md) for building instructions.
