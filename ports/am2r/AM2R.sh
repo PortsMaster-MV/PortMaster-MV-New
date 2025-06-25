@@ -28,15 +28,15 @@ mkdir -p "$GAMEDIR/conf/am2r"
 bind_directories ~/".config/am2r" "$GAMEDIR/conf/am2r"
 
 # Exports
-export PATCHER_FILE="$GAMEDIR/patchscript"
-export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
-export PATCHER_TIME="2 to 5 minutes"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
-export controlfolder
 
 # Check if we need to patch the game
 if [ ! -f "$GAMEDIR/patchlog.txt" ] || [ -f "$GAMEDIR/assets/data.win" ]; then
     if [ -f "$controlfolder/utils/patcher.txt" ]; then
+        export PATCHER_FILE="$GAMEDIR/patchscript"
+        export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
+        export PATCHER_TIME="2 to 5 minutes"
+        export controlfolder
         source "$controlfolder/utils/patcher.txt"
         $ESUDO kill -9 $(pidof gptokeyb)
     else

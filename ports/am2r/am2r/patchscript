@@ -123,7 +123,7 @@ apply_xdelta() {
 zip_archive() {
         echo "Finishing up..."
         rm -rf $AM2R_ZIP
-        if [ "$USE_PATCH" == 1 ]; then
+        if [ "$USEPATCH" == 1 ]; then
             rm -rf $AUTOPATCHER_ZIP
         fi
         zip -r -0 $DATAFILE ./assets/

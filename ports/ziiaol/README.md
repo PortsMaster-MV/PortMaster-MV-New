@@ -13,5 +13,6 @@ Download the .zip from https://hoverbat.itch.io/ziiaol and put in the `ports/zii
 
 ## Thanks
 This enhanced edition of Zelda II created by HoverBat  
-GMTools audo patcher by Cyril aka kotzebuedog  
+[GMLoader-Next](https://github.com/PortsMaster/gmloader-next) provided by JohnnyOnFlame and PortMaster Crew  
+[GMTools audio patcher](https://github.com/cdeletre/gmtools) by Cyril aka kotzebuedog  
 Testers and devs from the PortMaster Discord  

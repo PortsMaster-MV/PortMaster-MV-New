@@ -12,8 +12,8 @@
       "Jeod"
     ],
     "desc": "Zelda II Enhanced adds a ton of QoL improvements, widescreen, new areas, and new collectibles. The game is arguably much easier to play through.",
-    "inst": "Download the .zip from https://hoverbat.itch.io/ziiaol and put in the assets folder.",
-    "inst_md": "Download the .zip from https://hoverbat.itch.io/ziiaol and put in the assets folder.",
+    "inst": "Download the .zip from https://hoverbat.itch.io/ziiaol and put in the gamedata folder.",
+    "inst_md": "Download the .zip from https://hoverbat.itch.io/ziiaol and put in the gamedata folder.",
     "genres": [
       "action",
       "adventure",
@@ -22,7 +22,9 @@
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [
+      "gmtoolkit.squashfs"
+	],
     "reqs": [],
     "arch": [
       "armhf"
