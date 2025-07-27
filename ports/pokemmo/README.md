@@ -4,7 +4,7 @@
 
 PokeMMO is a fan-made multiplayer online game that brings together multiple generations of Pokémon in a single MMO experience.
 
-[!["Buy Me A Coffee"](https://github.com/lowlevel-1989/pokemmo-port/docs/coffee.png)](https://ko-fi.com/lowlevel1989)
+[!["Buy Me A Coffee"](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/coffee.png)](https://ko-fi.com/lowlevel1989)
 
 If you'd like to see updates and active support for this port continue as quickly as possible, consider supporting the project — you can buy me a coffee ☕ to help keep things running!
 
@@ -55,7 +55,7 @@ If you'd like to see updates and active support for this port continue as quickl
 If a `credentials.txt` file exists, it will use the username and password specified there, but only during application startup.
 
 The source code can be found here:  
-👉 [pokemmo/src](https://github.com/lowlevel-1989/pokemmo-port/pokemmo/src)
+👉 [pokemmo/src](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/pokemmo/src)
 
 | Operating System       | Requires `hack.jar`? | Known Issues Without `hack.jar`                                                   |
 |------------------------|----------------------|------------------------------------------------------------------------------------|
@@ -85,8 +85,8 @@ The default configuration included with this port is optimized and tested for **
 To configure Rocknix to use the **Panfrost** driver, first ensure your device supports it and that it’s not the only available option. For example, the **Powkiddy RGB30** supports both **libMali (GLES 3.2)** and **Panfrost (GL 3.1/GLES 3.1)**, as shown [here](https://rocknix.org/devices/powkiddy/rgb30/#software).
 
 To switch to the Panfrost driver:
-![step 1](https://github.com/lowlevel-1989/pokemmo-port/docs/1.jpg)
-![step 2](https://github.com/lowlevel-1989/pokemmo-port/docs/2.jpg)
+![step 1](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/1.jpg)
+![step 2](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/2.jpg)
 
 
 ### 1. Install/Update the Port [Video tutorial](https://www.youtube.com/watch?v=WtAtlXwQsZw)
@@ -233,7 +233,7 @@ The game will now automatically log in when launched on PortMaster-compatible de
 
 #### Calibrate cursor
 
-![cursor](https://github.com/lowlevel-1989/pokemmo-port/docs/3.gif)
+![cursor](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/3.gif)
 ---
 
 ## Thanks
