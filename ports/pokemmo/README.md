@@ -4,6 +4,10 @@
 
 PokeMMO is a fan-made multiplayer online game that brings together multiple generations of Pokémon in a single MMO experience.
 
+[!["Buy Me A Coffee"](https://github.com/lowlevel-1989/pokemmo-port/docs/coffee.png)](https://ko-fi.com/lowlevel1989)
+
+If you'd like to see updates and active support for this port continue as quickly as possible, consider supporting the project — you can buy me a coffee ☕ to help keep things running!
+
 ---
 
 ## 🛠 Installation Instructions
@@ -18,6 +22,15 @@ PokeMMO is a fan-made multiplayer online game that brings together multiple gene
 | Global trade link                     | No      | Yes (small, android)    | Yes (small, android)    | Yes                |
 | PC                     | No      | Yes (small, android)    | Yes (small, android)    | Yes                |
 
+### ⚠️ Android Theme Mode Warning
+
+> The **Android UI theme mode** is **highly resource-intensive** and is **not recommended for clone handhelds using the same chipset as the K36S**, especially when running **ArkOS**.  
+>  
+> These devices often **lack the necessary resources** to handle the Android-style UI, which can lead to **black screens, crashes, or unresponsive behavior**.  
+>  
+> 🔧 If you experience issues, use the **"PokeMMO Restore"** option available from the **PokeMMO Port Launcher** to reset the theme and restore default settings.  
+> This will switch back to the classic theme optimized for low-spec devices.
+
 ~~~
 - [x] AmberELEC
 - [x] ArkOS
@@ -26,8 +39,7 @@ PokeMMO is a fan-made multiplayer online game that brings together multiple gene
     -> [x] Libmali
 - [x] MuOS
 - [x] Knulli
-- [x] spruceOS (advanced user, tutorial coming soon)
-    -> You only need to manually install PortMaster via ssh
+- [x] spruceOS 4.0 or higher works automatically — below 4.0, manual SSH install needed.
 ~~~
 
 ### How do I enter the `security code` in PokeMMO?
@@ -43,16 +55,16 @@ PokeMMO is a fan-made multiplayer online game that brings together multiple gene
 If a `credentials.txt` file exists, it will use the username and password specified there, but only during application startup.
 
 The source code can be found here:  
-👉 [PokeMMO/src](https://github.com/lowlevel-1989/pokemmo-port/pokemmo/src)
+👉 [pokemmo/src](https://github.com/lowlevel-1989/pokemmo-port/pokemmo/src)
 
 | Operating System       | Requires `hack.jar`? | Known Issues Without `hack.jar`                                                   |
 |------------------------|----------------------|------------------------------------------------------------------------------------|
-| **ArkOS**              | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
-| **Rocknix (Panfrost)** | ❌ No                | - Works fine without `hack.jar`                                                   |
-| **Rocknix (Libmali)**  | ✅ Yes               | - Same issues as ArkOS                                                             |
-| **MuOS**               | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
-| **Knulli**             | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
-| **spruceOS**           | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
+| **ArkOS**              | NO                   | - Works fine without `hack.jar`                                                    |
+| **Rocknix (Panfrost)** | NO                   | - Works fine without `hack.jar`                                                    |
+| **Rocknix (Libmali)**  | NO                   | - Works fine without `hack.jar`                                                     |
+| **MuOS**               | NO                   | - Works fine without `hack.jar`                                                      |
+| **Knulli**             | NO                   | - Works fine without `hack.jar`                                                      |
+| **spruceOS**           | NO                   | - Works fine without `hack.jar`                                                      |
 
 ### 🎮 Experiencing FPS Drops?
 
@@ -73,8 +85,8 @@ The default configuration included with this port is optimized and tested for **
 To configure Rocknix to use the **Panfrost** driver, first ensure your device supports it and that it’s not the only available option. For example, the **Powkiddy RGB30** supports both **libMali (GLES 3.2)** and **Panfrost (GL 3.1/GLES 3.1)**, as shown [here](https://rocknix.org/devices/powkiddy/rgb30/#software).
 
 To switch to the Panfrost driver:
-![step 1](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/1.jpg)
-![step 2](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/2.jpg)
+![step 1](https://github.com/lowlevel-1989/pokemmo-port/docs/1.jpg)
+![step 2](https://github.com/lowlevel-1989/pokemmo-port/docs/2.jpg)
 
 
 ### 1. Install/Update the Port [Video tutorial](https://www.youtube.com/watch?v=WtAtlXwQsZw)
@@ -130,7 +142,7 @@ Replacing them may negatively impact performance on low-end devices.
 
 ### 3. Add Required and Optional ROMs
 
-To add the ROMs, place them inside the PokeMMO/roms folder and set the following values in `main.properties`:
+To add the ROMs, place them inside the pokemmo/roms folder and set the following values in `main.properties`:
 ~~~
 client.roms.nds=roms/pokemon_black.nds  
 client.roms.em=roms/pokemon_emerald.gba  
@@ -155,9 +167,14 @@ client.roms.nds3=roms/pokemon_heartgold.nds
 
 If your device does not have a keyboard, you can try one of the following methods to log in:
 
-#### 🔧 Option 1: PokeMMO/credentials.txt
+#### 🔧 Option 1: pokemmo/credentials.txt
 
-Edit the file PokeMMO/credentials.txt with your login credentials.
+Edit the file pokemmo/credentials.txt with your login credentials.
+
+This feature is tightly linked to the official PokeMMO client version.
+If the official game receives an update, Option 1 may stop working temporarily.
+
+If you notice that Option 1 stops working after a client update, please report it so that the port can be patched and restored as soon as possible.
 
 #### 🔧 Option 2: Connect a Keyboard for First Login
 
@@ -216,7 +233,7 @@ The game will now automatically log in when launched on PortMaster-compatible de
 
 #### Calibrate cursor
 
-![cursor](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/3.gif)
+![cursor](https://github.com/lowlevel-1989/pokemmo-port/docs/3.gif)
 ---
 
 ## Thanks
