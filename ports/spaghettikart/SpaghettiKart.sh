@@ -63,6 +63,8 @@ else
   cp bin/Spaghettify-GLES ./Spaghettify
 fi
 
+$ESUDO chmod +x ./Spaghettify
+
 $GPTOKEYB "$BINARY" -c "$BINARY.gptk" &
 
 pm_platform_helper "$GAMEDIR/$BINARY"
