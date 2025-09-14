@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Castlevania Tales of Night Moon.sh</path>
+    <name>Castlevania Tales of Night Moon</name>
+    <desc>A Castlevania fan made game where you play as Soma.</desc>
+    <releasedate>20231011T000000</releasedate>
+    <developer>Ikusatatsu</developer>
+    <publisher>Ikusatatsu</publisher>
+    <genre>Action/Adventure/Platformer</genre>
+    <image>./castlevaniatales/cover.png</image>
+  </game>
+</gameList>
