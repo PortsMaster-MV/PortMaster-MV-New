@@ -1,0 +1,41 @@
+{
+  "version": 4,
+  "name": "castlevaniatales.zip",
+  "items": [
+    "Castlevania Tales of Night Moon.sh",
+    "castlevaniatales"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Castlevania Tales of Night Moon",
+    "porter": [
+      "MadShmupper"
+    ],
+    "desc": "A fan made Castlevania game where you play as Soma.",
+    "desc_md": null,
+    "inst": "Download free at itch.io https://ikusatatsu.itch.io/castlevania-tales-of-night-moon and copy data.win to assets.",
+    "inst_md": "Download free at [itch.io](https://ikusatatsu.itch.io/castlevania-tales-of-night-moon) and copy data.win to assets.",
+    "genres": [
+      "action",
+      "adventure",
+      "platformer"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [
+      {
+        "name": "itch.io",
+        "gameurl": "https://ikusatatsu.itch.io/castlevania-tales-of-night-moon",
+        "developerurl": "https://ikusatatsu.itch.io/"
+      }
+    ],
+    "availability": "free",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
