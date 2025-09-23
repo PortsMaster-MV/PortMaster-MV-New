@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Chao Resort Island.sh</path>
+    <name>Chao Resort Island</name>
+    <desc>Chao Resort Island is a 2.5D Chao raising game originally available for PC and Mac and now on PortMaster! The game takes place on a tropical island which hosts multiple resorts for you to raise your Chao in.</desc>
+    <releasedate>20170806T000000</releasedate>
+    <developer>Nefault1st</developer>
+    <publisher>Nefault1st</publisher>
+    <genre>Simulation</genre>
+    <image>./chaoresortisland/screenshot.png</image>
+  </game>
+</gameList>
