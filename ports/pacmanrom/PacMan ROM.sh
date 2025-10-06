@@ -32,6 +32,6 @@ $GPTOKEYB "gmloader" -c ./pacmanrom.gptk &
 
 pm_platform_helper "$GAMEDIR/gmloader"
 
-./gmloader pacmanrom.apk
+./gmloader pacmancrt.apk
 
 pm_finish
