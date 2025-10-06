@@ -1,5 +1,4 @@
 #!/bin/bash
-# PORTMASTER: pacmanrom.zip, PacMan ROM.sh
 
 if [ -d "/opt/system/Tools/PortMaster/" ]; then
   controlfolder="/opt/system/Tools/PortMaster"
