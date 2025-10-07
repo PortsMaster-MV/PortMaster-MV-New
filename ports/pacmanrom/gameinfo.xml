@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./PacMan ROM.sh</path>
+    <name>PacMan ROM</name>
+    <desc>Recent reports have talked about strange symptoms when trying this corrupted ROM of the classic Pacman, we can't confirm or deny it, play it at your own risk.</desc>
+    <releasedate>20150327T000000</releasedate>
+    <developer>Berick Cook</developer>
+    <publisher>Berick Cook</publisher>
+    <genre>Arcade</genre>
+    <image>./pacmanrom/cover.png</image>
+  </game>
+</gameList>

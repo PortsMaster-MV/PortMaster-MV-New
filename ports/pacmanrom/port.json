@@ -1,0 +1,39 @@
+{
+  "version": 4,
+  "name": "pacmanrom.zip",
+  "items": [
+    "PacMan ROM.sh",
+    "pacmanrom"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "PacMan ROM",
+    "porter": [
+      "Slobters"
+    ],
+    "desc": "Recent reports have talked about strange symptoms when trying this corrupted ROM of the classic Pacman, we can't confirm or deny it, play it at your own risk.",
+    "desc_md": null,
+    "inst": "Ready to Run! Thanks to Berick Cook for giving us permissions to distribute game files!",
+    "inst_md": null,
+    "genres": [
+      "arcade"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": [],
+    "store": [
+      {
+        "name": "itch.io",
+        "gameurl": "https://berickcook.itch.io/pacman",
+        "developerurl": "https://berickcook.itch.io"
+      }
+    ],
+    "availability": "full",
+    "reqs": [],
+    "arch": [
+      "armhf"
+    ],
+    "min_glibc": ""
+  }
+}
