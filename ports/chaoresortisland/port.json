@@ -1,0 +1,34 @@
+{
+  "version": 4,
+  "name": "chaoresortisland.zip",
+  "items": [
+    "Chao Resort Island.sh",
+    "chaoresortisland"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Chao Resort Island",
+    "porter": [
+      "Chris",
+      "Ganimoth"
+    ],
+    "desc": "Chao Resort Island is a 2.5D Chao raising game originally available for PC and Mac and now on PortMaster! The game takes place on a tropical island which hosts multiple resorts for you to raise your Chao in.",
+    "desc_md": null,
+    "inst": "Ready to run.",
+    "inst_md": null,
+    "genres": [
+      "simulation"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
