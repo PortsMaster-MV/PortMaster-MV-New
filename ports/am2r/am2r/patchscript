@@ -30,15 +30,22 @@ unzip_archives() {
     mkdir -p "$DATADIR/am2r" && mkdir -p "$DATADIR/am2rpatch"
 
     # Identify AM2R zip (has data.win in root)
-    AM2R_ZIP=$(find "$DATADIR" -maxdepth 1 -type f -name "*.zip" -exec sh -c 'unzip -l "{}" | grep -q "^ *[0-9]\+ *[0-9-]\+ *[0-9:]\+ *data\.win$" && echo "{}"' \;)
+    # Note: ! -name "._*" filters out macOS metadata files created when copying to FAT32/exFAT
+    AM2R_ZIP=$(find "$DATADIR" -maxdepth 1 -type f -name "*.zip" ! -name "._*" -exec sh -c 'unzip -l "{}" | grep -q "^ *[0-9]\+ *[0-9-]\+ *[0-9:]\+ *data\.win$" && echo "{}"' \;)
 
     # Identify autopatcher zip (has AM2R-Autopatcher-Windows-master/data/ folder)
-    AUTOPATCHER_ZIP=$(find "$DATADIR" -maxdepth 1 -type f -name "*.zip" -exec sh -c 'unzip -l "{}" | grep -q "AM2R-Autopatcher-Windows-master/data/$" && echo "{}"' \;)
+    AUTOPATCHER_ZIP=$(find "$DATADIR" -maxdepth 1 -type f -name "*.zip" ! -name "._*" -exec sh -c 'unzip -l "{}" | grep -q "AM2R-Autopatcher-Windows-master/data/$" && echo "{}"' \;)
 
     # Check if AM2R zip was found
     if [ -z "$AM2R_ZIP" ]; then
-        echo "Error: No valid AM2R zip file found in $DATADIR (must have data.win in root)."
-        mv $LOGFILE $LOGERR
+        echo "========================================================"
+        echo "Error: AM2R v1.1 game files not found!"
+        echo ""
+        echo "Please download AM2R_11.zip (containing data.win) and"
+        echo "place it in: $DATADIR"
+        echo "========================================================"
+        mv "$LOGFILE" "$LOGERR"
+        sleep 2 # Give the user time to read the message before exiting
         exit 1
     fi
 
@@ -64,9 +71,9 @@ unzip_archives() {
 prepare_files() {
     # AM2R: Delete unnecessary files
     rm -rf  $DATADIR/am2r/*.exe $DATADIR/am2r/*.dll \
-            $DATADIR/.gitkeep $DATADIR/am2r/*.txt 
+            $DATADIR/.gitkeep $DATADIR/am2r/*.txt
     echo "Removed unnecessary files"
-    
+
     if [ "$USEPATCH" == 1 ]; then
         # AM2RPATCH: Move files
         echo "Moving patch files to $DATADIR/am2r"
@@ -74,23 +81,23 @@ prepare_files() {
         rsync -a "$DATADIR/am2rpatch/AM2R-Autopatcher-Windows-master/data/HDR_HQ_in-game_music/"* "$DATADIR/am2r/"
         DATA="$DATADIR/am2r/data.win"
         PATCH="$DATADIR/am2rpatch/AM2R-Autopatcher-Windows-master/data/data.xdelta"
-        
+
         # Try applying xdelta
         echo "Attempting to apply xdelta patch"
         apply_xdelta
-        
+
         # AM2R: Edit options.ini
         if [ -f "$DATADIR/am2r/options.ini" ]; then
             sed -i 's/CreateTexturesOnDemand=0/CreateTexturesOnDemand=1/' "$DATADIR/am2r/options.ini"
         else
             echo "Error: options.ini missing!"
-            mv $LOGFILE $LOGERR
+            mv "$LOGFILE" "$LOGERR"
             exit 1
         fi
     else
         mv "$DATADIR/am2r/data.win" "$DATADIR/am2r/game.droid"
     fi
-    
+
     # Move everything up to assets
     mv $DATADIR/am2r/* $DATADIR
     rm -rf $DATADIR/am2r
@@ -100,6 +107,7 @@ prepare_files() {
 apply_xdelta() {
     # Check if the data.win file exists and apply xdelta
     if [ -f "$DATADIR/am2r/data.win" ]; then
+        # shellcheck disable=SC2154 # controlfolder is exported by AM2R.sh before this script runs
         output=$($controlfolder/xdelta3 -d -s "$DATA" -f "$PATCH" "$DATADIR/game.droid" 2>&1)
         if [ $? -eq 0 ]; then
             echo "Patch applied successfully"
@@ -109,22 +117,23 @@ apply_xdelta() {
             # If this happens, it's not AM2R 1.1
             echo "Failed to apply patch"
             echo "$output"
-            mv $LOGFILE $LOGERR
+            mv "$LOGFILE" "$LOGERR"
+            sleep 2 # Give the user time to read the message before exiting
             exit 1
         fi
     else
         # This shouldn't be reachable, but we'll do a safety check anyway
         echo "No data.win file found to patch!"
-        mv $LOGFILE $LOGERR
+        mv "$LOGFILE" "$LOGERR"
         exit 1
     fi
 }
 
 zip_archive() {
         echo "Finishing up..."
-        rm -rf $AM2R_ZIP
-        if [ "$USE_PATCH" == 1 ]; then
-            rm -rf $AUTOPATCHER_ZIP
+        rm -rf "$AM2R_ZIP"
+        if [ "$USEPATCH" == 1 ]; then
+            rm -rf "$AUTOPATCHER_ZIP"
         fi
         zip -r -0 $DATAFILE ./assets/
         rm -rf $DATADIR/*
@@ -135,7 +144,7 @@ process_game() {
     unzip_archives
     prepare_files
     zip_archive
-	
+
     # Final completion message
     echo "Patching process complete!"
 }
