@@ -18,26 +18,36 @@ get_controls
 
 # Variables
 GAMEDIR="/$directory/ports/zeldadoi"
-SPLASHFILE="splash.png"
 
 # CD and set permissions
 cd "$GAMEDIR"
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-$ESUDO chmod +x -R $GAMEDIR/*
+$ESUDO chmod +x "$GAMEDIR/gmloadernext.aarch64"
 
 # Exports
-export LD_LIBRARY_PATH="$GAMEDIR/libs.${DEVICE_ARCH}:$GAMEDIR/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 # Display loading splash
 if [ "$CFW_NAME" == "muOS" ]; then
-  $ESUDO ./tools/splash $SPLASHFILE 1 
+  $ESUDO $GAMEDIR/tools/splash "$GAMEDIR/splash.png" 1 
 fi
-$ESUDO ./tools/splash $SPLASHFILE 5000
+$ESUDO $GAMEDIR/tools/splash "$GAMEDIR/splash.png" 7000
+
+# Unzip data directory if needed
+if [ -f "$GAMEDIR/saves/data.zip" ]; then
+    cd saves
+    if unzip "$GAMEDIR/saves/data.zip"; then
+        rm -rf data.zip
+        cd ..
+    else
+        echo "Couldn't unzip saves/data.zip. Please unzip manually."
+        exit 1
+    fi
+fi
 
 # Assign configs and load the game
 $GPTOKEYB "gmloadernext.aarch64" &
-pm_platform_helper "gmloadernext.aarch64"
+pm_platform_helper "gmloadernext.aarch64" > /dev/null
 ./gmloadernext.aarch64 -c gmloader.json
 
 # Cleanup
