@@ -144,7 +144,7 @@ fi
 # ~/.asoundrc is removed before and port is started
 # and put back after the port exits.
 # So we put it back
-[[ "$CFW_NAME" =~ ^(d)?ArkOS.* ]] && cp "${GAMEDIR}/asoundrc" "${HOME}/.asoundrc"
+[[ "$CFW_NAME" = *"ArkOS"* ]] && cp "${GAMEDIR}/asoundrc" "${HOME}/.asoundrc"
 
 ./sm64.us.f3dex2e.${DEVICE_ARCH} --savepath ./conf/
 
