@@ -13,30 +13,39 @@ else
 fi
 
 source $controlfolder/control.txt
-export PORT_32BIT="Y"
 [ -f "${controlfolder}/mod_${CFW_NAME}.txt" ] && source "${controlfolder}/mod_${CFW_NAME}.txt"
 get_controls
 
+# Variables
 GAMEDIR="/$directory/ports/nuclearthronemobile"
+GMLOADER_JSON="$GAMEDIR/gmloader.json"
 
+# CD and set permissions
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-$ESUDO chmod +x "$GAMEDIR/gmloader"
+$ESUDO chmod +x $GAMEDIR/gmlnext.aarch64
 
-export GMLOADER_DEPTH_DISABLE=1
-export GMLOADER_SAVEDIR="$GAMEDIR/gamedata/"
-export LD_LIBRARY_PATH="/usr/lib:/usr/lib32:/$directory/ports/nuclearthronemobile/libs:$LD_LIBRARY_PATH"
+# Exports
+export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/lib:$LD_LIBRARY_PATH"
+export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
-if [ -f "$GAMEDIR/nuclearthronemobile.apk" ] || [ -f "$GAMEDIR/ntm2527.apk" ]; then
-    mv "$GAMEDIR/ntm2527.apk" "$GAMEDIR/nuclearthronemobile.apk"
-else
-    pm_message "Error: ntm2527.apk not found in $GAMEDIR" >&2
+# Find any APK starting with ntm
+ntm_apk=$(find "$GAMEDIR" -maxdepth 1 -type f -name "ntm*.apk" | head -n 1)
+
+if [ -n "$ntm_apk" ]; then
+    # Only rename if it's not already named nuclearthronemobile.apk
+    if [ "$(basename "$ntm_apk")" != "nuclearthronemobile.apk" ]; then
+        mv "$ntm_apk" "$GAMEDIR/nuclearthronemobile.apk"
+    fi
+elif [ ! -f "$GAMEDIR/nuclearthronemobile.apk" ]; then
+    pm_message "Error: Nuclear Throne Mobile apk not found in $GAMEDIR" >&2
     exit 1
 fi
 
-$ESUDO chmod 666 /dev/uinput
-$GPTOKEYB "gmloader" -c "./nuclearthronemobile.gptk" &
-./gmloader nuclearthronemobile.apk
+# Assign configs and load the game
+$GPTOKEYB2 "gmlnext.aarch64" -c "nuclearthronemobile.gptk" &
+pm_platform_helper "$GAMEDIR/gmlnext.aarch64"
+./gmlnext.aarch64 -c "$GMLOADER_JSON"
 
+# Cleanup
 pm_finish
-

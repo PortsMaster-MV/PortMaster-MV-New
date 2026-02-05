@@ -5,6 +5,8 @@ Special thanks to Tonchi at https://toncho.itch.io/ for creating this mobile ver
 
 ## Controls
 
+Note:  When stuck on achievement screen after end of a run, use select or L3 buttons.
+
 |Button| Action |
 |--|--|
 | l-stick| movement  |
@@ -13,5 +15,5 @@ Special thanks to Tonchi at https://toncho.itch.io/ for creating this mobile ver
 | L1| ability |
 | A| select/pick up |
 | B| back/cancel |
-| Y/R2| change weapon |
-| Start/Select| pause |
+| R2| change weapon |
+| Start| pause |
