@@ -84,6 +84,8 @@ otr_check() {
             fi
         else
             pm_message "Missing ROM files! Can't generate o2r!"
+            sleep 5
+            exit
         fi
 
         # Check if OTR files were generated
