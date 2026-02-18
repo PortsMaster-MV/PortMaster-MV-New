@@ -83,12 +83,12 @@ otr_check() {
                 pm_message "This port requires the latest version of PortMaster."
             fi
         else
-            echo "Missing ROM files! Can't generate o2r!"
+            pm_message "Missing ROM files! Can't generate o2r!"
         fi
 
         # Check if OTR files were generated
         if [ ! -f "oot.o2r" ] && [ ! -f "oot-mq.o2r" ]; then
-            echo "No o2r files, can't run the game!"
+            pm_message "No o2r files, can't run the game!"
             exit 1
         fi
     fi

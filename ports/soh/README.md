@@ -36,10 +36,12 @@ I prefer the OoT 3DS look along with a studio ghibli style skybox:
 - [Studio Ghibli Skybox](https://github.com/JeodC/PortMaster-ShipOfHarkinian/tree/main/external-mods/)
 
 ## Thanks
-Nintendo for the game  
-HarbourMasters for the native pc port  
-AkerHasReawakened for the cover art  
-IanSantos for the ghibli skybox mod  
+- Nintendo for the game
+- beniamino for the updated build steps for develop to work on more devices
+- Testers and Devs from the PortMaster Discord
+- HarbourMasters for the native pc port
+- AkerHasReawakened for the cover art
+- IanSantos for the ghibli skybox mod 
 
 
 
