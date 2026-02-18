@@ -20,17 +20,14 @@ get_controls
 GAMEDIR="/$directory/ports/soh"
 
 # Exports
-export LD_LIBRARY_PATH="$GAMEDIR/libs":$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="$GAMEDIR/libs.${DEVICE_ARCH}":$LD_LIBRARY_PATH
 export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
-export PATCHER_FILE="$GAMEDIR/assets/otrgen"
-export PATCHER_GAME="$(basename "${0%.*}")" # This gets the current script filename without the extension
-export PATCHER_TIME="5 to 10 minutes"
 
-# CD and set permissions
+# CD and set log
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
-$ESUDO chmod +xwr soh.elf
-$ESUDO chmod +xwr $PATCHER_FILE
+$ESUDO chmod +x "$GAMEDIR/soh.elf.${DEVICE_ARCH}"
+$ESUDO chmod +x "$GAMEDIR/assets/otrgen"
 
 # Close the menu if open
 sed -i 's/"Menu": *1/"Menu": 0/' shipofharkinian.json
@@ -71,25 +68,30 @@ imgui_reset() {
 }
 
 otr_check() {
-if [ ! -f "oot.otr" ] || [ ! -f "oot-mq.otr" ]; then
-    # Ensure we have a rom file before attempting to generate otr
-    if ls *.*64 1> /dev/null 2>&1; then
-        if [ -f "$controlfolder/utils/patcher.txt" ]; then
-            source "$controlfolder/utils/patcher.txt"
-            $ESUDO kill -9 $(pidof gptokeyb)
+    if [ ! -f "oot.o2r" ] && [ ! -f "oot-mq.o2r" ]; then
+        # Ensure we have a rom file before attempting to generate otr
+        if ls "$GAMEDIR/baseroms/"*.*64 1> /dev/null 2>&1; then
+            if [ -f "$controlfolder/utils/patcher.txt" ]; then
+                export PATCHER_FILE="$GAMEDIR/assets/otrgen"
+                export PATCHER_GAME="$(basename "${0%.*}")"
+                export PATCHER_TIME="5 to 10 minutes"
+                export controlfolder
+                export DEVICE_ARCH
+                source "$controlfolder/utils/patcher.txt"
+                $ESUDO kill -9 $(pidof gptokeyb)
+            else
+                pm_message "This port requires the latest version of PortMaster."
+            fi
         else
-            pm_message "This port requires the latest version of PortMaster."
+            echo "Missing ROM files! Can't generate o2r!"
         fi
-    else
-        echo "Missing ROM files! Can't generate otr!"
+
+        # Check if OTR files were generated
+        if [ ! -f "oot.o2r" ] && [ ! -f "oot-mq.o2r" ]; then
+            echo "No o2r files, can't run the game!"
+            exit 1
+        fi
     fi
-    
-    # Check if OTR files were generated
-    if [ ! -f "oot.otr" ] && [ ! -f "oot-mq.otr" ]; then
-        echo "No otr files, can't run the game!"
-        exit 1
-    fi
-fi
 }
 
 # --------------------- END FUNCTIONS ---------------------
@@ -102,9 +104,9 @@ if [ -f "imgui.ini" ]; then
 fi
 
 # Run the game
-$GPTOKEYB "soh.elf" -c "soh.gptk" & 
-pm_platform_helper "soh.elf" >/dev/null
-./soh.elf
+$GPTOKEYB "soh.elf.${DEVICE_ARCH}" -c "soh.gptk" &
+pm_platform_helper "soh.elf.${DEVICE_ARCH}" >/dev/null
+./soh.elf.${DEVICE_ARCH}
 
 # Cleanup
 rm -rf "$GAMEDIR/logs/"
