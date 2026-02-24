@@ -33,9 +33,8 @@ $ESUDO umount "$monofile" || true
 $ESUDO mount "$monofile" "$monodir"
 
 # Setup savedir
-$ESUDO rm -rf ~/.local/share/Lode\ Runner\ Online
 mkdir -p ~/.local/share
-ln -sfv "$GAMEDIR/savedata" ~/.local/share/Lode\ Runner\ Online
+bind_directories ~/.local/share/Lode\ Runner\ Online "$GAMEDIR/savedata"
 
 # Remove all the dependencies in favour of system libs - e.g. the included 
 # Custom version of FNA included with patcher- v23, but with VorbisFile-CS added back (from v16)
