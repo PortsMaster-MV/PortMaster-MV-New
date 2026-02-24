@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 4,
   "name": "soh.zip",
   "items": [
     "Ship of Harkinian.sh",
@@ -10,10 +10,13 @@
     "title": "Ship of Harkinian",
     "porter": [
       "Jeod",
-      "beniamino"
+      "beniamino",
+      "monkeyx-net"
     ],
     "desc": "A source port of Ocarina of Time &amp; Master Quest. Ship of Harkinian features extensive and significant enhancements over the original game, such as improved performance, increased frame-rate, native ultra-widescreen support, and extensive mod support (especially compared to emulated versions of the original), among other features.",
-    "inst": "Follow the guide at https://www.shipofharkinian.com/setup-guide for your desired platform to create your oot.otr and/or oot-mq.otr files. Once created put in the ports/soh folder.",
+    "desc_md": null,
+    "inst": "Follow the guide at https://www.shipofharkinian.com/setup-guide for your desired platform to create your oot.o2r and/or oot-mq.o2r files. Once created put in the ports/soh/baseroms folder.",
+    "inst_md": null,
     "genres": [
       "action",
       "adventure"
@@ -21,10 +24,14 @@
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [],
+    "store": [],
+    "availability": "paid",
     "reqs": [],
     "arch": [
-      "aarch64"
-    ]
+      "aarch64",
+      "x86_64"
+    ],
+    "min_glibc": null
   }
 }

@@ -1,15 +1,15 @@
 ## Information
-Ship of Harkinian 8.0.6 was built from the develop branch (bleeding edge) with checkout commit https://github.com/HarbourMasters/Shipwright/commit/651348d2a94f6bfa5f7e7f89800908e9e8a4a3e5 on 03/12/2025.
+Ship of Harkinian was built from GitHub Actions at the [HM64 Autobuild Factory](https://github.com/JeodC/hm64-builder).
 
 ## Compatibility
 This build can run on firmwares with older GLIBC (where previously 2.36+ was required) thanks to new build steps by beniamino. TrimUI devices have a render bug where the PVR driver doesn't support NPOT (non-power-of-two) textures and therefore won't render them. The game is still playable, but several textures will be invisible.
 
 ## Installation
-You need to provide your own roms. See the [Shipwright](https://github.com/HarbourMasters/Shipwright/blob/develop/docs/supportedHashes.json) repository for a list of supported rom hashes. Gather your roms and put them in the `ports/soh` folder. Start the port, and on first run, your .otr files will be generated from the roms you provide. Note that only one `oot.otr` and `oot-mq.otr` will be made--if you provide more than one rom per game, strange things may occur. You *can* use pregenerated `.otr` files from elsewhere, but you may experience crashes.
+You need to provide your own roms. See the [Shipwright](https://github.com/HarbourMasters/Shipwright/blob/develop/docs/supportedHashes.json) repository for a list of supported rom hashes. Gather your roms and put them in the `ports/soh/baseroms` folder. Start the port, and on first run, your .o2r files will be generated from the roms you provide. Note that only one `oot.o2r` and `oot-mq.o2r` will be made--if you provide more than one rom per game, strange things may occur. You *can* use pregenerated `.o2r` files from elsewhere, but you may experience crashes.
 
 Texture pack files and mods can be added to the `ports/soh/mods` folder. 
 
-Logs are recorded automatically as `ports/soh/log.txt`. Please provide a log if you report an issue. PortMaster does not maintain the Ship of Harkinian repository and is not responsible for bugs or issues outside of our control. Likewise, HarbourMasters is not affiliated with PortMaster and this distribution is not officially supported by them. *Please come to PortMaster for help before approaching the HarbourMasters!*
+Logs are recorded automatically as `ports/soh/log.txt`. Please provide a log if you report an issue. HarbourMasters is not affiliated with PortMaster or RHH-Ports and this distribution is not officially supported by them. *Please report an issue to the RHH-Ports repository before going to HarbourMasters!*
 
 ## Menu Navigation
 Ship of Harkinian has built-in controller navigation for the imgui menu. Press `SELECT` to open the menu and use the `D-PAD` to choose a submenu, then press `A` to switch focus to it. Press `B` to back out of a submenu.
@@ -36,13 +36,12 @@ I prefer the OoT 3DS look along with a studio ghibli style skybox:
 - [Studio Ghibli Skybox](https://github.com/JeodC/PortMaster-ShipOfHarkinian/tree/main/external-mods/)
 
 ## Thanks
-Nintendo for the game  
-HarbourMasters for the native pc port  
-fpasteau for the original 8.0.4 compatibility build  
-beniamino for the updated build steps for develop to work on more devices  
-AkerHasReawakened for the cover art  
-IanSantos for the ghibli skybox mod  
-Testers and Devs from the PortMaster Discord  
+- Nintendo for the game
+- beniamino for the updated build steps for develop to work on more devices
+- Testers and Devs from the PortMaster Discord
+- HarbourMasters for the native pc port
+- AkerHasReawakened for the cover art
+- IanSantos for the ghibli skybox mod 
 
 
 
