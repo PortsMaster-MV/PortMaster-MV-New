@@ -1,25 +1,34 @@
 {
-    "version": "2",
-    "name": "smworld.zip",
-    "items": [
-        "smworld.sh",
-        "smworld"
+  "version": 4,
+  "name": "smworld.zip",
+  "items": [
+    "Super Mario World.sh",
+    "smworld"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Super Mario World (and All-Stars)",
+    "porter": [
+      "Tekkenfede",
+      "xikteny"
     ],
-    "items_opt": null,
-    "attr": {
-        "title": "Super Mario World (and All Stars)",
-        "porter": [
-            "Tekkenfede"
-        ],
-        "desc": "Super Mario World is a 2D side-scrolling platform game in which the player controls Mario or Luigi, the protagonists of the game. The game has similar gameplay to earlier games in the Super Mario series – Super Mario Bros., Super Mario Bros. 2, and Super Mario Bros. 3 – but introduces new elements. As well as dashing and jumping, the player can also fly or float with the aid of the Cape Feather and P-Balloon and can execute the new Spin Jump move.[",
-        "inst": "See Wiki",
-        "genres": [
-            "platformer"
-        ],
-        "image": null,
-        "rtr": false,
-        "runtime": null,
-        "reqs": [],
-        "arch": ["aarch64"]
-    }
+    "desc": "A reimplementation of Super Mario World, a classic 2D platformer originally released in 1991 for the Super Nintendo. Featuring similar gameplay to earlier games in the Super Mario series—such as Super Mario Bros., Super Mario Bros. 2, and Super Mario Bros. 3—but also introduces many new elements, such as the Cape Feather, the P-Balloon, and Yoshi.\n\nThis project is also able to play the All-Stars versions of Super Mario Bros. and Super Mario Bros.: The Lost Levels.",
+    "desc_md": "A reimplementation of *Super Mario World*, a classic 2D platformer originally released in 1991 for the Super Nintendo. Featuring similar gameplay to earlier games in the *Super Mario* series—such as *Super Mario Bros.*, *Super Mario Bros. 2*, and* Super Mario Bros. 3*—it also introduces many new elements, such as the Cape Feather, the P-Balloon, and Yoshi.\n\nThis project is also able to play the *All-Stars* versions of *Super Mario Bros.* and *Super Mario Bros.: The Lost Levels*.",
+    "inst": "Place your copy of 'Super Mario World (USA)' into the root of the \"ports/smworld/\" directory, and name it \"smw.sfc\". The correct ROM should have an MD5 checksum of cdd3c8c37322978ca8669b34bc89c804.\n\nAdditionally—if you want to be able to play 'SMB1' or 'The Lost Levels'—place your copy of 'Super Mario All-Stars (USA)' into the root of the \"ports/smworld/\" directory, and name it \"smas.sfc\". The correct ROM should have an MD5 checksum of 53c038150ba00d5f8d8574b4d36283f2.\n\nThe required asset file(s) will be created the first time you run the game(s).",
+    "inst_md": "Place your copy of *Super Mario World (USA)* into the root of the `ports/smworld/` directory, and name it `smw.sfc`. The correct ROM should have an MD5 checksum of `cdd3c8c37322978ca8669b34bc89c804`.\n\nAdditionally—if you want to be able to play *SMB1* or *The Lost Levels*—place your copy of *Super Mario All-Stars (USA)* into the root of the `ports/smworld/` directory, and name it `smas.sfc`. The correct ROM should have an MD5 checksum of `53c038150ba00d5f8d8574b4d36283f2`.\n\nThe required asset file(s) will be created the first time you run the game(s).",
+    "genres": [
+      "platformer"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "paid",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
 }
