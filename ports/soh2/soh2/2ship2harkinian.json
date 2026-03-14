@@ -12,7 +12,12 @@
             "UnrestrictedItems": 0
         },
         "gDeveloperTools": {
-            "LogLevel": 4
+            "DebugSaveFileMode": 0,
+            "DisableObjectDependency": 0,
+            "LogLevel": 4,
+            "PreventActorDraw": 0,
+            "PreventActorInit": 0,
+            "PreventActorUpdate": 0
         },
         "gEnhancements": {
             "Camera": {
@@ -89,25 +94,22 @@
         "gForceCursorVisibility": 0,
         "gInterpolationFPS": 20,
         "gMatchRefreshRate": 0,
+        "gRando": {
+            "SpoilerFile": "",
+            "SpoilerFileIndex": 0
+        },
         "gSettings": {
             "ControlNav": 1,
             "DisableCloseColorWrap": 1,
             "InternalResolution": 1.0,
             "MSAAValue": 1,
-            "OpenMenuBar": 1,
             "OverlayFont": "Press Start 2P",
             "TextureFilter": 0,
             "VsyncEnabled": 0
         },
         "gWindows": {
+            "Menu": 1,
             "Notifications": 1
-        }
-    },
-    "Window": {
-        "AudioBackend": "sdl",
-        "Backend": {
-            "Id": 1,
-            "Name": "OpenGL"
         }
     }
 }

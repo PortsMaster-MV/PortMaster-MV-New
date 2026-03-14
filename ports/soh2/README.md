@@ -1,5 +1,5 @@
 ## Information
-2Ship2Harkinian binaries were built from the develop branch (bleeding edge) on 03/10/2025. You can build your own binaries by following the [BUILDING.md guide](https://github.com/PortsMaster-MV/PortMaster-MV-New/blob/main/ports/soh2/soh2/build-docs/BUILDING.md).
+2Ship2Harkinian binaries were built from GitHub Actions at the [HM64 Autobuild Factory](https://github.com/JeodC/hm64-builder).
 
 ## Installation
 You must generate your `mm.o2r` file with a rom that has one of the following SHAs:
@@ -11,9 +11,9 @@ d6133ace5afaa0882cf214cf88daba39e266c078 - N64 US
 
 You can verify your rom at https://2ship.equipment.
 
-Legally obtain your rom and place it in `ports/soh2`, then start the port. Texture pack files can be added to the `ports/soh2/mods` folder.
+Legally obtain your rom and place it in `ports/soh2/baseroms`, then start the port. Texture pack files can be added to the `ports/soh2/mods` folder.
 
-Logs are recorded automatically as `ports/soh/log.txt`. Please provide a log if you report an issue. PortMaster does not maintain the 2Ship2Harkinian repository and is not responsible for bugs or issues outside of our control. Likewise, HarbourMasters is not affiliated with PortMaster and this distribution is not officially supported by them. *Please come to PortMaster for help before approaching the HarbourMasters!*
+Logs are recorded automatically as `ports/soh2/log.txt`. Please provide a log if you report an issue. HarbourMasters is not affiliated with PortMaster or RHH-Ports and this distribution is not officially supported by them. *Please report an issue to the RHH-Ports repository before going to HarbourMasters!*
 
 ## Graphics Adjustments
 You can open `2ship2harkinan.json` in a text editor and modify the values as you wish. If you mess up the syntax, the game will regenerate this file and your settings will be reverted to default. Please create a backup before modification.
