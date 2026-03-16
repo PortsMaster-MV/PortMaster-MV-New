@@ -5,9 +5,10 @@
 		<name>Ship of Harkinian 2</name>
 		<desc>A source port of Majora's Mask. 2Ship2Harkinian features extensive and significant enhancements over the original game, such as improved performance, increased frame-rate, native ultra-widescreen support, and extensive mod support (especially compared to emulated versions of the original), among other features.</desc>
 		<image>./soh2/cover.png</image>
+		<thumbnail>./soh2/thumb.png</thumbnail>
 		<releasedate>20240527</releasedate>
 		<developer>Nintendo</developer>
 		<publisher>Harbour Masters</publisher>
 		<genre>Adventure</genre>
 	</game>
-</gamelist>
+<gamelist>
