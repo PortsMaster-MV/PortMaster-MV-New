@@ -111,13 +111,13 @@ process_game() {
 		patch_failure
     else
         unzip_assets
-    fi
+	fi
 	sleep 1
 	echo "Compressing audio..."
 	compress_audio || patch_failure
 	sleep 1
-    echo "Finishing up..."
-    zip_archive || patch_failure
+	echo "Finishing up..."
+	zip_archive || patch_failure
     sleep 1
     
     # Unmount runtimes
