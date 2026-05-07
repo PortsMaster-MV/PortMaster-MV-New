@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "name": "ziiaol.zip",
   "items": [
     "Zelda II: Enhanced.sh",
@@ -12,8 +12,9 @@
       "Jeod"
     ],
     "desc": "Zelda II Enhanced adds a ton of QoL improvements, widescreen, new areas, and new collectibles. The game is arguably much easier to play through.",
-    "inst": "Download the .zip from https://hoverbat.itch.io/ziiaol and put in the assets folder.",
-    "inst_md": "Download the .zip from https://hoverbat.itch.io/ziiaol and put in the assets folder.",
+    "desc_md": null,
+    "inst": "Download the .zip from https://hoverbat.itch.io/ziiaol and put it in the ziiaol/assets folder.",
+    "inst_md": "Download the .zip from [Itch.io](https://hoverbat.itch.io/ziiaol) and put it in the `ziiaol/assets` folder.",
     "genres": [
       "action",
       "adventure",
@@ -22,10 +23,15 @@
     "image": null,
     "rtr": false,
     "exp": false,
-    "runtime": null,
+    "runtime": [
+      "gmtoolkit.squashfs"
+    ],
+    "store": [],
+    "availability": "free",
     "reqs": [],
     "arch": [
-      "armhf"
-    ]
+      "aarch64"
+    ],
+    "min_glibc": null
   }
 }

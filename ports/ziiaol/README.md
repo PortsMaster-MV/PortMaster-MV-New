@@ -9,7 +9,7 @@ Download the .zip from https://hoverbat.itch.io/ziiaol and put in the `ports/zii
 |D-PAD|Move|
 |A|Jump|
 |X|Attack|
-|L2|Options Menu|
+|R2|Options Menu|
 
 ## Thanks
 This enhanced edition of Zelda II created by HoverBat  
