@@ -1,25 +1,39 @@
 <?xml version='1.0' encoding='utf-8'?>
 <gameList>
-  <game>
-    <path>./smb1.sh</path>
-    <name>Super Mario All-Stars - Super Mario Bros.</name>
-    <desc>Super Mario All-Stars is a compilation on Super Nintendo of all the platform games featuring Mario released for Nintendo. It includes : Super Mario Bros. 1, 2 and 3 as well as Super Mario Bros.: The Lost Levels, which was never released in Europe before. More than a simple compilation, the game brings improved graphics and the possibility to save your progress. Nostalgic fans of the first Nintendo console will be pleased.</desc>
-    <image>./smworld/cover.smb1.png</image>
-    <releasedate>19930801T000000</releasedate>
-    <developer>Nintendo</developer>
-    <publisher>Nintendo</publisher>
-    <genre>Action-Compilation-Platform</genre>
-    <players>2</players>
-  </game>
-  <game>
-    <path>./smbll.sh</path>
-    <name>Super Mario All-Stars - Super Mario Bros.: The Lost Levels</name>
-    <desc>Super Mario All-Stars is a compilation on Super Nintendo of all the platform games featuring Mario released for Nintendo. It includes : Super Mario Bros. 1, 2 and 3 as well as Super Mario Bros.: The Lost Levels, which was never released in Europe before. More than a simple compilation, the game brings improved graphics and the possibility to save your progress. Nostalgic fans of the first Nintendo console will be pleased.</desc>
-    <image>./smworld/cover.smbll.png</image>
-    <releasedate>19930801T000000</releasedate>
-    <developer>Nintendo</developer>
-    <publisher>Nintendo</publisher>
-    <genre>Action-Compilation-Platform</genre>
-    <players>2</players>
-  </game>
+	<game>
+		<path>./Super Mario World.sh</path>
+		<name>Super Mario World</name>
+		<desc>Once again, the evil Bowser has captured Princess Peach (while on a holiday on Yoshi's Island), and it's up to Mario to save her. To aid him in his quest, Mario must use the flying ability of the feather to get him to places hard to reach. But what's even more important is his new friend, the dinosaur Yoshi, who Mario can ride through each level and eat the enemies.
+
+Over 90 levels are on offer, with plenty of Bowser's evil koopas and new characters around each level. Apart from saving Peach, you can also save some of Yoshi's friends, other dinosaurs that each have a special attack. Each level also contains a set of extra items to collect, including dinosaur coins, and break the tape at the end of each level to collect stars, that allow you to open up the bonus games.</desc>
+		<image>./smworld/cover.png</image>
+		<releasedate>19910813T000000</releasedate>
+		<developer>Nintendo</developer>
+		<publisher>Nintendo</publisher>
+		<genre>Platform / Run &amp; Jump-Platform</genre>
+		<players>1-2</players>
+	</game>
+	<game>
+		<path>./Super Mario All-Stars - Super Mario Bros..sh</path>
+		<name>Super Mario All-Stars - Super Mario Bros.</name>
+		<desc>Super Mario All-Stars is a compilation on Super Nintendo of all the platform games featuring Mario released for Nintendo. It includes : Super Mario Bros. 1, 2 and 3 as well as Super Mario Bros.: The Lost Levels, which was never released in Europe before. More than a simple compilation, the game brings improved graphics and the possibility to save your progress. Nostalgic fans of the first Nintendo console will be pleased.</desc>
+		<image>./smworld/cover.as.png</image>
+		<releasedate>19930801T000000</releasedate>
+		<developer>Nintendo</developer>
+		<publisher>Nintendo</publisher>
+		<genre>Platform-Compilation</genre>
+		<players>1-2</players>
+	</game>
+	<game>
+		<path>./Super Mario All-Stars - The Lost Levels.sh</path>
+		<name>Super Mario All-Stars - Super Mario Bros.: The Lost Levels</name>
+		<desc>Super Mario All-Stars is a compilation on Super Nintendo of all the platform games featuring Mario released for Nintendo. It includes : Super Mario Bros. 1, 2 and 3 as well as Super Mario Bros.: The Lost Levels, which was never released in Europe before. More than a simple compilation, the game brings improved graphics and the possibility to save your progress. Nostalgic fans of the first Nintendo console will be pleased.</desc>
+		<image>./smworld/cover.as.png</image>
+		<releasedate>19930801T000000</releasedate>
+		<developer>Nintendo</developer>
+		<publisher>Nintendo</publisher>
+		<genre>Action-Compilation-Platform</genre>
+		<genre>Platform-Compilation</genre>
+		<players>1-2</players>
+	</game>
 </gameList>

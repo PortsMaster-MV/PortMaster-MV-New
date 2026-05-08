@@ -1,42 +1,47 @@
 ## Notes
 
-Thanks to the [SNESREV project](https://github.com/snesrev/smw).
+Thanks to the [snesrev project](https://github.com/snesrev/smw), to [Tekkenfede](https://github.com/Tekkenfede) for the original PortMaster port, and to [Desoxyn](https://github.com/Trademarked69) for pointing out that there was an easier way to handle the required game assets.
 
-## Extract Assets
+## Installation
 
-For Windows 
+Place your copy of *Super Mario World (USA)* into the root of the `ports/smworld/` directory, and name it `smw.sfc`. The correct ROM should have an MD5 checksum of `cdd3c8c37322978ca8669b34bc89c804`.
 
-Dependencies and requirements:
+Additionally—if you want to be able to play *SMB1* or *The Lost Levels*—place your copy of *Super Mario All-Stars (USA)* into the root of the `ports/smworld/` directory, and name it `smas.sfc`. The correct ROM should have an MD5 checksum of `53c038150ba00d5f8d8574b4d36283f2`.
 
-You'll need TCC and SDL2 in order to compile using TCC.
-Rename your obtained US Super Mario World rom to smw.sfc and place it in the root folder.
-Unzip both TCC and SDL2 and place them in third_party folder.
-Double click run_with_tcc.bat
-Wait for it to compile and the game will automatically boot-up.
+The required asset file(s) will be created the first time you run the game(s).
 
-For Mac OSX/Linux
+## Controls
 
-Open a terminal
-Install pip if not already installed
-python3 -m ensurepip
-Clone the repo and cd into it
+| Button | Action |
+|--|--| 
+|Left Analog Stick|Move|
+|D-Pad|Move|
+|A Button|Spin Jump|
+|B Button|Jump|
+|X/Y Buttons|Dash/Grab/Shoot Fireballs|
+|Start Button|pause/Menu Confirm|
+|Select Button|Use Reserve Item/Menu Advance|
+|L1 Button|Scroll Screen Left|
+|R1 Button|Scroll Screen Right|
+|L2 Button|Save State|
+|R2 Button|Load State|
+|Menu Button|Fast Forward|
+|Start + Select buttons|Exit Game|
+
+This game uses **SDL** for controls. In the event that **ABXY** do not correspond to the expected buttons on your device/firmware, you may wish to make use of your firmware's options (ex.: [Knulli](https://knulli.org/play/basic-inputs/#switch-ab-and-xy-for-ports), [muOS](https://muos.dev/tour/modules/muxcontrol)), or to modify the options in the `[GamepadMap]` section of `ports/smworld/smw.ini` (see also the `[KeyMap]` section of `smw.ini`).
+
+## Configuration
+There are several game options which may be configured by editing `ports/smworld/smw.ini`. The `SavePlaythrough`, `LinearFiltering`, and `IgnoreAspectRatio` options are just some of those that may be of interest.
+
+Some devices—such as those with low or otherwise-unusual screen resolutions—*may* require modifying the `WindowSize`, `IgnoreAspectRatio`, or `Fullscreen` settings within the `[Graphics]` section.
+
+## Performance
+*SMB1* and *The Lost Levels* are more demanding than *Super Mario World*, and the performance of the former two games may be marginal on some devices. Usage of higher-than-default system governors can be beneficial in some cases. For example: selecting the `Performance` governor rather than the default `Ondemand` governor was observed to result in substantially smoother gameplay in *SMB1* and *The Lost Levels*, on both a TrimUI Brick Hammer as well as an Anbernic RG-35XX H, each of which were running the muOS firmware.
+
+## Compile
+This aarch64 build was built using Cebion's [WSL2 chroot environment](https://github.com/Cebion/Portmaster_builds).
+```shell
 git clone https://github.com/snesrev/smw.git
 cd smw
-Install SDL2
-Ubuntu/Debian sudo apt install libsdl2-dev
-Fedora Linux sudo dnf install SDL2-devel
-Arch Linux sudo pacman -S sdl2
-macOS: brew install sdl2
-Place your US ROM file named smw.sfc in smw
-Compile
-make (suggested make -j$(nproc) )
-
-Then we will have our .dat file  
-
-Pack with smb1 and smbll boot script included. 
-To extract the 2 rom file called smbll.sfc and smb1.sfc you need to place the us rom of super mario all star renamed smas.sfc inside the "other" folder and do this
-pip install zstandard
-then while inside the smw folder
-cd other
-python3 extract.py
-at this point you should have the the 2 sfc files to copy in the root of the game folder
+make
+```
