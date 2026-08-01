@@ -14,7 +14,7 @@ making native ports like this possible.
 
 ## Install
 
-1. Dump your GameCube or Wii disc to `.iso`, following the [Dolphin ripping
+1. Dump your GameCube to `.iso`, following the [Dolphin ripping
    guide](https://wiki.dolphin-emu.org/index.php?title=Ripping_Games).
    Optionally compress it to `.rvz` with Dolphin or
    [nodtool](https://github.com/encounter/nod/releases) to save space.
@@ -22,7 +22,7 @@ making native ports like this possible.
 3. Launch. Dusklight's own first-run screen lets you pick the disc and
    configure gameplay/enhancement options.
 
-Only the GameCube USA/EUR releases and the Wii release are currently known to
+Only the GameCube USA/EUR releases are currently known to
 work with this build.
 
 ## Configuration
