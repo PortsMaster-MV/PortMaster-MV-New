@@ -8,7 +8,7 @@
     "porter": ["jckhng", "bmdhacks"],
     "desc": "Native reimplementation of The Legend of Zelda: Twilight Princess, built on the zeldaret decompilation and rendered through Aurora on OpenGL ES.",
     "desc_md": "",
-    "inst": "Place your own legally-dumped Twilight Princess GameCube or Wii disc image (.iso or .rvz) in the assets directory.",
+    "inst": "Place your own legally-dumped Twilight Princess GameCube disc image (.iso or .rvz) in the assets directory.",
     "inst_md": "",
     "genres": ["adventure", "action"],
     "image": null,
