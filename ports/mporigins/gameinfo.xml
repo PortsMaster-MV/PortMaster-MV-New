@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Metroid Prime Origins.sh</path>
+    <name>Metroid Prime Origins</name>
+    <desc>Metroid Prime Origins is a fan-made 2D "demake" of the 2002 classic Metroid Prime, reimagining the original 3D GameCube game as an 8-bit, NES-style adventure. Developed by the team at Lv. 4 GAMES with custom pixel art, sound effects, and fan-made chiptune music.</desc>
+    <releasedate>20260807T000000</releasedate>
+    <developer>Lv.4 GAMES, Zevroid, BRAINOS, Loeder, Bran</developer>
+    <publisher>Self-published</publisher>
+    <genre>Action, Platformer</genre>
+    <image>./mporigins/cover.png</image>
+  </game>
+</gameList>
