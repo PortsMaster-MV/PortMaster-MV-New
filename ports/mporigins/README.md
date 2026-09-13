@@ -1,6 +1,6 @@
 ## Notes
 
-Thanks to  **Lv.4 GAMES**, **Zevroid**, **BRAINOS**, **Loeder** and **Bran** for developing this game. Download the game from the official [Discord](https://discord.gg/sNPCG7VKBE) server. Stronger devices like Mangmi Air X or Anbernic RG Vita Pro and better are recommended for better performance. 
+Thanks to  **Lv.4 GAMES**, **Zevroid**, **BRAINOS**, **Loeder** and **Bran** for developing this game. Download the game from the official [Google Drive](https://drive.google.com/drive/folders/15wf2j9x4SvWAuuYjOsznEBHtf41qaOJh) link. Stronger devices like Mangmi Air X or Anbernic RG Vita Pro and better are recommended for better performance. 
 
 ## Controls
 
