@@ -1,6 +1,6 @@
 ## Notes
 
-Thanks to  **Lv.4 GAMES**, **Zevroid**, **BRAINOS**, **Loeder** and **Bran** for developing this game. Thanks to **Nintendo** for not sending nintenjas after them. Download the game from the official [Discord](https://discord.gg/sNPCG7VKBE) server. Stronger devices like Mangmi Air X or Anbernic RG Vita Pro and better are recommended for better performance. 
+Thanks to  **Lv.4 GAMES**, **Zevroid**, **BRAINOS**, **Loeder** and **Bran** for developing this game. Download the game from the official [Discord](https://discord.gg/sNPCG7VKBE) server. Stronger devices like Mangmi Air X or Anbernic RG Vita Pro and better are recommended for better performance. 
 
 ## Controls
 
