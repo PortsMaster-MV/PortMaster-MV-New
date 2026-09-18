@@ -13,8 +13,8 @@
     ],
     "desc": "Metroid Prime Origins is a fan-made 2D \"demake\" of the 2002 classic Metroid Prime, reimagining the original 3D GameCube game as an 8-bit, NES-style adventure. Developed by the team at Lv. 4 GAMES with custom pixel art, sound effects, and fan-made chiptune music.",
     "desc_md": null,
-    "inst": "Go to https://drive.google.com/drive/folders/15wf2j9x4SvWAuuYjOsznEBHtf41qaOJh and download the Metroid Prime Origins 1.1.1 VM.zip. Extract all game files into assets folder. Devices with H700 CPU are a minimum, but stronger devices like Mangmi Air X or Anbernic RG Vita Pro are recommended for this game.",
-    "inst_md": "Go to https://drive.google.com/drive/folders/15wf2j9x4SvWAuuYjOsznEBHtf41qaOJh and download the `Metroid Prime Origins 1.1.1 VM.zip`. Extract all game files into `assets` folder. Devices with H700 CPU are a minimum, but stronger devices like `Mangmi Air X` or `Anbernic RG Vita Pro` are recommended for this game.",
+    "inst": "Go to https://drive.google.com/drive/folders/15wf2j9x4SvWAuuYjOsznEBHtf41qaOJh and download the Metroid Prime Origins 1.1.2 VM.zip. Extract all game files into assets folder. Devices with H700 CPU are a minimum, but stronger devices like Mangmi Air X or Anbernic RG Vita Pro are recommended for this game.",
+    "inst_md": "Go to https://drive.google.com/drive/folders/15wf2j9x4SvWAuuYjOsznEBHtf41qaOJh and download the `Metroid Prime Origins 1.1.2 VM.zip`. Extract all game files into `assets` folder. Devices with H700 CPU are a minimum, but stronger devices like `Mangmi Air X` or `Anbernic RG Vita Pro` are recommended for this game.",
     "genres": [
       "action",
       "platformer"

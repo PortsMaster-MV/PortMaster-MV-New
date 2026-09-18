@@ -8,6 +8,7 @@ function __InputInitializeSteam()
         __onWINE = false;
         __steamHandlesArray = [];
         __steamSwitchLabels = false;
+        __usingBigPicture = false;
         __steamTypeToInputTypeMap = ds_map_create();
         __steamTypeToDescriptionMap = ds_map_create();
         __steamInputTypeIgnoreMap = ds_map_create();
