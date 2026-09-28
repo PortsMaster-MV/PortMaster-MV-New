@@ -1,0 +1,9 @@
+The Misaki Gothic localization font is compiled into starfox.aarch64 as
+part of the Star Fox Enhanced runtime's text rendering.
+
+Copyright (C) 2002-2021 Num Kadoma.
+Source and license: https://littlelimit.net/misaki.htm
+                     https://littlelimit.net/font.htm#license
+
+Permission permits use, copying and distribution with or without
+modification, commercially or noncommercially, without warranty.
