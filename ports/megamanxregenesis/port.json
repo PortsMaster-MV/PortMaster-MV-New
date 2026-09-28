@@ -1,0 +1,40 @@
+{
+  "version": 4,
+  "name": "megamanxregenesis.zip",
+  "items": [
+    "Mega Man X regenesis.sh",
+    "megamanxregenesis"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Mega Man X regenesis",
+    "porter": [
+      "armsonic"
+    ],
+    "desc": "Note: This game is hard to run so it comes with a preconfigured save file with lighting and partical effects turned off. If you wish to create or add a save file I HIGHLY recommend that you turn off lighting and partical effects. Game Description: Set in an alternate timeline following the events of Mega Man X, Sigma has won, X has fallen, and humanity stands on the brink of extinction. Just when all hope appears lost, Dr. Cain unveils his final contingency—Project Regenesis. Given one last chance to rewrite history, X must rise once again and fight to save what remains of humanity.",
+    "desc_md": null,
+    "inst": "Download the latest Windows version of the game from https://mmxregenesis.itch.io/mega-man-x-regenesis#download/, extract the exe and place it into the game data folder within the ports directory.",
+    "inst_md": null,
+    "genres": [
+      "action",
+      "platformer"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [
+      "godot_4.7.1.squashfs"
+    ],
+    "store": [
+      {
+        "name": "Itch.io",
+        "gameurl": "https://mmxregenesis.itch.io/mega-man-x-regenesis#download",
+        "developerurl": "https://mmxregenesis.itch.io/"
+      }
+    ],
+    "availability": "free",
+    "reqs": [],
+    "arch": [],
+    "min_glibc": ""
+  }
+}
