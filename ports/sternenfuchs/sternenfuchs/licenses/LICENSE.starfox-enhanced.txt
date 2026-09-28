@@ -1,0 +1,29 @@
+Sternenfuchs packages a build of the "Star Fox Enhanced" native PC runtime:
+
+    https://github.com/kandowontu/starfox-enhanced
+    Pinned commit: 6612cb05e4bda0a5e25e8e805d64d0e3db50896a
+
+The original repository was deleted on 2026-09-28. The pinned commit is
+archived by Software Heritage:
+
+    https://archive.softwareheritage.org/swh:1:rev:6612cb05e4bda0a5e25e8e805d64d0e3db50896a;origin=https://github.com/kandowontu/starfox-enhanced
+
+Star Fox Enhanced is a fan-made enhancement/reimplementation built on top of
+the original 1993 Star Fox / Starwing SNES game (presented by Nintendo,
+developed by Argonaut Software) and the Star Fox EX and UltraStarFox
+community projects. See that project's CREDITS.md for the full attribution
+list:
+
+    https://archive.softwareheritage.org/swh:1:rev:6612cb05e4bda0a5e25e8e805d64d0e3db50896a;origin=https://github.com/kandowontu/starfox-enhanced;path=/CREDITS.md
+
+As of the pinned commit, the starfox-enhanced repository does not carry an
+explicit top-level open-source license for its own original code (its
+README points only to CREDITS.md and THIRD_PARTY_NOTICES.md for the
+libraries it bundles -- see the other LICENSE.*.txt files in this folder
+for those). This notice is provided for attribution; it does not assert a
+license starfox-enhanced itself has not granted.
+
+No Nintendo ROM data, assets, or other copyrighted game content are
+included in this port. The end user must supply their own legally obtained
+Star Fox/Starwing .sfc or .smc ROM, which the runtime validates locally and
+never distributes.
