@@ -1,0 +1,9 @@
+{
+    "compress_audio": {
+    "min_size":       "auto",
+    "bitrate":        64
+  },
+	"code_patches": [
+        { "entry": "gml_GlobalScript___InputInitializeSteam", "gml": "gml/GlobalScript___InputInitializeSteam.gml" }
+    ]
+}
