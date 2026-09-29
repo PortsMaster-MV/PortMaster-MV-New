@@ -47,3 +47,36 @@ menu can remap them.
 | SELECT | SNES Select |
 | START | SNES Start |
 | SELECT + START | Quit |
+
+## Compiling
+
+The binary is built from source by `scripts/build-arm64.sh` in
+[mtoensing/sternenfuchs](https://github.com/mtoensing/sternenfuchs) (branch
+`prototype/rg40xx`). It targets aarch64 and needs glibc 2.35 or older at
+runtime, so build on Ubuntu 22.04 arm64 (CI uses `ubuntu:22.04` on
+`ubuntu-24.04-arm`).
+
+```bash
+apt-get install -y ca-certificates git curl cmake ninja-build build-essential \
+  python3 zip file binutils pkg-config
+git clone -b prototype/rg40xx https://github.com/mtoensing/sternenfuchs.git
+cd sternenfuchs
+./scripts/build-arm64.sh
+```
+
+The script:
+
+1. Downloads Star Fox Enhanced at the pinned commit `6612cb05e4bda0a5e25e8e805d64d0e3db50896a`
+   from the Software Heritage archive (see `scripts/versions.sh`), since the
+   original repository was deleted. To build from your own clone or mirror
+   that contains the commit, set `STARFOX_REPO` to its URL or path.
+2. Builds the pinned `bmdhacks/SDL` SDL3-to-SDL2 shim (`libSDL3.so.0`) and
+   installs it into a private prefix. Vulkan is off.
+3. Applies `patches/0001-system-sdl3.patch` and
+   `patches/0002-software-renderer-fallback.patch` to the game source.
+4. Builds `starfox_pc` with `-mcpu=cortex-a53`, LTO and the committed
+   profile-guided optimization data in `pgo-data/`.
+5. Packages `dist/sternenfuchs.zip` (sideload layout) and
+   `dist/sternenfuchs-pr.zip` (PortMaster submission layout).
+
+The port ships two binaries: `starfox.aarch64` and `libs.aarch64/libSDL3.so.0`.
