@@ -57,7 +57,7 @@ runtime, so build on Ubuntu 22.04 arm64 (CI uses `ubuntu:22.04` on
 `ubuntu-24.04-arm`).
 
 ```bash
-apt-get install -y ca-certificates git cmake ninja-build build-essential \
+apt-get install -y ca-certificates git curl cmake ninja-build build-essential \
   python3 zip file binutils pkg-config
 git clone -b prototype/rg40xx https://github.com/mtoensing/sternenfuchs.git
 cd sternenfuchs
@@ -66,10 +66,10 @@ cd sternenfuchs
 
 The script:
 
-1. Clones Star Fox Enhanced at the pinned commit `6612cb05e4bda0a5e25e8e805d64d0e3db50896a`
-   (see `scripts/versions.sh`). The original repository was deleted, so point
-   `STARFOX_REPO` at a local clone or mirror containing that commit
-   (archived at Software Heritage, link above).
+1. Downloads Star Fox Enhanced at the pinned commit `6612cb05e4bda0a5e25e8e805d64d0e3db50896a`
+   from the Software Heritage archive (see `scripts/versions.sh`), since the
+   original repository was deleted. To build from your own clone or mirror
+   that contains the commit, set `STARFOX_REPO` to its URL or path.
 2. Builds the pinned `bmdhacks/SDL` SDL3-to-SDL2 shim (`libSDL3.so.0`) and
    installs it into a private prefix. Vulkan is off.
 3. Applies `patches/0001-system-sdl3.patch` and
