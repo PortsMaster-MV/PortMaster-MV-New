@@ -19,7 +19,7 @@
     "exp": true,
     "runtime": [],
     "store": [],
-    "availability": "paid",
+    "availability": "free",
     "reqs": [],
     "arch": ["aarch64"],
     "min_glibc": "2.35"
