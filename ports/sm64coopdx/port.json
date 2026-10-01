@@ -25,7 +25,7 @@
         "runtime": [],
         "store": [],
         "availability": "paid",
-        "reqs": [],
+        "reqs": ["!lowres"],
         "arch": [
             "aarch64"
         ],
