@@ -6,7 +6,7 @@ Thanks to the [Coop Deluxe Team](https://github.com/coop-deluxe/sm64coopdx) for 
 
 Thanks to CODEHEX4EVER for the original PortMaster port, which this release replaces.
 
-This build targets aarch64 handhelds (tested on RK3326 / ArkOS). It uses native SDL2 gamepad input, so no gptokeyb mapping is needed.
+This build targets aarch64 handhelds. It uses native SDL2 gamepad input, so no gptokeyb mapping is needed.
 
 ## Controls
 
