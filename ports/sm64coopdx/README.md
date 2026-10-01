@@ -1,5 +1,7 @@
 ## Notes
 
+Ported by [DedicatedToSoftware](https://dedicatedtosoftware.com).
+
 Thanks to the [Coop Deluxe Team](https://github.com/coop-deluxe/sm64coopdx) for making sm64coopdx, and to Nintendo for the original Super Mario 64.
 
 Thanks to CODEHEX4EVER for the original PortMaster port, which this release replaces.
