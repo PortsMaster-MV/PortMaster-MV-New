@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./ZQuest Classic.sh</path>
+    <name>ZQuest Classic</name>
+    <desc>ZQuest Classic (formerly Zelda Classic) is an open source engine for top-down Zelda-style adventure games, with a library of hundreds of fan-made quests. This port includes the player plus the bundled demo quest The Deep; more quests, including the original classic quests, can be downloaded from PureZC.</desc>
+    <releasedate>20260927T000000</releasedate>
+    <developer>ZQuest Classic Team</developer>
+    <publisher>Open Source</publisher>
+    <genre>Adventure</genre>
+    <image>./zquestclassic/screenshot.png</image>
+  </game>
+</gameList>
