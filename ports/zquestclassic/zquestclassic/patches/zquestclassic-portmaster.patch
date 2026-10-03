@@ -1,0 +1,617 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4757e9b..217e022 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,6 +26,7 @@ set(USE_PCH FALSE CACHE BOOL "Use precompiled headers")
+ set(UNITY_BUILD FALSE CACHE BOOL "Unity build")
+ set(WANT_ZUPDATER TRUE CACHE BOOL "Build the zupdater target")
+ set(WANT_SENTRY FALSE CACHE BOOL "Include Sentry for crash dump handling")
++set(WANT_NFD TRUE CACHE BOOL "Use nativefiledialog-extended for file dialogs")
+ set(WANT_FUZZ FALSE CACHE BOOL "Set FUZZ CXX definition")
+ set(WANT_GIT_HOOKS TRUE CACHE BOOL "Install git hooks")
+ set(WANT_VENDORED_ZLIB TRUE CACHE BOOL "Build the vendored library at third_party/zlib")
+@@ -224,7 +225,7 @@ if (NOT EMSCRIPTEN)
+ 	FetchContent_MakeAvailable(stduuid)
+ endif()
+ 
+-if (NOT EMSCRIPTEN)
++if (NOT EMSCRIPTEN AND WANT_NFD)
+ 	FetchContent_Declare(
+ 		nativefiledialog
+ 		GIT_REPOSITORY
+@@ -276,7 +277,7 @@ add_compile_definitions("$<$<CONFIG:ASAN>:DEBUGMODE>")
+ 
+ set(MINIMP3_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include/minimp3)
+ 
+-if(NOT EMSCRIPTEN)
++if(NOT EMSCRIPTEN AND NOT ALLEGRO_SDL)
+ 	# Vendored SDL2, used only by allegro's SDL joystick driver (see
+ 	# WANT_SDL2_JOYSTICK below); only joystick-related subsystems are built.
+ 	# Unlike the native evdev/HID/directinput drivers, SDL keeps working when
+@@ -316,6 +317,7 @@ FetchContent_Declare(
+   allegro5
+   GIT_REPOSITORY https://github.com/connorjclark/allegro5.git
+   GIT_TAG        9780b84a313d459baaf79f7cc493f6f975ac50f9
++  PATCH_COMMAND  git restore . && git apply ${CMAKE_SOURCE_DIR}/third_party/allegro5.patch
+   EXCLUDE_FROM_ALL
+ )
+ if(EMSCRIPTEN)
+@@ -336,7 +338,9 @@ set(WANT_OPUS OFF CACHE BOOL "" FORCE)
+ set(WANT_DUMB ON CACHE BOOL "" FORCE)
+ set(WANT_FLAC OFF CACHE BOOL "" FORCE)
+ set(WANT_VIDEO OFF CACHE BOOL "" FORCE)
+-set(WANT_ALLOW_SSE "sse3" CACHE STRING "" FORCE)
++if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86|AMD64|i.86")
++	set(WANT_ALLOW_SSE "sse3" CACHE STRING "" FORCE)
++endif()
+ FetchContent_MakeAvailable(allegro5)
+ # Allegro 5 CMakeLists sets CMAKE_CONFIGURATION_TYPES in a way that doesn't work for us,
+ # so set it back to our value.
+@@ -380,8 +384,9 @@ target_link_libraries(allegro-legacy PRIVATE allegro_headers)
+ 
+ add_library(allegro_with_legacy INTERFACE)
+ target_link_libraries(allegro_with_legacy INTERFACE allegro_headers allegro-legacy allegro_primitives allegro_font allegro_image allegro_audio allegro_acodec allegro_main)
+-if (NOT EMSCRIPTEN)
++if (TARGET allegro_dialog)
+ 	target_link_libraries(allegro_with_legacy INTERFACE allegro_dialog)
++	target_compile_definitions(allegro_with_legacy INTERFACE HAS_NATIVE_DIALOG)
+ endif()
+ 
+ target_include_directories(allegro_with_legacy INTERFACE 
+@@ -505,7 +510,7 @@ elseif(LINUX)
+ 	add_definitions(-DALLEGRO_LINUX) # Mistakenly used in the source.
+ 	add_definitions(-DALLEGRO_LEGACY_NO_FIX_ALIASES)
+ 
+-	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
++	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86|AMD64|i.86")
+ 		# SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -export-dynamic")
+ 		SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc")
+ 		SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libgcc")
+@@ -544,7 +549,7 @@ else()
+ 	set_source_files_properties(src/base/zc_math.cpp PROPERTIES COMPILE_FLAGS -O3 SKIP_PRECOMPILE_HEADERS ON)
+ endif()
+ 
+-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
++if((CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86|AMD64|i.86")
+ 	add_compile_options(-mssse3)
+ endif()
+ 
+@@ -642,6 +647,10 @@ if (APPLE)
+ endif()
+ add_library(zcbase STATIC ${zcbase_sources})
+ target_link_libraries(zcbase PUBLIC allegro_with_legacy fmt)
++if(ALLEGRO_SDL AND NOT EMSCRIPTEN)
++	target_include_directories(zcbase PUBLIC ${SDL2_INCLUDE_DIR})
++	target_link_libraries(zcbase PUBLIC SDL2)
++endif()
+ target_include_directories(zcbase PUBLIC src third_party/nonstd/include)
+ if(CURL_FOUND)
+ 	target_sources(zcbase PRIVATE src/base/http.cpp)
+@@ -653,7 +662,7 @@ endif()
+ if(NOT WIN32)
+ 	target_include_directories(zcbase PUBLIC include/pstream)
+ endif()
+-if (NOT EMSCRIPTEN)
++if (USE_NFD)
+ 	target_link_libraries(zcbase PUBLIC nfd)
+ 	target_compile_definitions(zcbase PUBLIC HAS_NFD)
+ 	list(APPEND ZC_INSTALL_TARGETS nfd)
+@@ -798,7 +807,7 @@ elseif(APPLE)
+ 	target_link_libraries(zplayer PRIVATE zconsolelogger zcbase zcgui zcsound ${IMAGELIBS} ${ZELDALIBSEXTRA})
+ endif()
+ 
+-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
++if(CMAKE_SIZEOF_VOID_P EQUAL 8 AND CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+ 	FetchContent_Declare(
+ 		asmjit
+ 		GIT_REPOSITORY
+diff --git a/src/base/files.cpp b/src/base/files.cpp
+index 0b9d24b..96079ec 100644
+--- a/src/base/files.cpp
++++ b/src/base/files.cpp
+@@ -7,7 +7,7 @@
+ #include <filesystem>
+ #include <fmt/format.h>
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NFD
+ #include "nfd.h"
+ #endif
+ 
+@@ -27,7 +27,7 @@ void set_always_use_native_file_dialog(bool active)
+ 	use_native_file_dialog = active;
+ }
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NFD
+ static bool init_dialog()
+ {
+ 	static bool initialized, tried;
+@@ -223,7 +223,7 @@ std::optional<std::string> prompt_for_existing_file(std::string prompt, std::str
+ 		}
+ 	}
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NFD
+ 	auto filters = create_filter_list(ext, list);
+ 	return open_native_dialog(FileMode::Open, initial_path, filters);
+ #else
+@@ -250,7 +250,7 @@ std::optional<std::string> prompt_for_existing_folder(std::string prompt, std::s
+ 		}
+ 	}
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NFD
+ 	std::vector<filteritem_t> filters;
+ 	return open_native_dialog(FileMode::Folder, initial_path, filters);
+ #else
+@@ -274,7 +274,7 @@ std::optional<std::string> prompt_for_new_file(std::string prompt, std::string e
+ 		}
+ 	}
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NFD
+ 	auto filters = create_filter_list(ext, list);
+ 	return open_native_dialog(FileMode::Save, initial_path, filters);
+ #else
+diff --git a/src/base/render.cpp b/src/base/render.cpp
+index 5415fc0..93a58e9 100644
+--- a/src/base/render.cpp
++++ b/src/base/render.cpp
+@@ -762,6 +762,37 @@ static void render_verify(RenderTreeItem* rti, ALLEGRO_COLOR clear_color, bool p
+ 	prev_frame_failed = hash != presented_hash;
+ }
+ 
++// Software-drawn mouse cursor, for KMS/DRM displays without a hardware cursor plane, where
++// the system cursor set by MouseSprite never appears. Enabled with [gui] software_cursor.
++static ALLEGRO_BITMAP* sw_cursor_bmp;
++static int sw_cursor_xf, sw_cursor_yf;
++
++static bool sw_cursor_enabled()
++{
++	static int enabled = -1;
++	if (enabled < 0)
++		enabled = zc_get_config("gui", "software_cursor", 0) ? 1 : 0;
++	return enabled == 1;
++}
++
++static bool sw_cursor_position(int& x, int& y)
++{
++	if (!sw_cursor_enabled() || !sw_cursor_bmp || !al_is_mouse_installed())
++		return false;
++	ALLEGRO_MOUSE_STATE state;
++	al_get_mouse_state(&state);
++	x = state.x - sw_cursor_xf;
++	y = state.y - sw_cursor_yf;
++	return true;
++}
++
++void render_draw_software_cursor()
++{
++	int x, y;
++	if (sw_cursor_position(x, y))
++		al_draw_bitmap(sw_cursor_bmp, x, y, 0);
++}
++
+ bool render_tree_draw_and_flip(RenderTreeItem* rti, ALLEGRO_COLOR clear_color)
+ {
+ #ifdef __EMSCRIPTEN__
+@@ -772,6 +803,7 @@ bool render_tree_draw_and_flip(RenderTreeItem* rti, ALLEGRO_COLOR clear_color)
+ 	al_set_target_backbuffer(display);
+ 	al_clear_to_color(clear_color);
+ 	render_tree_draw(rti);
++	render_draw_software_cursor();
+ 	al_flip_display();
+ 	return true;
+ #else
+@@ -792,6 +824,11 @@ bool render_tree_draw_and_flip(RenderTreeItem* rti, ALLEGRO_COLOR clear_color)
+ 	sig = hash_value(((uint64_t)(uint32_t)al_get_display_width(display) << 32) | (uint32_t)al_get_display_height(display), sig);
+ 	sig = hash_bytes(&clear_color, sizeof(clear_color), sig);
+ 	sig = render_tree_signature_item(rti, sig, pending_render);
++	if (int cx, cy; sw_cursor_position(cx, cy))
++	{
++		sig = hash_value(((uint64_t)(uint32_t)cx << 32) | (uint32_t)cy, sig);
++		sig = hash_value((uint64_t)(uintptr_t)sw_cursor_bmp, sig);
++	}
+ 
+ 	// When nothing changed, presenting again would show the identical frame - skip the
+ 	// draw and flip entirely so an idle app costs (nearly) nothing.
+@@ -810,6 +847,7 @@ bool render_tree_draw_and_flip(RenderTreeItem* rti, ALLEGRO_COLOR clear_color)
+ 	al_set_target_backbuffer(display);
+ 	al_clear_to_color(clear_color);
+ 	render_tree_draw_item(rti, false);
++	render_draw_software_cursor();
+ 
+ 	zc_mouse_x = gui_mouse_x();
+ 	zc_mouse_y = gui_mouse_y();
+@@ -983,9 +1021,12 @@ namespace MouseSprite
+ 	static int active_mouse_sprite = -1;
+ 	ALLEGRO_MOUSE_CURSOR* zc_mouse_sprites[MAX_MOUSESPRITE] = {nullptr};
+ 	ALLEGRO_MOUSE_CURSOR* nullmouse = nullptr;
++	static ALLEGRO_BITMAP* sw_sprites[MAX_MOUSESPRITE] = {nullptr};
++	static int sw_sprite_xf[MAX_MOUSESPRITE], sw_sprite_yf[MAX_MOUSESPRITE];
++	static ALLEGRO_BITMAP* sw_nullmouse = nullptr;
+ 	static void set_nullmouse()
+ 	{
+-		if(!nullmouse)
++		if(!nullmouse && !sw_nullmouse)
+ 		{
+ 			static char mouse_arrow_data[16*16] =
+ 			{
+@@ -1026,10 +1067,22 @@ namespace MouseSprite
+ 				}
+ 			}
+ 			al_unlock_bitmap(bmp);
+-			nullmouse = al_create_mouse_cursor(bmp, 1, 1);
+-			al_destroy_bitmap(bmp);
++			if(sw_cursor_enabled())
++				sw_nullmouse = bmp;
++			else
++			{
++				nullmouse = al_create_mouse_cursor(bmp, 1, 1);
++				al_destroy_bitmap(bmp);
++			}
+ 		}
+ 		active_mouse_sprite = -1;
++		if(sw_cursor_enabled())
++		{
++			al_hide_mouse_cursor(all_get_display());
++			sw_cursor_bmp = sw_nullmouse;
++			sw_cursor_xf = sw_cursor_yf = 1;
++			return;
++		}
+ 		al_show_mouse_cursor(all_get_display());
+ 		al_set_mouse_cursor(all_get_display(), nullmouse);
+ 	}
+@@ -1040,6 +1093,21 @@ namespace MouseSprite
+ 		ALLEGRO_MOUSE_CURSOR* old_cursor = zc_mouse_sprites[index];
+ 		all_set_transparent_palette_index(0);
+ 		ALLEGRO_BITMAP* a5_mouse_sprite = all_get_a5_bitmap(spr);
++		if(sw_cursor_enabled())
++		{
++			ALLEGRO_BITMAP* old_bmp = sw_sprites[index];
++			sw_sprites[index] = a5_mouse_sprite;
++			sw_sprite_xf[index] = xf;
++			sw_sprite_yf[index] = yf;
++			if(index == active_mouse_sprite)
++			{
++				active_mouse_sprite = -2;
++				set(index);
++			}
++			if(old_bmp)
++				al_destroy_bitmap(old_bmp);
++			return;
++		}
+ 		zc_mouse_sprites[index] = al_create_mouse_cursor(a5_mouse_sprite, xf, yf);
+ 		al_destroy_bitmap(a5_mouse_sprite);
+ 		
+@@ -1060,6 +1128,16 @@ namespace MouseSprite
+ 			return true;
+ 		}
+ 		if(index == active_mouse_sprite) return true;
++		if(sw_cursor_enabled())
++		{
++			if(!sw_sprites[index])
++				return false;
++			active_mouse_sprite = index;
++			sw_cursor_bmp = sw_sprites[index];
++			sw_cursor_xf = sw_sprite_xf[index];
++			sw_cursor_yf = sw_sprite_yf[index];
++			return true;
++		}
+ 		if(zc_mouse_sprites[index])
+ 		{
+ 			active_mouse_sprite = index;
+@@ -1076,11 +1154,18 @@ namespace MouseSprite
+ 		if(zc_mouse_sprites[index])
+ 			al_destroy_mouse_cursor(zc_mouse_sprites[index]);
+ 		zc_mouse_sprites[index] = nullptr;
++		if(sw_sprites[index])
++		{
++			if(sw_cursor_bmp == sw_sprites[index])
++				sw_cursor_bmp = nullptr;
++			al_destroy_bitmap(sw_sprites[index]);
++		}
++		sw_sprites[index] = nullptr;
+ 	}
+ 	void set_link_hover(bool hover)
+ 	{
+ 		static bool active = false;
+-		if(hover == active)
++		if(hover == active || sw_cursor_enabled())
+ 			return;
+ 		active = hover;
+ 		if(hover)
+diff --git a/src/base/render.h b/src/base/render.h
+index 0aff6f3..4b763bd 100644
+--- a/src/base/render.h
++++ b/src/base/render.h
+@@ -263,6 +263,7 @@ void render_tree_draw(RenderTreeItem* rti);
+ // frame was presented. Assumes it is the only thing presenting to the display, and that
+ // the same tree is passed every frame - anything drawn to the backbuffer outside the tree
+ // is invisible to the signature and would be skipped along with everything else.
++void render_draw_software_cursor();
+ bool render_tree_draw_and_flip(RenderTreeItem* rti, ALLEGRO_COLOR clear_color = al_map_rgb_f(0, 0, 0));
+ // Notes that something the render tree can't observe has drawn into one of its bitmaps
+ // (e.g. direct a5 drawing into the active dialog layer), so the next
+diff --git a/src/base/zapp.cpp b/src/base/zapp.cpp
+index a5bbcd0..8ad8e6d 100644
+--- a/src/base/zapp.cpp
++++ b/src/base/zapp.cpp
+@@ -172,7 +172,7 @@ void common_main_setup(App id, int argc_, char **argv_)
+ 	sentry_set_user(user);
+ #endif
+ 
+-#ifdef ALLEGRO_SDL
++#if defined(ALLEGRO_SDL) && !defined(NDEBUG)
+ 	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
+ #endif
+ 
+diff --git a/src/base/zsys.cpp b/src/base/zsys.cpp
+index a89d218..c2eaee8 100644
+--- a/src/base/zsys.cpp
++++ b/src/base/zsys.cpp
+@@ -232,7 +232,7 @@ char datapwd[8]   = "longtan";
+ 		CConsoleLoggerEx::COLOR_BACKGROUND_BLACK), "%s", buf);
+ 	al_trace("%s",buf);
+ 	zapp_reporting_add_breadcrumb("error_fatal", buf);
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+     if (!zscript_coloured_console.valid() && !is_headless())
+     {
+         al_show_native_message_box(all_get_display(), "ZQuest Classic: I AM ERROR", "", buf, NULL, ALLEGRO_MESSAGEBOX_ERROR);
+diff --git a/src/tiles.cpp b/src/tiles.cpp
+index 958922f..4f01e97 100644
+--- a/src/tiles.cpp
++++ b/src/tiles.cpp
+@@ -1,7 +1,9 @@
+ #include "base/zc_alleg.h"
+ #include <cstring>
++#ifdef __SSSE3__
+ #include <emmintrin.h>
+ #include <tmmintrin.h>
++#endif
+ 
+ #include "base/zdefs.h"
+ #include "base/zc_math.h"
+@@ -879,6 +881,19 @@ static void draw_tile8_transparent_fast(BITMAP* dest, const byte* __restrict si,
+ 	bool h_flip = flip & 1;
+ 	bool v_flip = flip & 2;
+ 
++#ifndef __SSSE3__
++	for (int dy = 0; dy < 8; ++dy)
++	{
++		const byte* src_row = si + 16 * (v_flip ? 7 - dy : dy);
++		byte* dest_addr = dest->line[y + dy] + x;
++		for (int dx = 0; dx < 8; ++dx)
++		{
++			byte px = src_row[h_flip ? 7 - dx : dx];
++			if (px)
++				dest_addr[dx] = (byte)(px + cset);
++		}
++	}
++#else
+ 	// Prepare constants
+ 	// cset is added to every pixel. Broadcast it to all bytes in a register.
+ 	__m128i v_cset = _mm_set1_epi8((char)cset);
+@@ -942,6 +957,7 @@ static void draw_tile8_transparent_fast(BITMAP* dest, const byte* __restrict si,
+ 
+ 		src_row += 16;
+ 	}
++#endif
+ }
+ 
+ // A (slow) function to handle any transparent tile8 draw.
+@@ -1022,6 +1038,16 @@ static void draw_tile8_unified(BITMAP* dest, int cl, int ct, int cr, int cb, con
+ // - No transparency
+ static void draw_tile16_opaque_fast(BITMAP* dest, const byte* __restrict si, int32_t x, int32_t y, int32_t cset, int32_t flip)
+ {
++#ifndef __SSSE3__
++	bool v_flip = (flip & 2);
++	for (int dy = 0; dy < 16; ++dy)
++	{
++		const uint8_t* src_ptr = si + 16 * dy;
++		uint8_t* d_ptr = dest->line[y + (v_flip ? 15 - dy : dy)] + x;
++		for (int dx = 0; dx < 16; ++dx)
++			d_ptr[dx] = (uint8_t)(src_ptr[dx] + cset);
++	}
++#else
+ 	__m128i cset_vec = _mm_set1_epi8((char)cset);
+ 
+ 	const uint8_t* __restrict src_ptr = si;
+@@ -1059,6 +1085,7 @@ static void draw_tile16_opaque_fast(BITMAP* dest, const byte* __restrict si, int
+ 			src_ptr += 16;
+ 		}
+ 	}
++#endif
+ }
+ 
+ static void draw_tile16_unified(BITMAP* dest, int cl, int ct, int cr, int cb, const byte* __restrict si, int32_t x, int32_t y, int32_t cset, int32_t flip, bool transparency)
+@@ -2594,6 +2621,21 @@ static void draw_tile16_cs2_fast(BITMAP *dest, const byte *si, int32_t x, int32_
+ 	int i_first = v_flip ? 2 : 0; // Index for the first 8 rows processed
+ 	int i_last  = v_flip ? 0 : 2; // Index for the last 8 rows processed
+ 
++#ifndef __SSSE3__
++	for (int dy = 0; dy < 16; ++dy)
++	{
++		const uint8_t* src_ptr = si + 16 * dy;
++		uint8_t* d_ptr = dest->line[y + (v_flip ? 15 - dy : dy)] + x;
++		int ci = dy < 8 ? i_first : i_last;
++		for (int dx = 0; dx < 16; ++dx)
++		{
++			uint8_t px = src_ptr[dx];
++			if (over && !px)
++				continue;
++			d_ptr[dx] = (uint8_t)(px + cset[ci + (dx < 8 ? 0 : 1)]);
++		}
++	}
++#else
+ 	// We need to combine two 8-byte colors into one 16-byte register.
+ 	// Low 64 bits = Left 8 pixels, High 64 bits = Right 8 pixels.
+ 
+@@ -2654,6 +2696,7 @@ static void draw_tile16_cs2_fast(BITMAP *dest, const byte *si, int32_t x, int32_
+ 
+ 		src_ptr += 16;
+ 	}
++#endif
+ }
+ 
+ static void draw_tile16_cs2_safe(BITMAP *dest, int cl, int ct, int cr, int cb, const byte *si, int32_t x, int32_t y, int32_t cset[], int32_t flip, bool over)
+diff --git a/src/zc/render.cpp b/src/zc/render.cpp
+index a82655a..9c255eb 100644
+--- a/src/zc/render.cpp
++++ b/src/zc/render.cpp
+@@ -377,6 +377,7 @@ void render_zc()
+ 		al_clear_to_color(clear_color);
+ 		render_tree_draw(&rti_root);
+ 		render_tree_draw_debug(&rti_root);
++		render_draw_software_cursor();
+ 		al_flip_display();
+ 	}
+ 	else
+diff --git a/src/zconsole/ConsoleLogger.cpp b/src/zconsole/ConsoleLogger.cpp
+index 5136edd..fad7862 100644
+--- a/src/zconsole/ConsoleLogger.cpp
++++ b/src/zconsole/ConsoleLogger.cpp
+@@ -563,7 +563,7 @@ int32_t CConsoleLogger::Create(const char	*lpszWindowTitle/*=NULL*/,
+ 							const char	*logger_name/*=NULL*/,
+ 							const char	*helper_executable/*=NULL*/)
+ {
+-#ifdef __EMSCRIPTEN__
++#ifndef HAS_NATIVE_DIALOG
+ 	return 0;
+ #else
+ 	if (m_textlog) {
+@@ -577,7 +577,7 @@ int32_t CConsoleLogger::Create(const char	*lpszWindowTitle/*=NULL*/,
+ 
+ void CConsoleLogger::kill()
+ {
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	if (m_textlog) {
+ 		al_close_native_text_log(m_textlog);
+ 		m_textlog = NULL;
+@@ -600,7 +600,7 @@ int32_t CConsoleLogger::Close(void)
+ //////////////////////////////////////////////////////////////////////////
+ inline int32_t CConsoleLogger::print(const char *lpszText,int32_t iSize/*=-1*/)
+ {
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	if (m_textlog) al_append_native_text_log(m_textlog, "%s", lpszText);
+ #endif
+ 	return 0;
+@@ -608,7 +608,7 @@ inline int32_t CConsoleLogger::print(const char *lpszText,int32_t iSize/*=-1*/)
+ 
+ bool CConsoleLogger::valid()
+ {
+-#ifdef __EMSCRIPTEN__
++#ifndef HAS_NATIVE_DIALOG
+ 	return 0;
+ #else
+ 	return m_textlog != NULL;
+@@ -630,7 +630,7 @@ int32_t CConsoleLogger::printf(const char *format,...)
+ 	
+ 	va_end(argList);
+ 	
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	if (m_textlog) al_append_native_text_log(m_textlog, "%s", tmp);
+ #endif
+ 	return ret;
+@@ -735,7 +735,7 @@ int32_t CConsoleLoggerEx::cprintf(int32_t attributes,const char *format,...)
+ 	
+ 	va_end(argList);
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	if (m_textlog) al_append_native_text_log(m_textlog, "%s", tmp);
+ #endif
+ 	return ret;
+@@ -743,7 +743,7 @@ int32_t CConsoleLoggerEx::cprintf(int32_t attributes,const char *format,...)
+ int32_t CConsoleLoggerEx::safeprint(int32_t attributes,const char *str)
+ {
+ 	int32_t sz = strlen(str);
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	if (m_textlog) al_append_native_text_log(m_textlog, "%s", str);
+ #endif
+ 	return sz;
+@@ -764,7 +764,7 @@ int32_t CConsoleLoggerEx::cprintf(const char *format,...)
+ 	
+ 	va_end(argList);
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	if (m_textlog) al_append_native_text_log(m_textlog, "%s", tmp);
+ #endif
+ 	return ret;
+@@ -772,7 +772,7 @@ int32_t CConsoleLoggerEx::cprintf(const char *format,...)
+ int32_t CConsoleLoggerEx::safeprint(const char *str)
+ {
+ 	int32_t sz = strlen(str);
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	if (m_textlog) al_append_native_text_log(m_textlog, "%s", str);
+ #endif
+ 	return sz;
+diff --git a/src/zconsole/ConsoleLogger.h b/src/zconsole/ConsoleLogger.h
+index 25ecb12..6587ab5 100644
+--- a/src/zconsole/ConsoleLogger.h
++++ b/src/zconsole/ConsoleLogger.h
+@@ -4,7 +4,7 @@
+ #include "base/zdefs.h"
+ #include "base/process_management.h"
+ 
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ #include <allegro5/allegro_native_dialog.h>
+ #endif
+ 
+@@ -280,7 +280,7 @@ public:
+ 
+ protected:
+ 	char	m_name[64];
+-#ifndef __EMSCRIPTEN__
++#ifdef HAS_NATIVE_DIALOG
+ 	ALLEGRO_TEXTLOG* m_textlog;
+ #endif
+ 	bool kill_on_close;
+diff --git a/third_party/allegro5.patch b/third_party/allegro5.patch
+new file mode 100644
+index 0000000..765edff
+--- /dev/null
++++ b/third_party/allegro5.patch
+@@ -0,0 +1,16 @@
++diff --git a/addons/audio/sdl_audio.c b/addons/audio/sdl_audio.c
++index 777324259..f97062cad 100644
++--- a/addons/audio/sdl_audio.c
+++++ b/addons/audio/sdl_audio.c
++@@ -76,8 +76,10 @@ static int sdl_allocate_voice(ALLEGRO_VOICE *voice)
++    want.freq = voice->frequency;
++    want.format = allegro_format_to_sdl(voice->depth);
++    want.channels = al_get_channel_count(voice->chan_conf);
++-   // TODO: Should make this configurable somehow
++    want.samples = 4096;
+++   const char *buffer_size = al_get_config_value(al_get_system_config(), "sdl", "buffer_size");
+++   if (buffer_size && atoi(buffer_size) > 0)
+++      want.samples = atoi(buffer_size);
++    want.callback = audio_callback;
++    want.userdata = sv;
++ 
+diff --git a/third_party/allegro_legacy/src/a5/a5_midi_driver.c b/third_party/allegro_legacy/src/a5/a5_midi_driver.c
+index 9d1ca7f..d6f39cb 100644
+--- a/third_party/allegro_legacy/src/a5/a5_midi_driver.c
++++ b/third_party/allegro_legacy/src/a5/a5_midi_driver.c
+@@ -20,6 +20,12 @@
+ #include "allegro/platform/ala5.h"
+ 
+ BEGIN_MIDI_DRIVER_LIST
++#ifdef ALLEGRO_SDL
++/* the SDL midia5 backend is a stub, so prefer the DIGMID software synth */
++MIDI_DRIVER_DIGMID
++MIDI_DRIVER_ALLEGRO_5
++#else
+ MIDI_DRIVER_ALLEGRO_5
+ MIDI_DRIVER_DIGMID
++#endif
+ END_MIDI_DRIVER_LIST

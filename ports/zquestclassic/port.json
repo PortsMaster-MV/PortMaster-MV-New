@@ -1,0 +1,34 @@
+{
+  "version": 4,
+  "name": "zquestclassic.zip",
+  "items": [
+    "ZQuest Classic.sh",
+    "zquestclassic"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "ZQuest Classic",
+    "porter": [
+      "Cebion"
+    ],
+    "desc": "ZQuest Classic (formerly Zelda Classic) is an open source engine for top-down Zelda-style adventure games, with a library of hundreds of fan-made quests. This port includes the player plus the bundled demo quest The Deep; more quests, including the original classic quests, can be downloaded from PureZC.",
+    "desc_md": null,
+    "inst": "Ready to run out of the box. To add quests, drop quest .zip files from purezc.net into the zquestclassic/quests folder.",
+    "inst_md": null,
+    "genres": [
+      "adventure",
+      "action"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": ""
+  }
+}
