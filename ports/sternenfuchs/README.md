@@ -28,9 +28,6 @@ is fine). The launcher and game check the CRC32:
 Tested with Star Fox (USA): SHA-1 `1f5355534ccfaf26ae6c8f055f3e4768f9d72a7e`,
 MD5 `9dce6a9dcbe4e304d67b9e8fd8999e7e`.
 
-Expect roughly 30-45 FPS in flight on H700-class devices; game speed stays
-correct regardless.
-
 Third-party licenses are in `sternenfuchs/licenses/`; full credits are in
 upstream's [CREDITS.md](https://github.com/kandowontu2/starfox-enhanced/blob/main/CREDITS.md).
 
