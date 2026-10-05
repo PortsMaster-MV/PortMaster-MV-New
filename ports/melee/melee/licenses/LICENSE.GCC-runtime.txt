@@ -1,9 +1,12 @@
-melee.aarch64 statically links the GCC 12.3.0 runtime libraries libstdc++.a and libgcc.a from the
-Bootlin aarch64--glibc--stable-2023.08-1 toolchain (a copy of that toolchain whose sysroot carries
-glibc 2.30 is used for the release link; native/tools/glibc230_toolchain.sh). libstdc++.a is
-modified: one object (native/tools/glibc_compat.c, this port's own code) is added so the archive
-resolves two symbols that glibc 2.30 lacks. The Flip bundle variant ships the unmodified
-libstdc++.so.6.0.30 instead.
+melee.aarch64 uses the device's own libstdc++.so.6 and libgcc_s.so.1. It is compiled with the GCC
+12.3.0 libstdc++ headers of the Bootlin aarch64--glibc--stable-2023.08-1 toolchain and statically
+contains a few objects of that toolchain's runtime libraries libstdc++.a (functexcept, snprintf_lite,
+sstream-inst: functions that libstdc++ 6.0.28, the oldest it runs with, does not have) and libgcc.a
+(a copy of that toolchain whose sysroot carries glibc 2.30 is used for the release link;
+native/tools/glibc230_toolchain.sh). libstdc++.a is modified: one object
+(native/tools/glibc_compat.c, this port's own code) is added so the archive resolves two symbols
+that glibc 2.30 lacks. A build against the plain toolchain links both archives statically in full,
+and the Flip bundle variant ships the unmodified libstdc++.so.6.0.30 instead.
 Copyright Free Software Foundation, Inc. and contributors.
 
 libstdc++ and libgcc are distributed under GPL version 3 with the GCC Runtime Library Exception

@@ -88,8 +88,9 @@ is gone, and leave the setting off for normal play.
 
 The port is cross-compiled on an x86_64 Linux host with the Bootlin
 `aarch64--glibc--stable-2023.08-1` toolchain for `-mcpu=cortex-a35` and linked against a glibc 2.30
-sysroot (`min_glibc` in `port.json`). The C++ runtime is linked statically; the only bundled library
-is `libs.aarch64/libSDL3.so.0`, the [SDL3-over-SDL2 shim](https://github.com/bmdhacks/SDL/tree/sdl2-backend)
+sysroot (`min_glibc` in `port.json`). The binary uses the device's own `libstdc++.so.6`, which is
+neither bundled nor linked statically, and needs `GLIBCXX_3.4.26` (GCC 9 or newer). The only bundled
+library is `libs.aarch64/libSDL3.so.0`, the [SDL3-over-SDL2 shim](https://github.com/bmdhacks/SDL/tree/sdl2-backend)
 that Dusklight also ships, so display, sound and pads go through the CFW's own SDL 2. No GPU driver
 is bundled. The release workflow (`.github/workflows/portmaster.yml`) runs the same steps and lists
 the host packages:
