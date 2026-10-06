@@ -64,9 +64,9 @@ activates a row, B saves and returns.
 
 | Row | Effect |
 | --- | --- |
-| Debug Menu, Y on title | On: Y on the title screen opens the game's developer menu. Off by default. |
-| Debug Overlays | On: matches listen for the development chords below. Off by default. |
 | Show Frame Rate | On: the frames drawn a second in the top right corner. |
+| Speed and Controls | Low Detail Fighters (the low-polygon models, about 15-20% more frames drawn), Fighter Shadows (off saves the shadow passes), Controller Fix (UCF 0.84 stick rules; changes gameplay, off by default and always off online). |
+| Debug Options | Debug Menu, Y on title (Y on the title screen opens the game's developer menu) and Debug Overlays (matches listen for the development chords below). Both off by default. |
 | Unlock All Characters and Stages | Sets every unlock in the current save and writes the memory card. The game then hands out its trophy pop-ups once on the next visit to the main menu. |
 | Online Play | Opens the host / join screen described above. |
 
