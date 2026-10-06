@@ -1,0 +1,168 @@
+-- Shared gamepad + raw joystick button tables for launcher and gameplay.
+-- Hardware-measured NX overrides live in NX_* tables below.
+
+local GamepadMap = {}
+
+-- LÖVE SDL game-controller mapping (D-pad / face / menu) — desktop/mobile.
+GamepadMap.DEFAULT_GAMEPAD_BINDINGS = {
+  dpup = "up", dpdown = "down", dpleft = "left", dpright = "right",
+  a = "a", b = "b",
+  start = "start", back = "select",
+}
+
+GamepadMap.TRIGGER_AXES = {
+  triggerleft = "triggerleft", lefttrigger = "triggerleft",
+  triggerright = "triggerright", righttrigger = "triggerright",
+}
+GamepadMap.TRIGGER_ON = 0.4
+GamepadMap.TRIGGER_OFF = 0.2
+
+GamepadMap.DEFAULT_PAD_ACTIONS = {
+  rightshoulder = "speedUp", triggerright = "speedUp",
+  leftshoulder = "speedDown", triggerleft = "speedDown",
+  -- FRLG: shoulders also drive l/r via Input dual-emit (see Input:gamepadpressed).
+}
+
+-- Switch: LÖVE/SDL labels south as "a" and east as "b", but Nintendo UX is
+-- physical A (east) = confirm (GB A), physical B (south) = cancel (GB B).
+GamepadMap.NX_GAMEPAD_BINDINGS = {
+  dpup = "up", dpdown = "down", dpleft = "left", dpright = "right",
+  a = "b", -- SDL south = Nintendo B → GB B
+  b = "a", -- SDL east = Nintendo A → GB A
+  start = "start", back = "select",
+}
+
+-- Generic SDL joysticks without a game-controller DB entry (Linux handhelds).
+-- Desktop XInput order only: raw numbering is per-driver, and SDL's iOS/MFi
+-- driver packs only the buttons a pad reports, which slides the D-pad onto
+-- 7..10 (#620). These are defaults; Input:applyBindings layers "joyN" pad
+-- rebinds over them (#632). Only sticks SDL does NOT recognize as gamepads
+-- are served from this table (see GamepadMap.ignoreRawForJoystick).
+GamepadMap.RAW_BUTTON_BINDINGS = {
+  [1] = "a", [2] = "b",
+  [7] = "select", [8] = "start", [9] = "select", [10] = "start",
+}
+
+-- Switch OLED raw indices (1-based). Only when NOT isGamepad() — love-nx
+-- also emits gamepadpressed; dual-path face presses break NamingScreen.
+-- #1 = Nintendo B, #2 = Nintendo A (probe); Y/X left unmapped for naming.
+GamepadMap.NX_RAW_BUTTON_BINDINGS = {
+  [1] = "b", [2] = "a",
+  [9] = "select", [10] = "start",
+}
+
+-- Raw index -> gamepad button *name* for RomImporter (then NX face swap applies).
+GamepadMap.RAW_TO_GAMEPAD_BUTTON = {
+  [1] = "a", [2] = "b", [3] = "x", [4] = "y",
+  [5] = "leftshoulder", [6] = "rightshoulder",
+  [7] = "back", [8] = "start", [9] = "back", [10] = "start",
+  [11] = "triggerleft", [12] = "triggerright",
+}
+
+GamepadMap.NX_RAW_TO_GAMEPAD_BUTTON = {
+  [1] = "a", [2] = "b", -- SDL south/east names; NX_GAMEPAD_BINDINGS swaps to GB
+  [9] = "back", [10] = "start",
+}
+
+-- Test hook: force NX tables without stubbing love.
+GamepadMap._forceNXForTests = false
+
+function GamepadMap._setForceNXForTests(v)
+  GamepadMap._forceNXForTests = not not v
+end
+
+local function nxActive()
+  if GamepadMap._forceNXForTests == true then return true end
+  if GamepadMap._forceNXForTests == false and love and (love._os ~= "NX" and (not love.system or love.system.getOS() ~= "NX")) then
+    return false
+  end
+  if love and love._os == "NX" then return true end
+  if love and love.system and love.system.getOS() == "NX" then return true end
+  return false
+end
+
+function GamepadMap.gamepadBindings()
+  if nxActive() then return GamepadMap.NX_GAMEPAD_BINDINGS end
+  return GamepadMap.DEFAULT_GAMEPAD_BINDINGS
+end
+
+-- Whole raw-index table for Input:applyBindings joyBindings seeding (#632).
+function GamepadMap.rawBindings()
+  if nxActive() then return GamepadMap.NX_RAW_BUTTON_BINDINGS end
+  return GamepadMap.RAW_BUTTON_BINDINGS
+end
+
+function GamepadMap.mapGamepadButton(button)
+  return GamepadMap.gamepadBindings()[button]
+end
+
+function GamepadMap.mapLauncherButton(button)
+  if nxActive() then
+    if button == "a" then return "b"
+    elseif button == "b" then return "a"
+    elseif button == "x" then return "y"
+    elseif button == "y" then return "x"
+    elseif button == "back" then return "select"
+    end
+  elseif button == "back" then
+    return "select"
+  end
+  return button
+end
+
+-- Select+face display chords (docs / Nintendo UX):
+--   Select+A → "2" (COLORS), Select+B → "3" (TILT),
+--   Select+Y → "5", Select+X → "6", Select+L (leftshoulder) → "7".
+-- For a/b: resolve through mapGamepadButton then GB a→"2", b→"3" so NX
+-- Nintendo physical A/B match the docs despite SDL face-label swap.
+-- Caller (Game:gamepadpressed) must require Select held; this is map-only.
+function GamepadMap.displayChordDigit(gamepadButton)
+  if gamepadButton == "y" then return "5" end
+  if gamepadButton == "x" then return "6" end
+  if gamepadButton == "leftshoulder" then return "7" end
+  if gamepadButton == "a" or gamepadButton == "b" then
+    local gb = GamepadMap.mapGamepadButton(gamepadButton)
+    if gb == "a" then return "2" end
+    if gb == "b" then return "3" end
+  end
+  return nil
+end
+
+-- love-nx / SDL: when isGamepad(), face+menu already arrive via gamepad*.
+-- Applying joystickpressed raw on top double-fires GB A/B in one frame.
+function GamepadMap.ignoreRawForJoystick(joystick)
+  if not joystick then return false end
+  local ok, isPad = pcall(function()
+    return joystick.isGamepad and joystick:isGamepad()
+  end)
+  return ok and isPad == true
+end
+
+-- conf.lua turns the mobile accelerometer-joystick off (#468), but guard the
+-- generic joystick path anyway: any sensor-style device that still reaches us
+-- has gravity pinning an axis past the deadzone, which would hide the touch
+-- overlay every instant and steer the player by tilt through the axis-1/2
+-- mapping (#459).  Real controllers arrive as SDL gamepads or named sticks,
+-- never as "* Accelerometer".
+function GamepadMap.isAccelerometer(joystick)
+  local name = joystick and joystick.getName and joystick:getName()
+  return name ~= nil and name:lower():find("accelerometer", 1, true) ~= nil
+end
+
+function GamepadMap.mapRawButton(index)
+  if nxActive() then
+    local nx = GamepadMap.NX_RAW_BUTTON_BINDINGS[index]
+    if nx then return nx end
+  end
+  return GamepadMap.RAW_BUTTON_BINDINGS[index]
+end
+
+function GamepadMap.mapRawToGamepadButton(index)
+  if nxActive() then
+    local nx = GamepadMap.NX_RAW_TO_GAMEPAD_BUTTON[index]
+    if nx then return nx end
+  end
+  return GamepadMap.RAW_TO_GAMEPAD_BUTTON[index]
+end
+
+return GamepadMap
