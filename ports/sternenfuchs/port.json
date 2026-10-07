@@ -11,7 +11,7 @@
     "porter": ["mtoensing"],
     "desc": "ARM64/PortMaster packaging of the open-source Star Fox Enhanced runtime, a fan-made SNES Star Fox/Starwing enhancement. No Nintendo ROM or ROM-derived data is included.",
     "desc_md": null,
-    "inst": "Copy your own legally obtained Star Fox/Starwing `.sfc` or `.smc` ROM (USA, Japan or Europe retail revision) into `ports/sternenfuchs/`. On first launch the game builds `Starfox-Assets.BIN` from it.",
+    "inst": "Copy your own legally obtained Star Fox/Starwing `.sfc` or `.smc` ROM (USA, Japan or Europe retail revision) into the `ports/sternenfuchs/` folder (the `your rom here.txt` file marks the spot). On first launch the game builds `Starfox-Assets.BIN` from it.",
     "inst_md": null,
     "genres": ["action"],
     "image": null,

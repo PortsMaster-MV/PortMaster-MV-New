@@ -1,15 +1,15 @@
 ## Notes
 
-Thanks to KandoWontU for [Star Fox Enhanced](https://archive.softwareheritage.org/swh:1:rev:6612cb05e4bda0a5e25e8e805d64d0e3db50896a;origin=https://github.com/kandowontu/starfox-enhanced)
-(original repository since deleted; link points to the Software Heritage archive),
+Thanks to KandoWontU for [Star Fox Enhanced](https://github.com/kandowontu2/starfox-enhanced),
 the open-source native runtime this port packages, and to Team SFEX
 (Star Fox EX) and SunlitSpace542 (UltraStarFox) for the community projects it
 builds on. Thanks to bmdhacks for the SDL3-to-SDL2 backend shim.
 
 No Nintendo ROM or ROM-derived data is included. Copy your own legally
 obtained Star Fox/Starwing `.sfc` or `.smc` ROM (USA, Japan or Europe retail
-revision) into `ports/sternenfuchs/`. On first launch the game builds
-`Starfox-Assets.BIN` from it.
+revision) into the `ports/sternenfuchs/` folder, where the `your rom here.txt`
+file marks the spot (e.g. `/roms/ports/sternenfuchs/` on KNULLI). On first
+launch the game builds `Starfox-Assets.BIN` from it.
 
 Supported unmodified retail dumps (No-Intro names; a 512-byte copier header
 is fine). The launcher and game check the CRC32:
@@ -28,11 +28,8 @@ is fine). The launcher and game check the CRC32:
 Tested with Star Fox (USA): SHA-1 `1f5355534ccfaf26ae6c8f055f3e4768f9d72a7e`,
 MD5 `9dce6a9dcbe4e304d67b9e8fd8999e7e`.
 
-Expect roughly 30-45 FPS in flight on H700-class devices; game speed stays
-correct regardless.
-
 Third-party licenses are in `sternenfuchs/licenses/`; full credits are in
-upstream's [CREDITS.md](https://archive.softwareheritage.org/swh:1:rev:6612cb05e4bda0a5e25e8e805d64d0e3db50896a;origin=https://github.com/kandowontu/starfox-enhanced;path=/CREDITS.md).
+upstream's [CREDITS.md](https://github.com/kandowontu2/starfox-enhanced/blob/main/CREDITS.md).
 
 ## Controls
 
@@ -66,10 +63,10 @@ cd sternenfuchs
 
 The script:
 
-1. Downloads Star Fox Enhanced at the pinned commit `6612cb05e4bda0a5e25e8e805d64d0e3db50896a`
-   from the Software Heritage archive (see `scripts/versions.sh`), since the
-   original repository was deleted. To build from your own clone or mirror
-   that contains the commit, set `STARFOX_REPO` to its URL or path.
+1. Clones Star Fox Enhanced from `kandowontu2/starfox-enhanced` and checks out
+   the pinned commit `6612cb05e4bda0a5e25e8e805d64d0e3db50896a` (see
+   `scripts/versions.sh`). To build from your own clone or mirror that
+   contains the commit, set `STARFOX_REPO` to its URL or path.
 2. Builds the pinned `bmdhacks/SDL` SDL3-to-SDL2 shim (`libSDL3.so.0`) and
    installs it into a private prefix. Vulkan is off.
 3. Applies `patches/0001-system-sdl3.patch` and

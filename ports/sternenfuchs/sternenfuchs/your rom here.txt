@@ -1,0 +1,10 @@
+Put your own Star Fox / Starwing ROM in this folder.
+
+  - File type: .sfc or .smc (a 512-byte copier header is fine)
+  - Unmodified retail dump, USA, Japan or Europe (see README.md for the
+    supported revisions and CRC32 checksums)
+  - Any file name works, e.g. "Star Fox (USA).sfc"
+
+On the first launch the game builds Starfox-Assets.BIN from the ROM.
+
+No ROM is included with this port and none will be provided.
