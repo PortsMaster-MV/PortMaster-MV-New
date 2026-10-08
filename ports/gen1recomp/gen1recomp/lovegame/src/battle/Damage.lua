@@ -1,0 +1,299 @@
+-- Gen 1 damage calculation, ported from engine/battle/core.asm
+-- (GetDamage / CriticalHitTest / AdjustDamageForMoveType / RandomizeDamage).
+--
+-- Battlers carry curStats/curTypes (Transform/Conversion can override the
+-- species values) plus reflect/lightScreen/focusEnergy volatile flags.
+-- Battlers built by makeBattler also carry the merged badgeBoosts rows and
+-- statuses records; hand-built battlers fall back to the vanilla tables.
+
+local Logger = require("src.core.Logger")
+local Runtime = require("src.mods.Runtime")
+local Stats = require("src.pokemon.Stats")
+local Status = require("src.battle.Status")
+local TypeChart = require("src.battle.TypeChart")
+
+local Damage = {}
+
+-- Moves with a boosted critical-hit rate (engine/battle/core.asm
+-- CriticalHitTest checks these move ids explicitly).  The move-record
+-- highCrit field wins; this list covers pre-existing imported caches.
+local HIGH_CRIT = {
+  KARATE_CHOP = true, RAZOR_LEAF = true, CRABHAMMER = true, SLASH = true,
+}
+
+-- ApplyBadgeStatBoosts (engine/battle/core.asm): x9/8 per badge on the
+-- named battle stat.  Data.constants.badgeBoosts replaces this via the
+-- battler's badgeBoosts field; these rows are the vanilla values.
+Damage.BADGE_BOOSTS = {
+  { badge = "BOULDERBADGE", stat = "attack", num = 9, den = 8 },
+  { badge = "THUNDERBADGE", stat = "defense", num = 9, den = 8 },
+  { badge = "SOULBADGE", stat = "speed", num = 9, den = 8 },
+  { badge = "VOLCANOBADGE", stat = "special", num = 9, den = 8 },
+}
+
+-- the boost a battler's badge set applies to one battle stat, or nil
+local function badgeBoost(battler, stat)
+  local badges = battler.badges
+  if not badges then return nil end
+  for _, row in ipairs(battler.badgeBoosts or Damage.BADGE_BOOSTS) do
+    if row.stat == stat and badges[row.badge] then return row end
+  end
+  return nil
+end
+
+-- engine/battle/core.asm:6454
+function Damage.applyBadgeBoost(battler, stat, value)
+  if battler.hazeStatReset then return value end
+  local row = badgeBoost(battler, stat)
+  if not row then return value end
+  local extra = battler.badgeExtraBoosts and battler.badgeExtraBoosts[stat] or 0
+  for _ = 1, 1 + extra do
+    value = math.min(999, math.floor(value * (row.num or 9) / (row.den or 8)))
+  end
+  return value
+end
+
+-- pokered/engine/battle/effects.asm:405
+function Damage.statAtCap(battle, battler, stat)
+  if battle.ruleset and battle.ruleset.statCapRollbackBug == false then return false end
+  if stat ~= "attack" and stat ~= "defense" and stat ~= "speed" and stat ~= "special" then return false end
+  local value = battler.curStats and battler.curStats[stat]
+  if type(value) ~= "number" then return false end
+  value = Stats.applyStage(value, battler.stages[stat] or 0)
+  value = Damage.applyBadgeBoost(battler, stat, value)
+  return Status.applyPenalty(battler, stat, value) == 999
+end
+
+-- engine/battle/effects.asm:498,689
+function Damage.reapplyBadgeBoosts(battler, changedStat)
+  if not battler or not battler.badges then return end
+  local extra = battler.badgeExtraBoosts
+  if not extra then extra = {} battler.badgeExtraBoosts = extra end
+  for _, row in ipairs(battler.badgeBoosts or Damage.BADGE_BOOSTS) do
+    if battler.badges[row.badge] then
+      if row.stat == changedStat then
+        extra[row.stat] = 0
+      else
+        extra[row.stat] = (extra[row.stat] or 0) + 1
+      end
+    end
+  end
+end
+
+-- Critical chance test, following CriticalHitTest's shift chain exactly
+-- (each left shift caps at 255): b = speed/2, then x2 (or /2 with
+-- Focus Energy's famous right-shift bug), then x4 for high-crit moves
+-- or /2 for normal ones.  Net rates: normal = speed/512, high-crit =
+-- speed*4/256 (capped), Focus Energy bug = 1/4 the usual.
+-- critUsesBaseSpeed (default true, the Gen 1 rule) reads the species
+-- base speed; a ruleset that sets it false uses the current in-battle
+-- speed with stages applied.
+function Damage.critRoll(ruleset, attacker, moveId, rng, highCrit)
+  rng = rng or love.math.random
+  local function shl(x) return math.min(255, x * 2) end
+  local speed
+  if ruleset.critUsesBaseSpeed == false then
+    speed = Stats.applyStage(attacker.curStats.speed,
+              attacker.stages and attacker.stages.speed or 0)
+  else
+    speed = attacker.def.baseStats.speed
+  end
+  local b = math.floor(speed / 2)
+  if attacker.focusEnergy then
+    if ruleset.focusEnergyBug then
+      b = math.floor(b / 2)      -- srl instead of sla
+    else
+      b = shl(shl(shl(b)))       -- intended: x4 the usual rate
+    end
+  else
+    b = shl(b)
+  end
+  if highCrit == nil then highCrit = HIGH_CRIT[moveId] end
+  if highCrit then
+    b = shl(shl(b))
+  else
+    b = math.floor(b / 2)
+  end
+  return rng(0, 255) < b
+end
+
+-- Exact number of the 256 RNG outcomes that pass MoveHitTest.  Keeping the
+-- threshold public lets read-only UIs preview the same rules the roll uses.
+function Damage.accuracyThreshold(ruleset, move, attacker, defender)
+  -- X ACCURACY sets USING_X_ACCURACY: the move simply never misses
+  -- (MoveHitTest returns before any accuracy math, 1/256 included)
+  if attacker.xAccuracy then return 256 end
+  local acc = math.floor(move.accuracy * 255 / 100)
+  local accuracyStage = attacker.stages and attacker.stages.accuracy or 0
+  local evasionStage = defender.stages and defender.stages.evasion or 0
+  -- CalcHitChance scales by the accuracy stage and the evasion stage as
+  -- two separate ratio multiplications, clamping each result
+  acc = math.min(255, Stats.applyStage(acc, accuracyStage))
+  acc = math.min(255, Stats.applyStage(acc, -evasionStage))
+  if not ruleset.oneIn256Miss and move.accuracy >= 100
+     and accuracyStage >= evasionStage then
+    return 256
+  end
+  return acc
+end
+
+function Damage.accuracyChance(ruleset, move, attacker, defender)
+  return Damage.accuracyThreshold(ruleset, move, attacker, defender) * 100 / 256
+end
+
+-- Accuracy test: rand(0..255) < the shared ruleset-aware threshold.
+function Damage.accuracyRoll(ruleset, move, attacker, defender, rng)
+  rng = rng or love.math.random
+  local acc = Damage.accuracyThreshold(ruleset, move, attacker, defender)
+  if acc == 256 then return true end
+  return rng(0, 255) < acc
+end
+
+local warnedTypes = {}
+
+-- Gen 1 splits physical from special by TYPE: the move's own category
+-- field wins, then the merged type record's, then physical (with one
+-- warning per unknown type).
+local function categoryOf(move)
+  local category = move.category or TypeChart.category(move.type)
+  if category == nil then
+    if move.type ~= nil and not warnedTypes[move.type] then
+      warnedTypes[move.type] = true
+      Logger.warn("move type %s has no category; treated as physical",
+                  tostring(move.type))
+    end
+    category = "physical"
+  end
+  return category
+end
+
+function Damage.isSpecial(moveType)
+  return TypeChart.category(moveType) == "special"
+end
+
+-- Compute damage.  attacker/defender are battler tables.
+-- opts: rng, forceCrit, explode (halves defense), typeless (confusion
+-- self-hit: no STAB/type/random factor), screens (battler whose
+-- Reflect/Light Screen apply when it isn't the defender -- the
+-- self-hit reads the opponent's screens).
+-- Returns damage, {crit=bool, typeMult=x10}.
+function Damage.compute(ruleset, attacker, defender, move, opts)
+  opts = opts or {}
+  local rng = opts.rng or love.math.random
+  if move.power == 0 or move.category == "status" then
+    return 0, { crit = false, typeMult = 10 }
+  end
+
+  local crit = opts.forceCrit
+  if crit == nil then
+    if Runtime.wantsHook("battle.crit") then
+      crit = Runtime.call("battle.crit", function(c)
+        return Damage.critRoll(c.ruleset, c.attacker, c.moveId, c.rng, c.highCrit)
+      end, { ruleset = ruleset, attacker = attacker, moveId = move.id,
+             rng = rng, highCrit = move.highCrit })
+    else
+      crit = Damage.critRoll(ruleset, attacker, move.id, rng, move.highCrit)
+    end
+  end
+
+  local special = categoryOf(move) == "special"
+  local atkStat = special and "special" or "attack"
+  local defStat = special and "special" or "defense"
+
+  local atk, dfn
+  if crit and ruleset.critIgnoresStages then
+    atk = attacker.curStats[atkStat]
+    dfn = defender.curStats[defStat]
+  else
+    atk = Stats.applyStage(attacker.curStats[atkStat],
+                           attacker.stages and attacker.stages[atkStat] or 0)
+    dfn = Stats.applyStage(defender.curStats[defStat],
+                           defender.stages and defender.stages[defStat] or 0)
+    -- badge boosts (x9/8), engine/battle/core.asm ApplyBadgeStatBoosts:
+    -- Boulder -> attack, Thunder -> defense, Soul -> speed (TurnOrder),
+    -- Volcano -> special
+    atk = Damage.applyBadgeBoost(attacker, atkStat, atk)
+    dfn = Damage.applyBadgeBoost(defender, defStat, dfn)
+    -- burn halves physical attack (applied as part of the stat in Gen 1;
+    -- the status record's statPenalty names the stat it cuts).
+    -- hazeStatReset suppresses it: Haze (haze.asm ResetStats) copied the
+    -- unmodified attack over the burn-halved battle stat, lifting the
+    -- penalty until the next stat recompute.
+    -- core.asm:6326, effects.asm:634-635
+    atk = Status.applyPenalty(attacker, atkStat, atk)
+    -- screens double the effective defense (crits bypass them).  The
+    -- confusion self-hit is the quirk case: HandleSelfConfusionDamage
+    -- swaps the user's own defense in but leaves the screen check
+    -- reading the OPPONENT's battle status, so the typeless path takes
+    -- the screen flags from opts.screens (the opponent) and never from
+    -- the user itself.
+    if not crit then
+      local screens = opts.screens
+      if screens == nil and not opts.typeless then screens = defender end
+      if screens then
+        if special and screens.lightScreen then dfn = dfn * 2 end
+        if not special and screens.reflect then dfn = dfn * 2 end
+      end
+    end
+  end
+  -- GetDamageVars .scaleStats: when either stat no longer fits a byte,
+  -- BOTH are quartered (losing low bits), each bumped to at least 1
+  if atk > 255 or dfn > 255 then
+    atk = math.max(1, math.floor(atk / 4))
+    dfn = math.max(1, math.floor(dfn / 4))
+  end
+  if opts.explode then
+    dfn = math.max(1, math.floor(dfn / 2))
+  end
+
+  local level = attacker.mon.level
+  if crit then level = level * 2 end
+
+  local d = math.floor(math.floor(2 * level / 5) + 2)
+  d = math.floor(math.floor(d * move.power * atk / math.max(1, dfn)) / 50)
+  d = math.min(d, 997) + 2
+
+  local mult = 10
+  if not opts.typeless then
+    -- STAB
+    local stab = false
+    for _, t in ipairs(attacker.curTypes) do
+      if t == move.type then stab = true break end
+    end
+    if stab then
+      d = math.floor(d * 3 / 2)
+    end
+
+    -- type effectiveness: each TypeEffects row is applied to the
+    -- running damage separately with its own floor (0.5*0.5 lands on
+    -- floor(floor(d/2)/2), not d*0.25)
+    mult = TypeChart.effectiveness(move.type, defender.curTypes)
+    if mult == 0 then
+      return 0, { crit = false, typeMult = 0 }
+    end
+    for _, m in ipairs(TypeChart.rows(move.type, defender.curTypes)) do
+      d = math.floor(d * m / 10)
+    end
+    if d == 0 then
+      -- a 2-3 damage hit at 0.25x floors to zero: the original flags
+      -- the move as missed rather than dealing a minimum 1
+      -- engine/battle/core.asm:5169-5176
+      if ruleset.zeroDamageMiss == false then
+        d = 1
+      else
+        return 0, { crit = false, typeMult = mult, missed = true }
+      end
+    end
+  end
+
+  -- random factor; the typeless confusion self-hit skips RandomizeDamage
+  -- along with AdjustDamageForMoveType (HandleSelfConfusionDamage calls
+  -- CalculateDamage directly), so it is fully deterministic
+  if d > 1 and not opts.typeless then
+    local r = rng(ruleset.randMin, ruleset.randMax)
+    d = math.floor(d * r / 255)
+  end
+  return math.max(d, 1), { crit = crit, typeMult = mult }
+end
+
+return Damage

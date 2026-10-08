@@ -1,0 +1,284 @@
+-- data/specials.inc, src/berry_powder.c, src/pokemon_jump.c, src/dodrio_berry_picking.c, src/berry_crush.c, src/battle_tower.c, src/field_specials.c
+
+local Strings = require("src.core.Strings")
+local Std = require("src.core.game3.scripting.stdscripts")
+
+local Wireless = {}
+
+local VAR_RESULT = 0x800D -- pokefirered/include/constants/vars.h:328
+local VAR_0x8004 = 0x8004 -- pokefirered/include/constants/vars.h:319
+local VAR_0x8005 = 0x8005 -- pokefirered/include/constants/vars.h:320
+local SE = require("src.core.game3.se_ids") -- pokefirered/include/constants/songs.h:30
+local VAR_OBJ_GFX_ID_0 = 0x4010 -- pokefirered/include/constants/vars.h:28
+local OBJ_EVENT_GFX_YOUNGSTER = 18 -- pokefirered/include/constants/event_objects.h:24
+local PARTY_SIZE = 6 -- pokefirered/include/constants/pokemon.h
+local MAX_BERRY_POWDER = 99999 -- pokefirered/src/berry_powder.c:12
+
+local function flagsMod()
+  return require("src.core.game3.scripting.flags")
+end
+
+local function sessionOf(ctx)
+  local rt = package.loaded["src.core.game3.runtime"]
+  return (rt and rt.getSession and rt.getSession())
+    or (ctx and ctx.session)
+    or nil
+end
+
+local function scriptStore(ctx)
+  local Space = package.loaded["src.core.game3.scripting.space"]
+  local session = sessionOf(ctx)
+  return (Space and Space.store)
+    or (session and (session.store or session))
+    or (ctx and (ctx.store or ctx.session or (ctx.vars and ctx)))
+    or nil
+end
+
+local function varGet(ctx, id)
+  return tonumber(flagsMod().getVar(scriptStore(ctx), ctx, id)) or 0
+end
+
+local function varSet(ctx, id, value)
+  flagsMod().setVar(scriptStore(ctx), ctx, id, tonumber(value) or 0)
+end
+
+local function setResult(ctx, value)
+  varSet(ctx, VAR_RESULT, value)
+end
+
+local function setStringVar(ctx, adapters, index, text)
+  if adapters and adapters.setStringVar then pcall(adapters.setStringVar, index, text) end
+  if ctx and ctx.stringVars then ctx.stringVars[index] = text end
+end
+
+-- pokefirered/src/quest_log.c:860
+local function qlAvoidDisplay()
+  local Runtime = package.loaded["src.core.game3.runtime"]
+  local game = Runtime and Runtime._game
+  return (game and game.phase == "quest_log") and true or false
+end
+
+local function showRecords(ctx, kind)
+  local Natives = require("src.core.game3.scripting.natives")
+  local done = false
+  Natives.awaitState(ctx, function() return done end)
+  require("src.ui.game3.minigame_records").show(kind, sessionOf(ctx), function() done = true end)
+  return false
+end
+
+-- pokefirered/src/battle_tower.c:1354
+local function visitingEReaderTrainer(session)
+  local trainer = session and session.ereaderTrainer
+  if type(trainer) ~= "table" then return nil end
+  if type(trainer.party) ~= "table" or type(trainer.party[1]) ~= "table" then
+    return nil
+  end
+  return trainer
+end
+
+-- pokefirered/src/battle_tower.c:830
+local function convertSpeech(words)
+  if type(words) ~= "table" then return "" end
+  return require("src.core.game3.easy_chat_text").phrase(words, 3, 2)
+end
+
+local function minigames()
+  return require("src.core.game3.minigames.common")
+end
+
+local function closeMessage()
+  local okM, Message = pcall(require, "src.ui.game3.message")
+  if okM and Message and Message.isOpen and Message.isOpen() and Message.close then
+    Message.close()
+  end
+end
+
+-- pokefirered/src/party_menu.c:1817
+function Wireless.chooseMonForMinigame(ctx)
+  local MG = minigames()
+  MG.partySlot = nil
+  local kind = varGet(ctx, VAR_0x8005)
+  local session = sessionOf(ctx)
+  local party = session and session.party
+  local okUi, PartyMenu = pcall(require, "src.ui.game3.party_menu")
+  local RomText = require("src.core.game3.rom_text")
+  local done = false
+  local function finish(slot0)
+    varSet(ctx, VAR_0x8004, slot0)
+    if slot0 < PARTY_SIZE then MG.partySlot = slot0 end
+    done = true
+  end
+  if not (type(party) == "table" and party[1] and okUi and type(PartyMenu) == "table" and PartyMenu.show) then
+    finish(PARTY_SIZE)
+    return false
+  end
+  closeMessage()
+  local picked, cancelled = nil, false
+  local show
+  local function eligible(slot, mon)
+    return MG.eligible(mon or party[slot], kind)
+  end
+  local menuOpts = {
+    mode = "choose",
+    session = session,
+    minigameEligible = eligible,
+    validate = function(slot)
+      local mon = party[slot]
+      if MG.eligible(mon, kind) then return nil end
+      pcall(function() require("src.core.game3.audio").playSe(SE.SE_FAILURE) end)
+      return RomText.box("gText_PkmnCantParticipate", { maxWidth = 216 })
+    end,
+    onSelect = function(slot)
+      picked = slot and ((tonumber(slot) or 1) - 1) or nil
+    end,
+  }
+  local closed = false
+  menuOpts.onClose = function() closed = true end
+  show = function()
+    PartyMenu.show(party, nil, menuOpts)
+  end
+  local function settle()
+    if done then return true end
+    if not closed then return false end
+    closed = false
+    if picked ~= nil then
+      finish(picked)
+      return true
+    end
+    if cancelled then
+      finish(PARTY_SIZE)
+      return true
+    end
+    local cursor = PartyMenu.cursor
+    show()
+    PartyMenu.cursor = cursor or 1
+    PartyMenu.showYesNo(RomText.box("gText_CancelParticipation", { maxWidth = 216 }), function(yes)
+      if yes then
+        cancelled = true
+        PartyMenu.close()
+      else
+        PartyMenu.mode = "choose"
+      end
+    end)
+    return false
+  end
+  show()
+  require("src.core.game3.scripting.natives").awaitState(ctx, settle)
+  return false
+end
+
+Wireless.BY_NAME = {
+  -- pokefirered/src/party_menu.c:5818, data/scripts/cable_club.inc:1181
+  ChooseMonForWirelessMinigame = function(ctx)
+    return Wireless.chooseMonForMinigame(ctx)
+  end,
+
+  -- pokefirered/src/pokemon_jump.c:2687, data/scripts/cable_club.inc:1177, pokemon_jump.c:766
+  IsPokemonJumpSpeciesInParty = function(ctx)
+    local session = sessionOf(ctx)
+    local party = session and session.party or {}
+    local MG = minigames()
+    local found = 0
+    for i = 1, PARTY_SIZE do
+      local mon = party[i]
+      if MG.speciesOf(mon) ~= 0 and MG.isJumpSpecies(MG.speciesOrEgg(mon)) then
+        found = 1
+        break
+      end
+    end
+    setResult(ctx, found)
+    return false, found
+  end,
+
+  -- pokefirered/src/pokemon_jump.c:4487, data/scripts/cable_club.inc:1278
+  ShowPokemonJumpRecords = function(ctx)
+    return showRecords(ctx, "pokemon_jump")
+  end,
+
+  -- pokefirered/src/dodrio_berry_picking.c:2929, data/scripts/cable_club.inc:1286
+  ShowDodrioBerryPickingRecords = function(ctx)
+    return showRecords(ctx, "dodrio")
+  end,
+
+  -- pokefirered/src/berry_crush.c:3189, data/maps/CeruleanCity_House5/scripts.inc:169
+  ShowBerryCrushRankings = function(ctx)
+    return showRecords(ctx, "berry_crush")
+  end,
+
+  -- pokefirered/src/berry_powder.c:113
+  DisplayBerryPowderVendorMenu = function()
+    if qlAvoidDisplay() then return false end
+    require("src.ui.game3.berry_powder_box").show()
+    return false
+  end,
+
+  -- pokefirered/src/berry_powder.c:128
+  RemoveBerryPowderVendorMenu = function()
+    require("src.ui.game3.berry_powder_box").hide()
+    return false
+  end,
+
+  -- pokefirered/src/berry_powder.c:108
+  PrintPlayerBerryPowderAmount = function()
+    require("src.ui.game3.berry_powder_box").update()
+    return false
+  end,
+
+  -- pokefirered/src/berry_powder.c:40
+  Script_HasEnoughBerryPowder = function(ctx)
+    local session = sessionOf(ctx)
+    local powder = math.floor(tonumber(session and session.berryPowder) or 0)
+    local cost = varGet(ctx, VAR_0x8004)
+    local enough = (powder >= cost) and 1 or 0
+    setResult(ctx, enough)
+    return false, enough
+  end,
+
+  -- pokefirered/src/berry_powder.c:77
+  Script_TakeBerryPowder = function(ctx)
+    local session = sessionOf(ctx)
+    local powder = math.floor(tonumber(session and session.berryPowder) or 0)
+    local cost = varGet(ctx, VAR_0x8004)
+    local took = 0
+    if session and powder >= cost then
+      powder = math.min(powder - cost, MAX_BERRY_POWDER)
+      session.berryPowder = powder
+      took = 1
+    end
+    setResult(ctx, took)
+    return false, took
+  end,
+
+  -- pokefirered/src/field_specials.c:331, battle_tower.c:1343, data/maps/SevenIsland_House_Room1/scripts.inc:88, text.inc:19
+  BufferEReaderTrainerName = function(ctx, adapters)
+    local trainer = visitingEReaderTrainer(sessionOf(ctx))
+    local name = trainer and trainer.name
+    if type(name) ~= "string" or name == "" then name = Strings("TRAINER") end
+    setStringVar(ctx, adapters, 1, name)
+    return false
+  end,
+
+  -- pokefirered/src/battle_tower.c:1401, data/maps/SevenIsland_House_Room2/scripts.inc:18
+  BufferEReaderTrainerGreeting = function(ctx, adapters)
+    local trainer = visitingEReaderTrainer(sessionOf(ctx))
+    local greeting = trainer and trainer.greeting
+    local text
+    if type(greeting) == "string" and greeting ~= "" then
+      text = greeting
+    elseif type(greeting) == "table" then
+      text = convertSpeech(greeting)
+    end
+    if not text or text == "" then text = Strings("OK, LET'S BATTLE!") end
+    setStringVar(ctx, adapters, 4, text)
+    return false
+  end,
+
+  -- pokefirered/src/battle_tower.c:397, data/maps/SevenIsland_House_Room2/scripts.inc:7
+  SetEReaderTrainerGfxId = function(ctx)
+    varSet(ctx, VAR_OBJ_GFX_ID_0, OBJ_EVENT_GFX_YOUNGSTER)
+    return false
+  end,
+}
+Std.legacyHandlers(Wireless)
+
+return Wireless

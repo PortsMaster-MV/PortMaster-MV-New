@@ -1,0 +1,2440 @@
+-- FRLG field effects engine (pret fldeff_*.c).
+-- Handles pure ROM-extracted field effect sprites and animations:
+-- Tall grass, Cut grass leaves, Rock smash rubble, Surf blob, Fly bird, Ripples,
+-- Flash screen flash, Dig / Teleport warp spin, Sweet scent aroma.
+
+local function lazyReq(name)
+  local m = package.loaded[name]
+  if type(m) == "table" then return m end
+  return require(name)
+end
+
+local Extract = require("src.import.gba.extract_island1")
+
+local FieldEffects = {}
+
+FieldEffects._cache = nil
+FieldEffects._sheets = {} -- [name] = { image = ..., quads = ..., fw = ..., fh = ..., frames = ... }
+FieldEffects._fx = nil    -- tall grass
+FieldEffects._anims = {}  -- transient active field animations
+FieldEffects._ground = nil -- pokefirered/src/event_object_movement.c:8721
+FieldEffects._surfClock = 0
+FieldEffects._logged = false
+-- pokefirered/src/scrcmd.c:2051 — gFieldEffectArguments, written by
+-- setfieldeffectargument and read by the effect that dofieldeffect starts.
+FieldEffects._fieldEffectArguments = {}
+-- waitfieldeffect callers parked until isFieldEffectActive(id) goes false.
+FieldEffects._waiters = {}
+
+-- pokefirered/include/constants/field_effects.h:71-72
+FieldEffects.FLDEFF_MOVE_DEOXYS_ROCK = 67
+FieldEffects.FLDEFF_DESTROY_DEOXYS_ROCK = 68
+
+-- pokefirered/include/constants/songs.h:81,80
+local SE_THUNDER2 = 81
+local SE_THUNDER = 80
+
+-- How far a Deoxys rock shard travels before it counts as off-screen and is
+-- dropped.  pret destroys each fragment once it leaves the 240x160 viewport
+-- (field_effect.c:4015); the engine draws in world space, so this is a
+-- viewport-sized bound around the shard's spawn point instead.
+local FRAG_TRAVEL_X = 260
+local FRAG_TRAVEL_Y = 200
+
+local CELL = 16
+local GameVersion = require("src.core.GameVersion")
+local FEET_H = 8
+local RUSTLE = { 1, 2, 3, 4, 0 }
+local FRAME_DUR = 10
+-- pokefirered/src/data/field_effects/field_effect_objects.h:1099
+local FLY_BIRD_W, FLY_BIRD_H, FLY_BIRD_FRAMES = 64, 64, 5
+
+local frlgReflective = nil
+local frlgReflectionQuad = nil
+local frlgModules = nil
+local FRLG_REFL_CULL = 64
+local objectPoseOpts = {}
+local playerPoseOpts = {}
+local function isFrlgReflective(behavior)
+  if not frlgReflective then
+    local MB = lazyReq("src.core.game3.mb")
+    frlgReflective = {}
+    for _, name in ipairs({ "POND_WATER", "PUDDLE", "UNUSED_WATER", "CYCLING_ROAD_WATER", "ICE" }) do
+      local id = MB.id(name)
+      if id ~= nil then frlgReflective[id] = true end
+    end
+  end
+  return frlgReflective[behavior] == true
+end
+FieldEffects.isFrlgReflective = isFrlgReflective
+
+local function frlgReflectionType(cx, cy, pcx, pcy, w, h, behaviorAt)
+  local width = math.floor(((w or 16) + 8) / 16)
+  local height = math.floor(((h or 32) + 8) / 16)
+  for row = 0, height - 1 do
+    local y = cy + 1 + row
+    local prevY = pcy + 1 + row
+    for dx = 1 - width, width - 1 do
+      if isFrlgReflective(behaviorAt(cx + dx, y))
+          or isFrlgReflective(behaviorAt(pcx + dx, prevY)) then return true end
+    end
+  end
+  return false
+end
+FieldEffects.frlgReflectionType = frlgReflectionType
+
+local drawFrlgReflection
+local function getFrlgModules()
+  if frlgModules then return frlgModules end
+  local Collision = package.loaded["src.core.game3.collision"]
+  local Ow = package.loaded["src.core.game3.ow_sprites"]
+  local Objects = package.loaded["src.core.game3.objects"]
+  local Player = package.loaded["src.core.game3.player"]
+  local Runtime = package.loaded["src.core.game3.runtime"]
+  if not (Collision and Collision.behavior and Ow and Ow.getDraw and Ow.pose
+      and Objects and Player and Runtime) then return nil end
+  frlgModules = {
+    Collision = Collision, Ow = Ow, Objects = Objects,
+    Player = Player, Runtime = Runtime,
+  }
+  return frlgModules
+end
+
+local function drawFrlgReflections(camX, camY)
+  if GameVersion.layout(GameVersion.get()) ~= "frlg" then return end
+  local modules = getFrlgModules()
+  if not modules then return end
+  local Collision, Ow = modules.Collision, modules.Ow
+  local Objects, P, Runtime = modules.Objects, modules.Player, modules.Runtime
+  local behaviorAt = Collision.worldBehavior or Collision.behavior
+  local drawn = 0
+  if Objects.forDraw then
+    for _, obj in ipairs(Objects.forDraw()) do
+      if not obj.hideReflection and obj.graphicsId then
+        local spr = Ow.getDraw(obj.graphicsId)
+        if spr then
+          objectPoseOpts.frame = obj.customFrame
+          local frame, flip = Ow.pose(spr, obj.facing, Objects.walkPhase(obj), obj.stepFlip,
+            objectPoseOpts)
+          if drawFrlgReflection(obj, obj.graphicsId, frame, flip, camX, camY,
+              behaviorAt, Ow) then drawn = drawn + 1 end
+        end
+      end
+    end
+  end
+  local Map = package.loaded["src.core.game3.map"]
+  local Ghosts = package.loaded["src.core.game3.ghosts"]
+  local world = Map and Map.world
+  if Ghosts and Ghosts.forDraw and type(world) == "table" then
+    local host = Collision._mapDef
+    local FV = package.loaded["src.core.game3.field_view"]
+    local Display = lazyReq("src.core.game3.display")
+    local vw = FV and FV._viewW or Display.W
+    local vh = FV and FV._viewH or Display.H
+    local x0, y0 = camX - FRLG_REFL_CULL, camY - FRLG_REFL_CULL
+    local x1, y1 = camX + vw + FRLG_REFL_CULL, camY + vh + FRLG_REFL_CULL
+    for i = 1, #world do
+      local entry = world[i]
+      local ox, oy = entry.ox or 0, entry.oy or 0
+      local L = entry.def and entry.def.midLayout
+      local ex, ey = ox * CELL, oy * CELL
+      if entry.def ~= host and L
+          and ex + (L.width or 0) * CELL > x0 and ex < x1
+          and ey + (L.height or 0) * CELL > y0 and ey < y1 then
+        local live = Ghosts.forDraw(entry.id)
+        if live then
+          for j = 1, #live do
+            local obj = live[j]
+            if not obj.hideReflection and obj.graphicsId and not obj.virtualId then
+              local spr = (Ow.peekDraw or Ow.getDraw)(obj.graphicsId)
+              if spr then
+                objectPoseOpts.frame = obj.customFrame
+                local frame, flip = Ow.pose(spr, obj.facing, Objects.walkPhase(obj), obj.stepFlip,
+                  objectPoseOpts)
+                if drawFrlgReflection(obj, obj.graphicsId, frame, flip, camX, camY,
+                    behaviorAt, Ow, ox, oy) then drawn = drawn + 1 end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+  if P and P.isVisible and P.isVisible() and not P.hideReflection then
+    local gid = Ow.playerGraphicsId(Runtime._game, P)
+    local spr = gid and Ow.getDraw(gid)
+    if spr then
+      playerPoseOpts.running = P.runPose and P.runPose() or nil
+      local frame, flip = Ow.pose(spr, P.facing, P.walkPhase and P.walkPhase() or 0,
+        P.drawFlip and P.drawFlip() or false, playerPoseOpts)
+      if drawFrlgReflection(P, gid, frame, flip, camX, camY,
+          behaviorAt, Ow) then drawn = drawn + 1 end
+    end
+  end
+  FieldEffects.lastFrlgReflections = drawn
+end
+
+drawFrlgReflection = function(obj, graphicsId, frame, hflip, camX, camY, behaviorAt, Ow, ox, oy)
+  local spr = Ow.getReflectionDraw and Ow.getReflectionDraw(graphicsId)
+  if not (spr and spr.quads and spr.quads[frame]) then return false end
+  ox, oy = ox or 0, oy or 0
+  local cx = (obj.moving and obj.targetX or obj.cellX) + ox
+  local cy = (obj.moving and obj.targetY or obj.cellY) + oy
+  local pcx, pcy = obj.cellX + ox, obj.cellY + oy
+  if not frlgReflectionType(cx, cy, pcx, pcy, spr.width, spr.height, behaviorAt) then return false end
+  local w, h = spr.width, spr.height
+  local left = (obj.px or (cx - ox) * CELL) + ox * CELL + (16 - w) / 2
+  local top = (obj.py or (cy - oy) * CELL) + oy * CELL + 14
+  local x0, x1 = math.floor(left / CELL), math.floor((left + w - 1) / CELL)
+  local y0, y1 = math.floor(top / CELL), math.floor((top + h - 1) / CELL)
+  local q = frlgReflectionQuad or love.graphics.newQuad(0, 0, 1, 1, spr.width, spr.height * spr.frameCount)
+  frlgReflectionQuad = q
+  love.graphics.setColor(1, 1, 1, 1)
+  for ty = y0, y1 do
+    for tx = x0, x1 do
+      if isFrlgReflective(behaviorAt(tx, ty)) then
+        local ix0, ix1 = math.max(left, tx * CELL), math.min(left + w, tx * CELL + CELL)
+        local iy0, iy1 = math.max(top, ty * CELL), math.min(top + h, ty * CELL + CELL)
+        local dw, dh = ix1 - ix0, iy1 - iy0
+        if dw > 0 and dh > 0 then
+          local sx = hflip and (w - (ix0 - left + dw)) or ix0 - left
+          local sy = h - (iy0 - top + dh)
+          q:setViewport(sx, frame * h + sy, dw, dh, w, h * spr.frameCount)
+          love.graphics.draw(spr.image, q, ix0 + (hflip and dw or 0) - camX, iy0 + dh - camY,
+            0, hflip and -1 or 1, -1)
+        end
+      end
+    end
+  end
+  love.graphics.setColor(1, 1, 1, 1)
+  return true
+end
+
+-- Forward-declared so field-effect starters defined above the body can call it.
+local play_se
+
+local _M = {}
+local function getMod(key, path)
+  local m = _M[key]
+  if not m then
+    m = package.loaded[path]
+    if not m then
+      local ok, loaded = pcall(require, path)
+      if ok then m = loaded end
+    end
+    _M[key] = m
+  end
+  return m
+end
+
+local function modFieldView() return getMod("FieldView", "src.core.game3.field_view") end
+local function modHeal() return getMod("Heal", "src.core.game3.pokecenter_heal") end
+local function modShowMon() return getMod("ShowMon", "src.core.game3.field_move_show_mon") end
+local function modItemfinder() return getMod("Itemfinder", "src.core.game3.itemfinder") end
+local function modAudio() return getMod("Audio", "src.core.game3.audio") end
+local function modOwSprites() return getMod("OwSprites", "src.core.game3.ow_sprites") end
+local function modRenderer() return getMod("Renderer", "src.render.Renderer") end
+
+local function log(msg)
+  if FieldEffects._logged then return end
+  FieldEffects._logged = true
+  print("[game3/field_effects] " .. tostring(msg))
+end
+
+local function cache_root()
+  return Extract.CACHE_ROOT or "data/generated/gba"
+end
+
+local EMPTY = {}
+
+local function fieldBlock()
+  local Profile = package.loaded["src.core.game3.profile"] or lazyReq("src.core.game3.profile")
+  local ok, row = pcall(Profile.forSession)
+  return ok and row and row.field or EMPTY
+end
+
+local function se_id(name, fallback)
+  local SE = package.loaded["src.core.game3.se_ids"] or lazyReq("src.core.game3.se_ids")
+  return (SE and SE[name]) or fallback
+end
+
+local function fx_manifest()
+  local m = FieldEffects._manifest
+  if m ~= nil then return m or nil end
+  local cache = FieldEffects._cache
+  local src = cache and cache.read and cache:read(cache_root() .. "/field_effects/objects.lua")
+  local t
+  if src then
+    local chunk = load(src, "@field_effects/objects.lua", "t", {})
+    local ok, res = false, nil
+    if chunk then ok, res = pcall(chunk) end
+    if ok and type(res) == "table" then t = res end
+  end
+  if t then
+    local byName = {}
+    for _, list in ipairs({ t.objects or {}, t.extras or {} }) do
+      for _, o in pairs(list) do
+        if type(o) == "table" and o.name then byName[o.name] = o end
+      end
+    end
+    t._byName = byName
+  end
+  FieldEffects._manifest = t or false
+  return t
+end
+
+function FieldEffects.manifest()
+  return fx_manifest()
+end
+
+local function rse()
+  local m = fx_manifest()
+  if m and m.family == "rse" then return lazyReq("src.core.game3.field_effects_rse") end
+  return nil
+end
+FieldEffects.rse = rse
+
+-- pokeemerald/src/field_effect_helpers.c:926
+function FieldEffects.startAsh(cx, cy)
+  local R = rse()
+  if R then return R.startAsh(cx, cy, nil, 1) end
+end
+
+-- pokeemerald/src/field_effect.c:2220
+function FieldEffects.startAshPuff(cx, cy, onDone)
+  local R = rse()
+  if R then return R.startAshPuff(cx, cy, onDone) end
+end
+
+-- pokeemerald/src/field_effect.c:2127
+function FieldEffects.startAshLaunch(cx, cy, onDone)
+  local R = rse()
+  if R then return R.startAshLaunch(cx, cy, onDone) end
+end
+
+function FieldEffects.manifestObject(name)
+  local m = fx_manifest()
+  if not m then return nil end
+  name = (m.aliases and m.aliases[name]) or name
+  return m._byName[name]
+end
+
+local function try_load_rgba(cache, rel, w, h)
+  if not cache or not cache.read then return nil end
+  local rgba = cache:read(rel)
+  if not rgba or #rgba ~= w * h * 4 then return nil end
+  if not (love and love.image and love.graphics) then return nil end
+  local ok, id = pcall(love.image.newImageData, w, h, "rgba8", rgba)
+  if not ok or not id then return nil end
+  local img = love.graphics.newImage(id)
+  if img.setFilter then img:setFilter("nearest", "nearest") end
+  return img
+end
+
+local function load_sheet(name, fw, fh, frames)
+  local memo = FieldEffects._sheets[name]
+  if memo ~= nil then return memo or nil end
+  local file = name .. ".rgba"
+  if fx_manifest() then
+    local o = FieldEffects.manifestObject(name)
+    if not (o and o.rgba and o.fw and o.fh and (o.frames or 0) > 0) then
+      FieldEffects._sheets[name] = false
+      return nil
+    end
+    fw, fh, frames, file = o.fw, o.fh, o.frames, o.rgba
+  end
+  if not (fw and fh and frames) then return nil end
+  local totalH = fh * frames
+  local root = cache_root() .. "/field_effects/"
+  local img = try_load_rgba(FieldEffects._cache, root .. file, fw, totalH)
+  if not img then
+    FieldEffects._sheets[name] = false
+    return nil
+  end
+
+  local quads = {}
+  local quadsFront = {}
+  local iw, ih = img:getDimensions()
+  for i = 0, frames - 1 do
+    local y = i * fh
+    if y + fh <= ih then
+      quads[i] = love.graphics.newQuad(0, y, fw, fh, iw, ih)
+      if fh >= FEET_H then
+        quadsFront[i] = love.graphics.newQuad(0, y + (fh - FEET_H), fw, FEET_H, iw, ih)
+      end
+    end
+  end
+
+  local sheet = {
+    image = img,
+    quads = quads,
+    quadsFront = quadsFront,
+    fw = fw,
+    fh = fh,
+    frames = frames,
+  }
+  FieldEffects._sheets[name] = sheet
+  return sheet
+end
+FieldEffects.loadSheet = load_sheet
+
+function FieldEffects.install(cache)
+  local Rse = package.loaded["src.core.game3.field_effects_rse"]
+  if Rse then Rse.invalidate() end
+  FieldEffects._cache = cache
+  FieldEffects._manifest = nil
+  FieldEffects._sheets = {}
+  FieldEffects._fx = nil
+  FieldEffects._anims = {}
+  FieldEffects._ground = nil
+  FieldEffects._surfClock = 0
+  FieldEffects._logged = false
+  local FieldView = modFieldView()
+  if FieldView and FieldView.setCameraPanning then
+    FieldView.setCameraPanning(0, 0)
+    FieldView.setFlashRadius(nil)
+  end
+  local Heal = modHeal()
+  if Heal and Heal.install then Heal.install(cache) end
+  local ShowMon = modShowMon()
+  if ShowMon and ShowMon.invalidate then ShowMon.invalidate() end
+end
+
+function FieldEffects.invalidate()
+  local Rse = package.loaded["src.core.game3.field_effects_rse"]
+  if Rse then Rse.invalidate() end
+  FieldEffects._manifest = nil
+  FieldEffects._sheets = {}
+  FieldEffects._fx = nil
+  FieldEffects._anims = {}
+  FieldEffects._ground = nil
+  local FieldView = modFieldView()
+  if FieldView and FieldView.setCameraPanning then
+    FieldView.setCameraPanning(0, 0)
+    FieldView.setFlashRadius(nil)
+  end
+  local Heal = modHeal()
+  if Heal and Heal.invalidate then Heal.invalidate() end
+  local ShowMon = modShowMon()
+  if ShowMon and ShowMon.invalidate then ShowMon.invalidate() end
+end
+
+-- ---------------------------------------------------------------- Tall Grass
+local function manifest_seq(o)
+  local seq = {}
+  for _, cmd in ipairs(o and o.anims and o.anims[1] or {}) do
+    if cmd[1] == "frame" then seq[#seq + 1] = { cmd[2], math.max(1, tonumber(cmd[3]) or 1) } end
+  end
+  return #seq > 0 and seq or nil
+end
+
+-- pokeemerald/src/event_object_movement.c:7839
+local function grass_sheet_for(cx, cy)
+  if not fx_manifest() then return nil end
+  local Collision = package.loaded["src.core.game3.collision"]
+  local beh = Collision and Collision.behavior and Collision.behavior(cx, cy)
+  local MB = lazyReq("src.core.game3.mb")
+  local name = (beh ~= nil and beh == MB.id("LONG_GRASS")) and "long_grass" or "tall_grass"
+  return name, manifest_seq(FieldEffects.manifestObject(name))
+end
+
+function FieldEffects.tallGrassAt(cx, cy, seekEnd)
+  cx, cy = tonumber(cx) or 0, tonumber(cy) or 0
+  local name, seq = grass_sheet_for(cx, cy)
+  local sheet = name and load_sheet(name) or load_sheet("tall_grass", 16, 16, 5)
+  if not sheet then return end
+  local fx = FieldEffects._fx
+  if fx and fx.cx == cx and fx.cy == cy and not fx.leaving then return end
+  FieldEffects._fx = {
+    cx = cx,
+    cy = cy,
+    timer = 0,
+    step = seekEnd and (#RUSTLE - 1) or 0,
+    leaving = false,
+    done = false,
+    sheet = seq and name or nil,
+    seq = seq,
+  }
+  if seq then
+    local new = FieldEffects._fx
+    new.step = seekEnd and #seq or 1
+    new.frame = seq[seekEnd and #seq or 1][1]
+  end
+end
+
+local function grass_frame(fx)
+  if fx.seq then return fx.frame or 0 end
+  return RUSTLE[fx.step + 1] or 0
+end
+
+function FieldEffects.clearTallGrass()
+  FieldEffects._fx = nil
+end
+
+function FieldEffects.leaveTallGrass()
+  local fx = FieldEffects._fx
+  if not fx then return end
+  fx.leaving = true
+end
+
+-- ---------------------------------------------------------------- Transient Animations
+
+--- Cut tree animation: tree slices and collapses (pret EventScript_CutTreeDown / Movement_CutTreeDown)
+function FieldEffects.startCutTree(targetObj, cx, cy, onDone)
+  cx, cy = tonumber(cx) or 0, tonumber(cy) or 0
+  local anim = {
+    kind = "cut_tree",
+    targetObj = targetObj,
+    cx = cx,
+    cy = cy,
+    timer = 0,
+    maxDur = 24, -- 4 frames (0, 1, 2, 3) at 6 ticks per frame
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+end
+
+--- Cut grass leaves scattering animation across 3x3 tiles (pret FldEff_CutGrass)
+function FieldEffects.startCutGrass(cx, cy, onDone)
+  load_sheet("cut_grass", 8, 8, 1)
+  cx, cy = tonumber(cx) or 0, tonumber(cy) or 0
+  local px = cx * CELL
+  local py = cy * CELL
+
+  local particles = {}
+  for i = 1, 8 do
+    local angle = (i - 1) * (math.pi / 4)
+    local spd = 1.2 + math.random() * 1.0
+    particles[#particles + 1] = {
+      x = px + 4,
+      y = py + 4,
+      vx = math.cos(angle) * spd,
+      vy = math.sin(angle) * spd - 1.0,
+      frame = 0,
+    }
+  end
+
+  local anim = {
+    kind = "cut_grass_scatter",
+    cx = cx,
+    cy = cy,
+    timer = 0,
+    maxDur = 24,
+    particles = particles,
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+end
+
+--- Rock smash rubble exploding animation
+function FieldEffects.startRockSmash(targetObj, cx, cy, onDone)
+  load_sheet("rock_smash", 16, 16, 4)
+  cx, cy = tonumber(cx) or 0, tonumber(cy) or 0
+  local px = cx * CELL
+  local py = cy * CELL
+
+  local particles = {}
+  for i = 1, 8 do
+    local angle = (i - 1) * (math.pi / 4) + (math.random() * 0.3 - 0.15)
+    local spd = 1.2 + math.random() * 1.6
+    particles[#particles + 1] = {
+      x = px + 4,
+      y = py + 4,
+      vx = math.cos(angle) * spd,
+      vy = math.sin(angle) * spd - 1.5,
+      frame = math.random(0, 3),
+    }
+  end
+
+  local anim = {
+    kind = "rock_smash",
+    targetObj = targetObj,
+    cx = cx,
+    cy = cy,
+    timer = 0,
+    maxDur = 24,
+    particles = particles,
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+end
+
+--- pokefirered/src/field_screen_effect.c:194
+function FieldEffects.animateFlashLevel(fromLevel, toLevel)
+  local FieldView = modFieldView()
+  if not FieldView then return nil end
+  local from = FieldView.radiusForLevel(fromLevel)
+  local to = FieldView.radiusForLevel(toLevel)
+  if from == to then
+    FieldView.setFlashLevel(toLevel)
+    return nil
+  end
+  FieldView.setFlashRadius(from)
+  -- pokeemerald/src/field_screen_effect.c:980
+  local step = rse() and 1 or 2
+  local anim = {
+    kind = "flash_level",
+    radius = from,
+    dest = to,
+    delta = (from < to) and step or -step,
+    level = tonumber(toLevel) or 0,
+    clear = (tonumber(toLevel) or 0) == 0,
+    state = 0,
+    timer = 0,
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+--- Screen flash animation (Flash HM)
+function FieldEffects.startFlash(onDone)
+  local anim = {
+    kind = "flash",
+    alpha = 1.0,
+    timer = 0,
+    maxDur = 30,
+  }
+  table.insert(FieldEffects._anims, anim)
+  -- pokefirered/data/scripts/flash.inc:2
+  local FieldView = modFieldView()
+  local levelAnim
+  if FieldView and FieldView.getFlashLevel and FieldView.getFlashLevel() ~= 0 then
+    levelAnim = FieldEffects.animateFlashLevel(FieldView.getFlashLevel(), 0)
+  end
+  -- pokefirered/src/field_screen_effect.c:202
+  if levelAnim then
+    levelAnim.onDone = onDone
+  else
+    anim.onDone = onDone
+  end
+  return levelAnim or anim
+end
+
+--- pokefirered/src/field_effect.c:1258
+function FieldEffects.startLandingShake(onDone)
+  local anim = {
+    kind = "camera_shake",
+    amp = 4,
+    ticks = 0,
+    timer = 0,
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+local function player_gender()
+  local R = package.loaded["src.core.game3.runtime"]
+  local s = R and R.getSession and R.getSession()
+  return (s and tonumber(s.gender)) or 0
+end
+
+local SINE = require("src.core.game3.trig").SINE
+local function gba_sin(i, a) return math.floor(a * SINE[i + 1] / 256) end
+local function gba_cos(i, a) return math.floor(a * SINE[i + 64 + 1] / 256) end
+
+local PLAYER_SPRITE_X, PLAYER_SPRITE_Y = 120, 72
+-- pokefirered/src/event_object_movement.c:9051
+local JUMP_Y_HIGH = { -4, -6, -8, -10, -11, -12, -12, -12, -11, -10, -9, -8, -6, -4, 0, 0 }
+-- pokefirered/src/field_effect.c:3577
+local JUMP_OFF_Y = { -2, -4, -5, -6, -7, -8, -8, -8, -7, -7, -6, -5, -3, -2, 0, 2, 4, 8 }
+-- pokefirered/src/field_effect.c:2373
+local SPIN_NEXT = { down = "left", left = "up", up = "right", right = "down" }
+
+local function fly_player()
+  return package.loaded["src.core.game3.player"]
+end
+
+-- pokefirered/src/field_effect.c:3338 CreateFlyBirdSprite
+local function new_bird()
+  return { x = 255, y = 180, x2 = 0, y2 = 0, anim = 0, cb = nil, attached = false,
+    init = false, d1 = 0, d2 = 0, d3 = 0, d4 = 0, done = false }
+end
+
+-- pokefirered/src/field_effect.c:3360 StartFlyBirdSwoopDown
+local function bird_start_swoop(b)
+  b.cb = "swoop"
+  b.x, b.y, b.x2, b.y2 = 120, 0, 0, 0
+  b.init, b.d1, b.d2, b.d3, b.d4, b.done = false, 0, 0, 0, 0, false
+  b.attached = false
+end
+
+local function bird_attach_player(b)
+  if not b.attached then return end
+  local P = fly_player()
+  if not P then return end
+  P.spriteXOffset = b.x + b.x2 - PLAYER_SPRITE_X
+  P.spriteYOffset = b.y + b.y2 - 8 - PLAYER_SPRITE_Y
+end
+
+local function bird_affine_step(b)
+  local a = b.aff
+  if not a then return end
+  if a.kind == "leave" then
+    -- pokefirered/src/field_effect.c:3378 sAffineAnim_FlyBirdLeaveBall
+    if a.k == 0 then a.scale, a.rot = 8, -30 * 256
+    elseif a.k <= 30 then a.scale = a.scale + 28 end
+  elseif a.kind == "return" then
+    -- pokefirered/src/field_effect.c:3385 sAffineAnim_FlyBirdReturnToBall
+    if a.k == 0 then a.scale, a.rot = 256, 64 * 256
+    elseif a.k <= 22 then a.scale = a.scale - 10 end
+  elseif a.kind == "out" then
+    -- pokefirered/src/field_effect.c:3650 sAffineAnim_FlyBirdOutOfMap
+    a.scale = a.scale + 24
+  elseif a.kind == "in" then
+    -- pokefirered/src/field_effect.c:3656 sAffineAnim_FlyBirdIntoMap
+    if a.k == 0 then a.scale = a.scale + 512 else a.scale = a.scale - 16 end
+  end
+  a.k = a.k + 1
+end
+
+local function bird_step(b, gender)
+  if b.cb == "leave" then
+    -- pokefirered/src/field_effect.c:3398 SpriteCB_FlyBirdLeaveBall
+    if not b.done then
+      if not b.init then
+        b.aff = { kind = "leave", k = 0, scale = 256, rot = 0 }
+        b.x = (gender == 0) and 128 or 118
+        b.y = -48
+        b.init = true
+        b.d1, b.d2 = 64, 256
+      end
+      b.d1 = b.d1 + math.floor(b.d2 / 256)
+      b.x2 = gba_cos(b.d1, 120)
+      b.y2 = gba_sin(b.d1, 120)
+      if b.d2 < 2048 then b.d2 = b.d2 + 96 end
+      if b.d1 > 129 then
+        b.done = true
+        b.aff = nil
+      end
+    end
+  elseif b.cb == "swoop" then
+    -- pokefirered/src/field_effect.c:3432 SpriteCB_FlyBirdSwoopDown
+    b.x2 = gba_cos(b.d2, 140)
+    b.y2 = gba_sin(b.d2, 72)
+    b.d2 = (b.d2 + 4) % 256
+    bird_attach_player(b)
+    if b.d2 >= 128 then b.done = true end
+  elseif b.cb == "with_player" then
+    -- pokefirered/src/field_effect.c:3677 SpriteCB_FlyBirdWithPlayer
+    b.x2 = gba_cos(b.d2, 180)
+    b.y2 = gba_sin(b.d2, 72)
+    b.d2 = (b.d2 + 2) % 256
+    bird_attach_player(b)
+    if b.d2 >= 128 then
+      b.done = true
+      b.aff = nil
+    end
+  elseif b.cb == "return" then
+    -- pokefirered/src/field_effect.c:3450 SpriteCB_FlyBirdReturnToBall
+    if not b.done then
+      if not b.init then
+        b.aff = { kind = "return", k = 0, scale = 256, rot = 0 }
+        b.x = (gender == 0) and 112 or 100
+        b.y = -32
+        b.init = true
+        b.d1, b.d2, b.d4 = 240, 2048, 128
+      end
+      local step = math.floor(b.d2 / 256)
+      b.d1 = (b.d1 + step) % 256
+      b.d3 = b.d3 + step
+      b.x2 = gba_cos(b.d1, 32)
+      b.y2 = gba_sin(b.d1, 120)
+      if b.d2 > 256 then b.d2 = b.d2 - b.d4 end
+      if b.d4 < 256 then b.d4 = b.d4 + 24 end
+      if b.d2 < 256 then b.d2 = 256 end
+      if b.d3 >= 60 then
+        b.done = true
+        b.aff = nil
+        b.invisible = true
+      end
+    end
+  end
+  bird_affine_step(b)
+end
+
+local function fly_clear_player(P)
+  P.spriteXOffset = 0
+  P.spriteYOffset = 0
+  P.flyRide = false
+end
+
+-- pokefirered/src/field_effect.c:3252 FlyOutFieldEffect_BirdLeaveBall
+function FieldEffects.startFlyOut(onFlownOff)
+  load_sheet("fly_bird", FLY_BIRD_W, FLY_BIRD_H, FLY_BIRD_FRAMES)
+  local anim = {
+    kind = "fly_out",
+    state = "leave_ball",
+    timer = 0,
+    tTimer = 0,
+    gender = player_gender(),
+    onDone = onFlownOff,
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+local function step_fly_out(a)
+  local P = fly_player()
+  if not P then return true end
+  local st = a.state
+  if st == "leave_ball" then
+    -- pokefirered/src/field_effect.c:3252 FlyOutFieldEffect_BirdLeaveBall
+    P.fieldMoveAnim = 1
+    a.bird = new_bird()
+    a.bird.cb = "leave"
+    a.state = "wait_leave"
+  elseif st == "wait_leave" then
+    -- pokefirered/src/field_effect.c:3267 FlyOutFieldEffect_WaitBirdLeave
+    if a.bird.done then
+      a.state = "swoop"
+      a.tTimer = 16
+      P.fieldMoveAnim = 0
+      P.facing = "left"
+    else
+      P.fieldMoveAnim = 1
+    end
+  elseif st == "swoop" then
+    -- pokefirered/src/field_effect.c:3278 FlyOutFieldEffect_BirdSwoopDown
+    if a.tTimer ~= 0 then a.tTimer = a.tTimer - 1 end
+    if a.tTimer == 0 then
+      a.state = "jump_on"
+      play_se(se_id("SE_M_FLY", 151))
+      bird_start_swoop(a.bird)
+    end
+  elseif st == "jump_on" then
+    -- pokefirered/src/field_effect.c:3289 FlyOutFieldEffect_JumpOnBird
+    a.tTimer = a.tTimer + 1
+    if a.tTimer >= 8 then
+      P.flyRide = true
+      P.facing = "left"
+      a.jump = 0
+      a.state = "fly_off"
+      a.tTimer = 0
+    end
+  elseif st == "fly_off" then
+    -- pokefirered/src/field_effect.c:3303 FlyOutFieldEffect_FlyOffWithBird
+    a.tTimer = a.tTimer + 1
+    if a.tTimer >= 10 then
+      a.jump = nil
+      local b = a.bird
+      b.attached = true
+      b.anim = a.gender * 2 + 1
+      b.aff = { kind = "out", k = 0, scale = 256, rot = 0 }
+      b.cb = "with_player"
+      a.state = "wait_off"
+    end
+  elseif st == "wait_off" then
+    -- pokefirered/src/field_effect.c:3320 FlyOutFieldEffect_WaitFlyOff
+    if a.bird.done then
+      fly_clear_player(P)
+      P.setVisible(false)
+      return true
+    end
+  end
+  if a.bird then bird_step(a.bird, a.gender) end
+  if a.jump then
+    P.spriteYOffset = JUMP_Y_HIGH[a.jump + 1] or 0
+    a.jump = a.jump + 1
+    if a.jump >= #JUMP_Y_HIGH then a.jump = nil end
+  end
+  return false
+end
+
+-- pokefirered/src/field_effect.c:3518 FldEff_FlyIn
+function FieldEffects.startFlyIn(onDone)
+  load_sheet("fly_bird", FLY_BIRD_W, FLY_BIRD_H, FLY_BIRD_FRAMES)
+  local anim = {
+    kind = "fly_in",
+    state = "swoop",
+    timer = 0,
+    tTimer = 0,
+    gender = player_gender(),
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+local function step_fly_in(a)
+  local P = fly_player()
+  if not P then return true end
+  local st = a.state
+  if st == "swoop" then
+    -- pokefirered/src/field_effect.c:3529 FlyInFieldEffect_BirdSwoopDown
+    a.state = "with_bird"
+    a.tTimer = 33
+    P.flyRide = true
+    P.facing = "left"
+    P.setVisible(true)
+    local b = new_bird()
+    bird_start_swoop(b)
+    b.attached = true
+    b.anim = a.gender * 2 + 2
+    b.aff = { kind = "in", k = 0, scale = 256, rot = 0 }
+    b.cb = "with_player"
+    a.bird = b
+  elseif st == "with_bird" then
+    -- pokefirered/src/field_effect.c:3556 FlyInFieldEffect_FlyInWithBird
+    local b = a.bird
+    -- pokefirered/src/field_effect.c:3705 TryChangeBirdSprite
+    if b.aff and b.aff.scale == 256 then
+      b.aff = nil
+      b.anim = 0
+      b.cb = "swoop"
+    end
+    if a.tTimer ~= 0 then a.tTimer = a.tTimer - 1 end
+    if a.tTimer == 0 then
+      b.attached = false
+      a.baseY = P.spriteYOffset
+      a.state = "jump_off"
+      a.tTimer = 0
+    end
+  elseif st == "jump_off" then
+    -- pokefirered/src/field_effect.c:3575 FlyInFieldEffect_JumpOffBird
+    P.spriteYOffset = a.baseY + JUMP_OFF_Y[a.tTimer + 1]
+    a.tTimer = a.tTimer + 1
+    if a.tTimer >= #JUMP_OFF_Y then a.state = "pose" end
+  elseif st == "pose" then
+    -- pokefirered/src/field_effect.c:3584 FlyInFieldEffect_FieldMovePose
+    if a.bird.done then
+      fly_clear_player(P)
+      P.startFieldMove(24)
+      a.poseWait = 24
+      a.state = "return"
+    end
+  elseif st == "return" then
+    -- pokefirered/src/field_effect.c:3603 FlyInFieldEffect_BirdReturnToBall
+    a.poseWait = a.poseWait - 1
+    if a.poseWait <= 0 then
+      P.fieldMoveAnim = 1
+      bird_start_swoop(a.bird)
+      a.bird.cb = "return"
+      a.state = "wait_return"
+    end
+  elseif st == "wait_return" then
+    -- pokefirered/src/field_effect.c:3612 FlyInFieldEffect_WaitBirdReturn
+    P.fieldMoveAnim = 1
+    if a.bird.done then
+      a.bird = nil
+      a.state = "end"
+      a.d1 = 16
+    end
+  elseif st == "end" then
+    -- pokefirered/src/field_effect.c:3622 FlyInFieldEffect_End
+    a.d1 = a.d1 - 1
+    if a.d1 == 0 then
+      P.fieldMoveAnim = 0
+      P.facing = "down"
+      return true
+    end
+    P.fieldMoveAnim = 1
+  end
+  if a.bird then bird_step(a.bird, a.gender) end
+  return false
+end
+
+-- pokefirered/src/field_effect.c:2352 CreateTeleportFieldEffectTask
+function FieldEffects.startTeleportOut(onRisen)
+  local P = fly_player()
+  local anim = {
+    kind = "teleport_out",
+    state = 2,
+    timer = 0,
+    orig = P and P.facing or "down",
+    d1 = 0, d2 = 0, d3 = 0, d4 = 0,
+    onDone = onRisen,
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+local function step_teleport_out(a)
+  local P = fly_player()
+  if not P then return true end
+  if a.state == 2 then
+    -- pokefirered/src/field_effect.c:2371 TeleportFieldEffectTask2
+    local turn = a.d1 == 0
+    if not turn then
+      a.d1 = a.d1 - 1
+      turn = a.d1 == 0
+    end
+    if turn then
+      P.facing = SPIN_NEXT[P.facing] or "down"
+      a.d1 = 8
+      a.d2 = a.d2 + 1
+    end
+    if a.d2 > 7 and a.orig == P.facing then
+      a.state = 3
+      a.d1, a.d2, a.d3 = 4, 8, 1
+      play_se(se_id("SE_WARP_IN", 39))
+    end
+  else
+    -- pokefirered/src/field_effect.c:2397 TeleportFieldEffectTask3
+    a.d1 = a.d1 - 1
+    if a.d1 <= 0 then
+      a.d1 = 4
+      P.facing = SPIN_NEXT[P.facing] or "down"
+    end
+    a.d4 = a.d4 + a.d3
+    P.spriteYOffset = -a.d4
+    a.d2 = a.d2 - 1
+    if a.d2 <= 0 then
+      a.d2 = 4
+      if a.d3 < 8 then a.d3 = a.d3 * 2 end
+    end
+    if a.d4 > 8 then P.oamPriority = 1 end
+    if a.d4 >= 0xa8 then
+      P.spriteYOffset = 0
+      P.oamPriority = nil
+      P.setVisible(false)
+      return true
+    end
+  end
+  return false
+end
+
+-- pokefirered/src/field_effect.c:2446 FieldCallback_TeleportIn
+function FieldEffects.startTeleportIn(onDone)
+  local P = fly_player()
+  -- pokefirered/src/field_effect.c:2464 TeleportInFieldEffectTask1
+  local anim = {
+    kind = "teleport_in",
+    state = 2,
+    timer = 0,
+    y2 = -(PLAYER_SPRITE_Y + 16),
+    d1 = 8, d2 = 1,
+    onDone = onDone,
+  }
+  if P then
+    P.spriteYOffset = anim.y2
+    P.oamPriority = 1
+    P.setVisible(true)
+  end
+  play_se(se_id("SE_WARP_IN", 39))
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+local function step_teleport_in(a)
+  local P = fly_player()
+  if not P then return true end
+  if a.state == 2 then
+    -- pokefirered/src/field_effect.c:2483 TeleportInFieldEffectTask2
+    a.y2 = a.y2 + a.d1
+    if a.y2 >= -8 then P.oamPriority = nil else P.oamPriority = 1 end
+    if a.y2 >= -0x30 and a.d1 > 1 and a.y2 % 2 == 0 then a.d1 = a.d1 - 1 end
+    a.d2 = a.d2 - 1
+    if a.d2 == 0 then
+      a.d2 = 4
+      P.facing = SPIN_NEXT[P.facing] or "down"
+    end
+    if a.y2 >= 0 then
+      a.y2 = 0
+      a.state = 3
+      a.d1, a.d2 = 1, 0
+    end
+    P.spriteYOffset = a.y2
+  else
+    -- pokefirered/src/field_effect.c:2522 TeleportInFieldEffectTask3
+    P.spriteYOffset = 0
+    a.d1 = a.d1 - 1
+    if a.d1 == 0 then
+      P.facing = SPIN_NEXT[P.facing] or "down"
+      a.d1 = 8
+      a.d2 = a.d2 + 1
+      -- pokefirered/src/field_effect.c:2530
+      if a.d2 > 4 and P.facing == "down" then return true end
+    end
+  end
+  return false
+end
+
+local function draw_bird(b, camX, camY)
+  if b.invisible then return end
+  local sheet = load_sheet("fly_bird", FLY_BIRD_W, FLY_BIRD_H, FLY_BIRD_FRAMES)
+  local q = sheet and sheet.quads[b.anim]
+  local P = fly_player()
+  if not (q and P) then return end
+  local cx = P.px - camX - PLAYER_SPRITE_X + 8 + b.x + b.x2
+  local cy = P.py - camY - PLAYER_SPRITE_Y + b.y + b.y2
+  love.graphics.setColor(1, 1, 1, 1)
+  local a = b.aff
+  if not a then
+    love.graphics.draw(sheet.image, q, cx - FLY_BIRD_W / 2, cy - FLY_BIRD_H / 2)
+    return
+  end
+  local s = a.scale / 256
+  local rot = a.rot % 65536
+  if rot == 0 and s > 2 then
+    local half = FLY_BIRD_W / s
+    local u0 = FLY_BIRD_W / 2 - half
+    local iw, ih = sheet.image:getDimensions()
+    FieldEffects._birdQuad = FieldEffects._birdQuad or love.graphics.newQuad(0, 0, 1, 1, iw, ih)
+    FieldEffects._birdQuad:setViewport(u0, b.anim * FLY_BIRD_H + u0, half * 2, half * 2, iw, ih)
+    love.graphics.draw(sheet.image, FieldEffects._birdQuad, cx, cy, 0, s, s, half, half)
+  else
+    love.graphics.draw(sheet.image, q, cx, cy, -rot * 2 * math.pi / 65536, s, s,
+      FLY_BIRD_W / 2, FLY_BIRD_H / 2)
+  end
+end
+
+--- Sweet scent aroma waves
+function FieldEffects.startSweetScent(onDone)
+  local anim = {
+    kind = "sweet_scent",
+    timer = 0,
+    maxDur = 50,
+    radius = 0,
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+end
+
+-- pokefirered/src/field_effect.c:3946 — the Deoxys shatter whites the MAP out:
+--   BlendPalettes(PALETTES_BG, 0x10, RGB_WHITE);
+--   BeginNormalPaletteFade(PALETTES_BG, 0, 0x10, 0, RGB_WHITE);
+-- PALETTES_BG only, so the four rock fragments — OBJ sprites sharing the
+-- meteorite's palette tag 4371 — keep their colours and stay visible against
+-- the white map while they fly.  That is why this is a background veil painted
+-- between the map layers and the actors, and not a whole-screen "flash" like
+-- the one FldEff_PhotoFlash uses (that one really is PALETTES_ALL).
+-- gPaletteFade.y steps by 2, so 0x10 -> 0 is 8 frames.
+local BG_FLASH_FRAMES = 8
+
+function FieldEffects.startBgFlash(duration)
+  local anim = {
+    kind = "bg_flash",
+    timer = 0,
+    maxDur = math.max(1, math.floor(tonumber(duration) or BG_FLASH_FRAMES)),
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+--- How white the map layers should be veiled this frame, 0..1.  Read by
+--- FieldView.draw between the tiles and the actors.
+function FieldEffects.bgFlashAlpha()
+  for _, anim in ipairs(FieldEffects._anims) do
+    if anim.kind == "bg_flash" then
+      return math.max(0, 1.0 - (anim.timer / anim.maxDur))
+    end
+  end
+  return 0
+end
+
+-- ------------------------------------------------- Birth Island Deoxys effects
+
+--- pokefirered/src/field_effect.c:3722 — slide the meteorite object to (x, y).
+--- pret works in object-event coords offset by +7 so the sprite visibly travels
+--- a long way; here the sprite simply lerps from its current pixel position to
+--- the target cell, which reads the same on screen.
+function FieldEffects.startMoveDeoxysRock(localId, x, y, frames)
+  local Objects = package.loaded["src.core.game3.objects"]
+  if not (Objects and Objects.find) then return nil end
+  local eo = Objects.find(localId)
+  if not eo then return nil end
+  local fromX, fromY = eo.px or 0, eo.py or 0
+  local toX, toY = (tonumber(x) or 0) * CELL, (tonumber(y) or 0) * CELL
+  -- Snap the home/template coords immediately, exactly like
+  -- SetObjEventTemplateCoords: the script-visible position must already be final
+  -- when the next interaction runs.
+  Objects.setObjectXY(localId, x, y)
+  -- setObjectXY snaps px/py to the destination; keep the sprite drawn where it
+  -- was so the lerp below actually slides it instead of teleporting.
+  eo.px, eo.py = fromX, fromY
+  frames = math.max(1, math.floor(tonumber(frames) or 5))
+  local anim = {
+    kind = "deoxys_rock_move",
+    localId = localId,
+    fromX = fromX,
+    fromY = fromY,
+    toX = toX,
+    toY = toY,
+    timer = 0,
+    maxDur = frames,
+    effectName = "FLDEFF_MOVE_DEOXYS_ROCK",
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+--- pokefirered/src/field_effect.c:3840 — camera shake, thunder, then the rock
+--- shatters into four fragments and is removed from the map.
+function FieldEffects.startDestroyDeoxysRock(localId, graphicsId)
+  local Objects = package.loaded["src.core.game3.objects"]
+  local eo = Objects and Objects.find and Objects.find(localId)
+  if not eo then return nil end
+  local x, y = eo.px or 0, eo.py or 0
+  graphicsId = graphicsId or eo.graphicsId
+
+  -- pokefirered/src/field_effect.c:3975 CreateDeoxysRockFragments: all four
+  -- shards start at the rock's own top-left corner (4px higher) and fly apart.
+  -- eo.px/py is the cell's foot point, so undo the offset OwSprites.draw adds.
+  local originX, originY = x - 8, y - 20
+  local OwSprites = modOwSprites()
+  if OwSprites and OwSprites.getDraw then
+    local spr = OwSprites.getDraw(graphicsId)
+    if spr and spr.width and spr.height then
+      originX = x + (16 - spr.width) / 2
+      originY = y + 16 - spr.height - 4
+    end
+  end
+
+  -- pokefirered/src/field_effect.c:3993 SpriteCB_DeoxysRockFragment: fixed
+  -- ±16 x / ±12 y per frame, no gravity, one shard per diagonal.
+  local frags = {}
+  local dirs = { { -1, -1 }, { 1, -1 }, { -1, 1 }, { 1, 1 } }
+  for i = 1, 4 do
+    frags[i] = {
+      frame = i - 1,
+      x = originX,
+      y = originY,
+      ox = originX,
+      oy = originY,
+      dx = dirs[i][1] * 16,
+      dy = dirs[i][2] * 12,
+      off = false,
+    }
+  end
+  local anim = {
+    kind = "deoxys_rock_destroy",
+    localId = localId,
+    graphicsId = graphicsId,
+    x = x,
+    y = y,
+    px = x,
+    py = y,
+    timer = 0,
+    state = "shake",
+    frags = frags,
+    effectName = "FLDEFF_DESTROY_DEOXYS_ROCK",
+  }
+  table.insert(FieldEffects._anims, anim)
+  play_se(se_id("SE_THUNDER2", SE_THUNDER2))
+  return anim
+end
+
+local EMOTE_BASES = {
+  [0] = 0,
+  [1] = 6,
+  [2] = 3,
+  [3] = 9,
+  [4] = 12,
+  exclamation = 0,
+  double_exclamation = 6,
+  x = 3,
+  smile = 9,
+  question = 12,
+  question_mark = 12,
+  [0x62] = 0,
+  [0x63] = 12,
+  [0x64] = 3,
+  [0x65] = 6,
+  [0x66] = 9,
+}
+
+--- Start emote bubble animation over target object (pret FLDEFF_*_ICON / sSpriteAnimTable_Emoticons)
+local RSE_EMOTE_KEYS = {
+  [0] = "exclamation", [1] = "exclamation", [2] = "exclamation", [3] = "exclamation", [4] = "question",
+  exclamation = "exclamation", double_exclamation = "exclamation", x = "exclamation", smile = "exclamation",
+  question = "question", question_mark = "question", heart = "heart",
+  [0x62] = "exclamation", [0x63] = "question", [0x64] = "exclamation", [0x65] = "exclamation", [0x66] = "exclamation",
+}
+
+-- pokeemerald/src/trainer_see.c:731
+local function start_rse_emote(spec, targetObj, emoteType, onDone)
+  local key = RSE_EMOTE_KEYS[emoteType] or "exclamation"
+  local e = spec[key] or spec.exclamation
+  load_sheet(e.sheet)
+  local anim = {
+    kind = "emote",
+    targetObj = targetObj,
+    timer = 0,
+    maxDur = spec.frames or 60,
+    sheet = e.sheet,
+    baseFrame = e.frame or 0,
+    frame = e.frame or 0,
+    yOffset = 0,
+    yVelocity = spec.yVelocity or -5,
+    rse = true,
+    effectName = key == "question" and "FLDEFF_QUESTION_MARK_ICON"
+      or key == "heart" and "FLDEFF_HEART_ICON" or "FLDEFF_EXCLAMATION_MARK_ICON",
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+  return anim
+end
+
+function FieldEffects.startEmote(targetObj, emoteType, onDone)
+  local rse = fieldBlock().emotes
+  if rse then return start_rse_emote(rse, targetObj, emoteType, onDone) end
+  load_sheet("emoticons", 16, 16, 15)
+  local baseFrame = EMOTE_BASES[emoteType] or 0
+  local anim = {
+    kind = "emote",
+    targetObj = targetObj,
+    timer = 0,
+    maxDur = 60, -- 4 + 4 + 52 frames matching pokefirered
+    baseFrame = baseFrame,
+    frame = baseFrame,
+    onDone = onDone,
+  }
+  table.insert(FieldEffects._anims, anim)
+  if emoteType == "exclamation" or emoteType == 0 or emoteType == 0x62 or
+     emoteType == "double_exclamation" or emoteType == 1 or emoteType == 0x65 then
+    local Audio = modAudio()
+    if Audio and Audio.playSe then
+      Audio.playSe(se_id("SE_PIN", 21))
+    end
+  end
+  return anim
+end
+
+--- Exclamation mark '!' emote animation over target object (pret FLDEFF_EXCLAMATION_MARK_ICON / sAnim_ExclamationMark)
+function FieldEffects.startExclamation(targetObj, onDone)
+  return FieldEffects.startEmote(targetObj, "exclamation", onDone)
+end
+
+--- Alias for vs_seeker and other callers
+function FieldEffects.spawnEmoticon(targetObj, emoteType, onDone)
+  return FieldEffects.startEmote(targetObj, emoteType, onDone)
+end
+
+-- pokefirered/include/constants/metatile_behaviors.h:14
+local MB_POND_WATER = 0x10
+-- pokefirered/include/constants/metatile_behaviors.h:20
+local MB_PUDDLE = 0x16
+local MB_SHALLOW_WATER = 0x17
+
+-- pokefirered/src/data/field_effects/field_effect_objects.h:571 sAnim_Splash_0
+local ANIM_SPLASH = { { 0, 4 }, { 1, 4 } }
+-- pokefirered/src/data/field_effects/field_effect_objects.h:578 sAnim_Splash_1
+local ANIM_FEET_IN_FLOWING_WATER = {
+  { 0, 4 }, { 1, 4 }, { 0, 6 }, { 1, 6 }, { 0, 8 }, { 1, 8 }, { 0, 6 }, { 1, 6 },
+}
+-- pokefirered/src/data/field_effects/field_effect_objects.h:108 sAnim_Ripple
+local ANIM_RIPPLE = {
+  { 0, 12 }, { 1, 9 }, { 2, 9 }, { 3, 9 }, { 0, 9 }, { 1, 9 }, { 2, 11 }, { 4, 11 },
+}
+-- pokefirered/src/data/field_effects/field_effect_objects.h:295
+local ANIM_GROUND_IMPACT_DUST = { { 0, 8 }, { 1, 8 }, { 2, 8 } }
+
+local SE_PUDDLE = 63
+
+local function anim_frame(seq, t, loop)
+  local total = 0
+  for i = 1, #seq do total = total + seq[i][2] end
+  if total <= 0 then return nil end
+  if loop then
+    t = t % total
+  elseif t >= total then
+    return nil
+  end
+  local acc = 0
+  for i = 1, #seq do
+    acc = acc + seq[i][2]
+    if t < acc then return seq[i][1] end
+  end
+  return seq[#seq][1]
+end
+
+function play_se(id)
+  local Audio = modAudio()
+  if Audio and Audio.playSe then Audio.playSe(id) end
+end
+
+-- ------------------------------------------------- setfieldeffectargument plumbing
+-- pokefirered/src/scrcmd.c:2051 writes gFieldEffectArguments[argNum]; the value
+-- operand is VarGet'd, which passes raw constants (< 0x4000) straight through.
+function FieldEffects.setFieldEffectArgument(argNum, value)
+  argNum = math.floor(tonumber(argNum) or -1)
+  if argNum < 0 or argNum > 15 then return false end
+  FieldEffects._fieldEffectArguments[argNum] = math.floor(tonumber(value) or 0)
+  return true
+end
+
+function FieldEffects.fieldEffectArgument(argNum, default)
+  local v = FieldEffects._fieldEffectArguments[argNum]
+  if v == nil then return default end
+  return v
+end
+
+function FieldEffects.clearFieldEffectArguments()
+  FieldEffects._fieldEffectArguments = {}
+end
+
+local function resolve_waiters()
+  local pending = FieldEffects._waiters
+  if #pending == 0 then return end
+  local keep = {}
+  for i = 1, #pending do
+    local w = pending[i]
+    if FieldEffects.isFieldEffectActive(w.id) then
+      keep[#keep + 1] = w
+    elseif w.done then
+      w.done()
+    end
+  end
+  FieldEffects._waiters = keep
+end
+
+local function ground_state()
+  local g = FieldEffects._ground
+  if not g then
+    g = { inShallowFlowingWater = false, inHotSprings = false, moving = false }
+    FieldEffects._ground = g
+  end
+  return g
+end
+
+local function behavior_at(cx, cy)
+  local Collision = package.loaded["src.core.game3.collision"]
+  if not (Collision and Collision.behavior) then return nil end
+  return Collision.behavior(cx, cy)
+end
+
+local function is_hot_springs(beh)
+  local Collision = package.loaded["src.core.game3.collision"]
+  if Collision and Collision.isHotSprings then return Collision.isHotSprings(beh) end
+  return false
+end
+
+-- pokefirered/src/event_object_movement.c:8143
+local function flag_shallow_flowing_water(g, cur, prev)
+  if cur == MB_SHALLOW_WATER and prev == MB_SHALLOW_WATER then
+    if not g.inShallowFlowingWater then
+      g.inShallowFlowingWater = true
+      return true
+    end
+  else
+    g.inShallowFlowingWater = false
+  end
+  return false
+end
+
+-- pokefirered/src/event_object_movement.c:8163
+local function flag_puddle(cur, prev)
+  return cur == MB_PUDDLE and prev == MB_PUDDLE
+end
+
+-- pokefirered/src/event_object_movement.c:8172
+local function flag_ripple(cur)
+  return cur == MB_POND_WATER or cur == MB_PUDDLE
+end
+
+-- pokefirered/src/event_object_movement.c:8196
+local function flag_hot_springs(g, cur, prev)
+  if is_hot_springs(cur) and is_hot_springs(prev) then
+    if not g.inHotSprings then
+      g.inHotSprings = true
+      return true
+    end
+  else
+    g.inHotSprings = false
+  end
+  return false
+end
+
+local function has_anim(kind)
+  for _, anim in ipairs(FieldEffects._anims) do
+    if anim.kind == kind then return true end
+  end
+  return false
+end
+
+local GROUND_KINDS = { splash = true, feet_water = true, hot_springs = true, ripple = true }
+
+local function clear_ground_anims()
+  local keep = {}
+  for _, anim in ipairs(FieldEffects._anims) do
+    if not GROUND_KINDS[anim.kind] then keep[#keep + 1] = anim end
+  end
+  FieldEffects._anims = keep
+end
+
+-- pokefirered/src/event_object_movement.c:8580 GroundEffect_StepOnPuddle
+local function start_splash()
+  load_sheet("splash", 16, 8, 2)
+  table.insert(FieldEffects._anims, { kind = "splash", timer = 0, frame = 0 })
+  play_se(se_id("SE_PUDDLE", SE_PUDDLE))
+end
+
+-- pokefirered/src/event_object_movement.c:8505 GroundEffect_FlowingWater
+local function start_feet_in_flowing_water()
+  if has_anim("feet_water") then return end
+  load_sheet("splash", 16, 8, 2)
+  table.insert(FieldEffects._anims, { kind = "feet_water", timer = 0, frame = 0 })
+end
+
+-- pokefirered/src/event_object_movement.c:8575 GroundEffect_Ripple
+local function start_ripple(cx, cy)
+  load_sheet("ripple", 16, 16, 5)
+  table.insert(FieldEffects._anims,
+    { kind = "ripple", timer = 0, frame = 0, cx = cx, cy = cy })
+end
+FieldEffects.startRipple = start_ripple
+
+-- pokefirered/src/event_object_movement.c:8652 GroundEffect_HotSprings
+local function start_hot_springs()
+  if has_anim("hot_springs") then return end
+  load_sheet("hot_springs_water", 16, 16, 1)
+  table.insert(FieldEffects._anims, { kind = "hot_springs", timer = 0, frame = 0 })
+end
+
+-- pokefirered/src/field_effect_helpers.c:1112
+function FieldEffects.startDust(cx, cy)
+  load_sheet("ground_impact_dust", 16, 8, 3)
+  table.insert(FieldEffects._anims, { kind = "dust", timer = 0, frame = 0, cx = cx, cy = cy })
+end
+
+-- pokefirered/src/event_object_movement.c:8220
+local function flag_land_on_normal_ground(g, cur)
+  local Collision = package.loaded["src.core.game3.collision"]
+  if Collision and Collision.isGrass and Collision.isGrass(g.cx, g.cy) then return false end
+  if cur == MB_PUDDLE or cur == MB_SHALLOW_WATER then return false end
+  if Collision and Collision.isSurfable and Collision.isSurfable(cur) then return false end
+  return true
+end
+
+-- pokefirered/src/event_object_movement.c:8023 GetAllGroundEffectFlags_OnSpawn
+local function ground_effects_on_spawn(g, cur, prev)
+  if flag_shallow_flowing_water(g, cur, prev) then start_feet_in_flowing_water() end
+  if flag_hot_springs(g, cur, prev) then start_hot_springs() end
+  local R = rse()
+  if R then R.onSpawn(g, cur, prev) end
+end
+
+local TRACK_DIRS = { down = 1, up = 2, left = 3, right = 4 }
+
+-- pokeemerald/src/event_object_movement.c:7480
+local function start_tracks(g, prev)
+  if not fx_manifest() or prev == nil then return end
+  local P = package.loaded["src.core.game3.player"]
+  if not P or P.biking then return end
+  local MB = lazyReq("src.core.game3.mb")
+  local name
+  if prev == MB.id("DEEP_SAND") then
+    name = "deep_sand_footprints"
+  elseif prev == MB.id("SAND") or prev == MB.id("FOOTPRINTS") then
+    name = "sand_footprints"
+  else
+    return
+  end
+  local o = FieldEffects.manifestObject(name)
+  if not (o and load_sheet(name)) then return end
+  -- pokeemerald/src/event_object_movement.c:7889
+  local seq = o.anims and o.anims[(TRACK_DIRS[P.facing] or 1) + 1]
+  local cmd = seq and seq[1] or { "frame", 0, 1, false, false }
+  table.insert(FieldEffects._anims, {
+    kind = "tracks", sheet = name, timer = 0, cx = g.px, cy = g.py,
+    frame = cmd[2] or 0, hflip = cmd[4] == true, vflip = cmd[5] == true, visible = true,
+  })
+end
+
+-- pokefirered/src/event_object_movement.c:8035 GetAllGroundEffectFlags_OnBeginStep
+local function ground_effects_on_begin_step(g, cur, prev)
+  start_tracks(g, prev)
+  if flag_shallow_flowing_water(g, cur, prev) then start_feet_in_flowing_water() end
+  if flag_puddle(cur, prev) then start_splash() end
+  if flag_hot_springs(g, cur, prev) then start_hot_springs() end
+  local R = rse()
+  if R then R.onBeginStep(g, cur, prev) end
+end
+
+-- pokefirered/src/event_object_movement.c:8049 GetAllGroundEffectFlags_OnFinishStep
+local function ground_effects_on_finish_step(g, cur, jumped, landingJump)
+  -- pokefirered/src/event_object_movement.c:5343 ShiftStillObjectEventCoords (previous := current)
+  local prev = cur
+  if flag_shallow_flowing_water(g, cur, prev) then start_feet_in_flowing_water() end
+  -- pokefirered/src/event_object_movement.c:8715 FilterOutStepOnPuddleGroundEffectIfJumping
+  if flag_puddle(cur, prev) and not jumped then start_splash() end
+  if flag_ripple(cur) then start_ripple(g.cx, g.cy) end
+  if flag_hot_springs(g, cur, prev) then start_hot_springs() end
+  local R = rse()
+  if R then
+    R.onFinishStep(g, cur, jumped, landingJump)
+    return
+  end
+  -- pokefirered/src/event_object_movement.c:8638
+  if landingJump and flag_land_on_normal_ground(g, cur) then FieldEffects.startDust(g.cx, g.cy) end
+end
+
+--- pokefirered/src/event_object_movement.c:8721 DoGroundEffects_OnSpawn / OnBeginStep / OnFinishStep
+function FieldEffects.groundEffects()
+  local P = package.loaded["src.core.game3.player"]
+  if not P then return end
+  local moving = P.moving and true or false
+  local cx, cy
+  if moving then
+    cx, cy = P.targetX or P.cellX, P.targetY or P.cellY
+  else
+    cx, cy = P.cellX, P.cellY
+  end
+  if cx == nil or cy == nil then return end
+  local g = ground_state()
+  local Map = package.loaded["src.core.game3.map"]
+  local mapId = Map and Map.current
+  if mapId ~= g.mapId then
+    -- pokefirered/src/event_object_movement.c:1934 ResetObjectEventFldEffData
+    g.mapId = mapId
+    g.inShallowFlowingWater = false
+    g.inHotSprings = false
+    g.cx, g.cy, g.px, g.py = nil, nil, nil, nil
+    g.moving = false
+    clear_ground_anims()
+    local R = rse()
+    if R then R.clearGround() end
+  end
+  if moving == g.moving and cx == g.cx and cy == g.cy then return end
+
+  local px, py = cx, cy
+  if moving or g.moving then px, py = P.prevCellX or cx, P.prevCellY or cy end
+  local wasMoving = g.moving
+  local wasPx = g.px
+  local wasJump = g.jumped
+  local wasLanding = g.landingJump
+  g.moving = moving
+  g.cx, g.cy = cx, cy
+  g.px, g.py = px, py
+  g.jumped = moving and (P.jumping and true or false) or false
+  -- pokefirered/src/event_object_movement.c:6646
+  g.landingJump = g.jumped and not (P.surfHopping or P.dismounting) or false
+
+  if wasMoving and moving and wasPx ~= nil then
+    g.cx, g.cy = px, py
+    ground_effects_on_finish_step(g, behavior_at(px, py), wasJump, wasLanding)
+    g.cx, g.cy = cx, cy
+  end
+
+  -- pokefirered/src/event_object_movement.c:8062 ObjectEventUpdateMetatileBehaviors
+  local cur = behavior_at(cx, cy)
+  local prev = behavior_at(px, py)
+
+  if moving and not wasMoving then
+    ground_effects_on_begin_step(g, cur, prev)
+  elseif wasMoving and not moving then
+    ground_effects_on_finish_step(g, cur, wasJump, wasLanding)
+  elseif wasMoving and moving then
+    ground_effects_on_begin_step(g, cur, prev)
+  else
+    -- pokefirered/src/event_object_movement.c:1934 ResetObjectEventFldEffData
+    g.inShallowFlowingWater = false
+    g.inHotSprings = false
+    clear_ground_anims()
+    ground_effects_on_spawn(g, cur, prev)
+  end
+end
+
+-- ---------------------------------------------------------------- Step & Update
+function FieldEffects.step()
+  FieldEffects.groundEffects()
+  lazyReq("src.core.game3.warp_arrow").step()
+  -- Tall grass update
+  local fx = FieldEffects._fx
+  if fx and not fx.done and fx.seq then
+    -- pokeemerald/src/field_effect_helpers.c:420
+    fx.timer = fx.timer + 1
+    local cur = fx.seq[fx.step]
+    if cur and fx.timer >= cur[2] then
+      fx.timer = 0
+      if fx.step < #fx.seq then
+        fx.step = fx.step + 1
+        fx.frame = fx.seq[fx.step][1]
+      elseif fx.leaving then
+        fx.done = true
+        FieldEffects._fx = nil
+      end
+    end
+  elseif fx and not fx.done then
+    fx.timer = fx.timer + 1
+    if fx.timer >= FRAME_DUR then
+      fx.timer = 0
+      fx.step = fx.step + 1
+      if fx.step >= #RUSTLE then
+        if fx.leaving then
+          fx.done = true
+          FieldEffects._fx = nil
+        else
+          fx.step = #RUSTLE - 1
+        end
+      end
+    end
+  end
+
+  -- Surfing blob clock (48 ticks per frame * 2 frames = 96 ticks per loop)
+  FieldEffects._surfClock = (FieldEffects._surfClock + 1) % 96
+
+  -- Update active transient animations
+  local active = {}
+  for _, anim in ipairs(FieldEffects._anims) do
+    anim.timer = anim.timer + 1
+    local finished = false
+
+    if anim.kind == "cut_tree" then
+      -- Animate tree object through frames 0..3 (6 ticks per frame)
+      local frame = math.min(3, math.floor(anim.timer / 6))
+      if anim.targetObj then
+        anim.targetObj.customFrame = frame
+      end
+      -- Update scattering leaf particles with gravity
+      for _, p in ipairs(anim.particles or {}) do
+        p.x = p.x + p.vx
+        p.y = p.y + p.vy
+        p.vy = p.vy + 0.12 -- gravity
+        p.frame = math.floor(anim.timer / 4) % 4
+      end
+      if anim.timer >= anim.maxDur then
+        finished = true
+      end
+    elseif anim.kind == "cut_grass_scatter" then
+      for _, p in ipairs(anim.particles or {}) do
+        p.x = p.x + p.vx
+        p.y = p.y + p.vy
+        p.vy = p.vy + 0.12
+        p.frame = math.floor(anim.timer / 4) % 4
+      end
+      if anim.timer >= anim.maxDur then
+        finished = true
+      end
+    elseif anim.kind == "rock_smash" then
+      local frame = math.min(3, math.floor(anim.timer / 6))
+      if anim.targetObj then
+        anim.targetObj.customFrame = frame
+      end
+      for _, p in ipairs(anim.particles or {}) do
+        p.x = p.x + p.vx
+        p.y = p.y + p.vy
+        p.vy = p.vy + 0.15 -- gravity
+        p.frame = math.floor(anim.timer / 4) % 4
+      end
+      if anim.timer >= anim.maxDur then
+        finished = true
+      end
+    elseif anim.kind == "flash" or anim.kind == "bg_flash" then
+      anim.alpha = math.max(0, 1.0 - (anim.timer / anim.maxDur))
+      if anim.timer >= anim.maxDur then
+        finished = true
+      end
+    elseif anim.kind == "flash_level" then
+      -- pokefirered/src/field_screen_effect.c:119
+      local FieldView = modFieldView()
+      if not FieldView then
+        finished = true
+      elseif anim.state == 2 then
+        FieldView.setFlashLevel(anim.level)
+        finished = true
+      else
+        FieldView.setFlashRadius(anim.radius)
+        if anim.state == 0 then
+          anim.state = 1
+        else
+          anim.state = 0
+          anim.radius = anim.radius + anim.delta
+          if anim.radius > anim.dest then
+            if anim.clear then
+              anim.state = 2
+            else
+              FieldView.setFlashLevel(anim.level)
+              finished = true
+            end
+          end
+        end
+      end
+    elseif anim.kind == "camera_shake" then
+      local FieldView = modFieldView()
+      if not FieldView then
+        finished = true
+      elseif anim.amp == 0 then
+        -- pokefirered/src/field_camera.c:513
+        FieldView.setCameraPanning(0, 0)
+        finished = true
+      else
+        FieldView.setCameraPanning(0, anim.amp)
+        anim.amp = -anim.amp
+        anim.ticks = anim.ticks + 1
+        if anim.ticks % 4 == 0 then
+          anim.amp = math.floor(anim.amp / 2)
+        end
+      end
+    elseif anim.kind == "fly_out" then
+      finished = step_fly_out(anim)
+    elseif anim.kind == "fly_in" then
+      finished = step_fly_in(anim)
+    elseif anim.kind == "teleport_out" then
+      finished = step_teleport_out(anim)
+    elseif anim.kind == "teleport_in" then
+      finished = step_teleport_in(anim)
+    elseif anim.kind == "sweet_scent" then
+      anim.radius = (anim.timer / anim.maxDur) * 120
+      if anim.timer >= anim.maxDur then
+        finished = true
+      end
+    elseif anim.rse and anim.kind == "emote" then
+      -- pokeemerald/src/trainer_see.c:757
+      anim.yOffset = anim.yOffset + anim.yVelocity
+      if anim.yOffset ~= 0 then
+        anim.yVelocity = anim.yVelocity + 1
+      else
+        anim.yVelocity = 0
+      end
+      if anim.timer >= anim.maxDur then
+        finished = true
+      end
+    elseif anim.kind == "emote" or anim.kind == "exclamation" then
+      local base = anim.baseFrame or 0
+      if anim.timer < 4 then
+        anim.frame = base
+      elseif anim.timer < 8 then
+        anim.frame = base + 1
+      else
+        anim.frame = base + 2
+      end
+      if anim.timer >= anim.maxDur then
+        finished = true
+      end
+    elseif anim.kind == "splash" then
+      -- pokefirered/src/field_effect_helpers.c:626 UpdateSplashFieldEffect
+      local frame = anim_frame(ANIM_SPLASH, anim.timer - 1, false)
+      if frame then anim.frame = frame else finished = true end
+    elseif anim.kind == "dust" then
+      -- pokefirered/src/field_effect_helpers.c:1369
+      local frame = anim_frame(ANIM_GROUND_IMPACT_DUST, anim.timer - 1, false)
+      if frame then anim.frame = frame else finished = true end
+    elseif anim.kind == "feet_water" then
+      -- pokefirered/src/field_effect_helpers.c:707 UpdateFeetInFlowingWaterFieldEffect
+      local g = FieldEffects._ground
+      if not (g and g.inShallowFlowingWater) then
+        finished = true
+      else
+        anim.frame = anim_frame(ANIM_FEET_IN_FLOWING_WATER, anim.timer - 1, true) or 0
+        if g.cx and (g.cx ~= anim.cx or g.cy ~= anim.cy) then
+          anim.cx, anim.cy = g.cx, g.cy
+          play_se(se_id("SE_PUDDLE", SE_PUDDLE))
+        end
+      end
+    elseif anim.kind == "hot_springs" then
+      -- pokefirered/src/field_effect_helpers.c:777 UpdateHotSpringsWaterFieldEffect
+      local g = FieldEffects._ground
+      if not (g and g.inHotSprings) then finished = true end
+    elseif anim.kind == "deoxys_rock_move" then
+      -- pokefirered/src/field_effect.c:3745 — linear sprite lerp over maxDur frames.
+      local t = math.min(1, anim.timer / anim.maxDur)
+      local Objects = package.loaded["src.core.game3.objects"]
+      local eo = Objects and Objects.find and Objects.find(anim.localId)
+      if eo then
+        eo.px = anim.fromX + (anim.toX - anim.fromX) * t
+        eo.py = anim.fromY + (anim.toY - anim.fromY) * t
+      end
+      if anim.timer >= anim.maxDur then
+        if eo then
+          eo.px, eo.py = anim.toX, anim.toY
+          -- pret ShiftStillObjectEventCoords + triggerGroundEffectsOnStop.
+          if Objects.copyObjectXYToPerm then Objects.copyObjectXYToPerm(anim.localId) end
+        end
+        finished = true
+      end
+    elseif anim.kind == "deoxys_rock_destroy" then
+      -- pokefirered/src/field_effect.c:3860 DestroyDeoxysRockEffect_*
+      local FieldView = modFieldView()
+      if anim.state == "shake" then
+        -- Task_DeoxysRockCameraShake (data[7]==0): full amplitude, sign flips
+        -- when data[0] passes 1, i.e. every other frame.
+        if FieldView and FieldView.setCameraPanning then
+          FieldView.setCameraPanning(0, (math.floor(anim.timer / 2) % 2 == 0) and 4 or -4)
+        end
+        -- DestroyDeoxysRockEffect_RockFragments: `if (++tTimer > 120)`.
+        if anim.timer > 120 then
+          local Objects = package.loaded["src.core.game3.objects"]
+          local eo = Objects and Objects.find and Objects.find(anim.localId)
+          if eo then
+            eo.px, eo.py = anim.x, anim.y
+            eo.invisible = true
+            eo.hidden = true
+            eo.visible = false
+          end
+          FieldEffects.startBgFlash()
+          play_se(se_id("SE_THUNDER", SE_THUNDER))
+          anim.state = "shatter"
+          anim.timer = 0
+          anim.amp = 4
+        end
+      elseif anim.state == "shatter" then
+        -- The shards fly out while the shake decays (StartEndingDeoxysRock
+        -- CameraShake + the data[7]!=0 half of Task_DeoxysRockCameraShake).
+        for _, f in ipairs(anim.frags) do
+          if not f.off then
+            f.x = f.x + f.dx
+            f.y = f.y + f.dy
+            if math.abs(f.x - f.ox) > FRAG_TRAVEL_X
+              or math.abs(f.y - f.oy) > FRAG_TRAVEL_Y then
+              f.off = true
+            end
+          end
+        end
+        if anim.timer > 0 and anim.timer % 21 == 0 and anim.amp > 0 then
+          anim.amp = anim.amp - 1
+        end
+        if FieldView and FieldView.setCameraPanning then
+          FieldView.setCameraPanning(0,
+            (anim.timer % 2 == 0) and anim.amp or -anim.amp)
+        end
+        if anim.amp <= 0 then
+          if FieldView and FieldView.setCameraPanning then
+            FieldView.setCameraPanning(0, 0)
+          end
+          local Objects = package.loaded["src.core.game3.objects"]
+          if Objects and Objects.removeObject then Objects.removeObject(anim.localId) end
+          finished = true
+        end
+      end
+    elseif anim.kind == "tracks" then
+      -- pokeemerald/src/field_effect_helpers.c:615
+      if anim.timer > 41 then anim.visible = not anim.visible end
+      if anim.timer >= 57 then finished = true end
+    elseif anim.kind == "ripple" then
+      -- pokefirered/src/field_effect_helpers.c:737 FldEff_Ripple
+      local frame = anim_frame(ANIM_RIPPLE, anim.timer - 1, false)
+      if frame then anim.frame = frame else finished = true end
+    end
+
+    if finished then
+      if anim.onDone then anim.onDone() end
+    else
+      table.insert(active, anim)
+    end
+  end
+  FieldEffects._anims = active
+
+  local R = rse()
+  if R then R.step() end
+
+  resolve_waiters()
+
+  local Heal = modHeal()
+  if Heal and Heal.step then Heal.step() end
+  local ShowMon = modShowMon()
+  if ShowMon and ShowMon.step then ShowMon.step() end
+end
+
+-- ---------------------------------------------------------------- Drawing
+
+--- Draw behind player (Surf blob, tall grass bottom, etc.)
+function FieldEffects.drawBehind(camX, camY)
+  camX, camY = camX or 0, camY or 0
+  local R = rse()
+  if R then R.drawBehind(camX, camY) end
+  if not R then drawFrlgReflections(camX, camY) end
+
+  -- 1) Surfing water mount (pret FLDEFF_SURF_BLOB)
+  local P = package.loaded["src.core.game3.player"]
+  if P and (P.surfing or P.surfHopping or P.dismounting) then
+    local surfSheet = load_sheet("surf_blob", 32, 32, 6)
+    if surfSheet then
+      local facing = P.facing or "down"
+      local step = math.floor(FieldEffects._surfClock / 48) % 2
+      local frameIdx = 0
+      local flip = false
+
+      local blob = surfSheet.frames < 6 and FieldEffects.manifestObject("surf_blob")
+      if blob and blob.anims then
+        -- pokeemerald/src/data/field_effects/field_effect_objects.h:203
+        local seq = blob.anims[({ down = 1, up = 2, left = 3, right = 4 })[facing] or 1]
+        local cmd = seq and seq[1]
+        frameIdx = cmd and cmd[2] or 0
+        flip = cmd and cmd[4] == true or false
+      elseif facing == "down" then
+        frameIdx = 0 + step
+      elseif facing == "up" then
+        frameIdx = 2 + step
+      elseif facing == "left" then
+        frameIdx = 4 + step
+      elseif facing == "right" then
+        frameIdx = 4 + step
+        flip = true
+      end
+
+      local q = surfSheet.quads[frameIdx]
+      if q then
+        local sx, sy
+        if P.surfHopping then
+          -- Player is hopping onto water: blob is in position on the destination tile
+          sx = (P.targetX or P.cellX) * CELL - camX - 8
+          sy = (P.targetY or P.cellY) * CELL - camY - 8
+        elseif P.dismounting then
+          -- Player is hopping off water to land: blob remains at origin tile
+          sx = P.cellX * CELL - camX - 8
+          sy = P.cellY * CELL - camY - 8
+        else
+          local bob = (not P.moving and not P.jumping) and ((step == 1) and -1 or 0) or 0
+          sx = P.px - camX - 8
+          sy = P.py - camY - 8 + bob
+        end
+
+        love.graphics.setColor(1, 1, 1, 1)
+        if flip then
+          love.graphics.draw(surfSheet.image, q, sx + 32, sy, 0, -1, 1)
+        else
+          love.graphics.draw(surfSheet.image, q, sx, sy)
+        end
+      end
+    end
+  end
+
+  -- 2) Tall grass base pad
+  local fx = FieldEffects._fx
+  if fx then
+    local sheet = fx.sheet and load_sheet(fx.sheet) or load_sheet("tall_grass", 16, 16, 5)
+    if sheet then
+      local frameIdx = grass_frame(fx)
+      local q = sheet.quads[frameIdx]
+      if q then
+        local sx = fx.cx * CELL - camX
+        local sy = fx.cy * CELL - camY
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(sheet.image, q, sx, sy)
+      end
+    end
+  end
+
+  -- pokefirered/src/event_object_movement.c:9404 DoRippleFieldEffect
+  for _, anim in ipairs(FieldEffects._anims) do
+    if anim.kind == "tracks" and anim.visible then
+      local sheet = load_sheet(anim.sheet)
+      local q = sheet and sheet.quads[anim.frame or 0]
+      if q and anim.cx and anim.cy then
+        local sx = anim.cx * CELL - camX
+        local sy = anim.cy * CELL - camY
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(sheet.image, q, sx + (anim.hflip and CELL or 0), sy + (anim.vflip and CELL or 0), 0,
+          anim.hflip and -1 or 1, anim.vflip and -1 or 1)
+      end
+    elseif anim.kind == "ripple" then
+      local sheet = load_sheet("ripple", 16, 16, 5)
+      local q = sheet and sheet.quads[anim.frame or 0]
+      if q then
+        local sx = anim.cx * CELL - camX
+        local sy = anim.cy * CELL + 6 - camY
+        love.graphics.setColor(1, 1, 1, 1)
+        love.graphics.draw(sheet.image, q, sx, sy)
+      end
+    end
+  end
+end
+
+--- Collect ground/feet field effects as sorted actors (OAM Y-ordering with players/NPCs).
+function FieldEffects.collectActors(actors)
+  if not actors then return end
+
+  -- 1) Tall grass feet cover (player active effect)
+  local fx = FieldEffects._fx
+  local sheetGrass = load_sheet("tall_grass", 16, 16, 5)
+  local fxSheet = fx and fx.sheet and load_sheet(fx.sheet) or sheetGrass
+  if fx and fxSheet and fxSheet.quadsFront then
+    local P = package.loaded["src.core.game3.player"]
+    local playerPy = P and P.py
+    local drawCover = true
+    if playerPy ~= nil then
+      local feetY = playerPy + CELL
+      local grassTop = fx.cy * CELL
+      local grassBot = grassTop + CELL
+      if feetY < grassTop + FEET_H or feetY > grassBot + 2 then
+        drawCover = false
+      end
+    end
+    if drawCover then
+      local frameIdx = grass_frame(fx)
+      local q = fxSheet.quadsFront[frameIdx]
+      if q then
+        local gx = fx.cx * CELL
+        local gy = fx.cy * CELL + (16 - FEET_H)
+        actors[#actors + 1] = {
+          kind = "field_effect_grass",
+          elevation = P and P.elevation or 3,
+          sortY = fx.cy * CELL + 0.5,
+          x = gx,
+          y = gy,
+          i = 90000,
+          draw = function(_, camX, camY)
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(fxSheet.image, q, gx - camX, gy - camY)
+          end,
+        }
+      end
+    end
+  end
+
+  -- 2) Grass feet cover for NPCs standing on grass
+  local Objects = package.loaded["src.core.game3.objects"]
+  local Collision = package.loaded["src.core.game3.collision"]
+  if Objects and Objects.forDraw and Collision and Collision.isGrass and sheetGrass and sheetGrass.quadsFront then
+    local qStatic = sheetGrass.quadsFront[4]
+    if qStatic then
+      for _, eo in ipairs(Objects.forDraw()) do
+        local cx = eo.cellX
+        local cy = eo.cellY
+        local isPlayerFx = fx and fx.cx == cx and fx.cy == cy
+        if not isPlayerFx and cx and cy and Collision.isGrass(cx, cy) then
+          local npcPy = eo.py or (cy * CELL)
+          local feetY = npcPy + CELL
+          local grassTop = cy * CELL
+          local grassBot = grassTop + CELL
+          if feetY >= grassTop + FEET_H and feetY <= grassBot + 2 then
+            local gx = cx * CELL
+            local gy = cy * CELL + (16 - FEET_H)
+            actors[#actors + 1] = {
+              kind = "field_effect_npc_grass",
+              elevation = eo.elevation or (eo.def and eo.def.elevation) or 3,
+              sortY = npcPy + 0.5,
+              x = gx,
+              y = gy,
+              i = 90000 + (tonumber(eo.localId) or 0),
+              draw = function(_, camX, camY)
+                love.graphics.setColor(1, 1, 1, 1)
+                love.graphics.draw(sheetGrass.image, qStatic, gx - camX, gy - camY)
+              end,
+            }
+          end
+        end
+      end
+    end
+  end
+
+  -- 3) Ground / actor attached transient animations
+  local P = package.loaded["src.core.game3.player"]
+  -- pokeemerald/src/field_effect_helpers.c:249
+  if P and P.jumping and not (P.surfHopping or P.dismounting) and P.isVisible and P.isVisible() then
+    local sheet = load_sheet("shadow_medium")
+    local q = sheet and sheet.quads[0]
+    if q then
+      local sx, sy = P.px, P.py + CELL - sheet.fh
+      actors[#actors + 1] = {
+        kind = "field_effect_shadow",
+        elevation = P.elevation or 3,
+        sortY = P.py - 0.5,
+        x = sx,
+        y = sy,
+        i = 90500,
+        draw = function(_, camX, camY)
+          love.graphics.setColor(1, 1, 1, 1)
+          love.graphics.draw(sheet.image, q, sx - camX, sy - camY)
+        end,
+      }
+    end
+  end
+  for idx, anim in ipairs(FieldEffects._anims) do
+    if anim.kind == "splash" or anim.kind == "feet_water" then
+      local sheet = load_sheet("splash", 16, 8, 2)
+      local q = sheet and P and sheet.quads[anim.frame or 0]
+      if q and P then
+        local px = P.px
+        local py = P.py + FEET_H
+        actors[#actors + 1] = {
+          kind = "field_effect_splash",
+          elevation = P.elevation or 3,
+          sortY = P.py + 0.5,
+          x = px,
+          y = py,
+          i = 91000 + idx,
+          draw = function(_, camX, camY)
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(sheet.image, q, px - camX, py - camY)
+          end,
+        }
+      end
+    elseif anim.kind == "dust" then
+      local sheet = load_sheet("ground_impact_dust", 16, 8, 3)
+      local q = sheet and sheet.quads[anim.frame or 0]
+      if q then
+        local dx = anim.cx * CELL
+        local dy = anim.cy * CELL + 8
+        actors[#actors + 1] = {
+          kind = "field_effect_dust",
+          elevation = 3,
+          sortY = anim.cy * CELL + 0.5,
+          x = dx,
+          y = dy,
+          i = 91000 + idx,
+          draw = function(_, camX, camY)
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(sheet.image, q, dx - camX, dy - camY)
+          end,
+        }
+      end
+    elseif anim.kind == "hot_springs" then
+      local sheet = load_sheet("hot_springs_water", 16, 16, 1)
+      local q = sheet and P and sheet.quads[0]
+      if q and P then
+        local px = P.px
+        local py = P.py
+        actors[#actors + 1] = {
+          kind = "field_effect_hot_springs",
+          elevation = P.elevation or 3,
+          sortY = P.py + 0.5,
+          x = px,
+          y = py,
+          i = 91000 + idx,
+          draw = function(_, camX, camY)
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(sheet.image, q, px - camX, py - camY)
+          end,
+        }
+      end
+    elseif anim.kind == "cut_tree" then
+      local sheet = load_sheet("cut_tree", 32, 32, 4)
+      local f = math.min(3, math.floor((anim.timer or 0) / 6))
+      local q = sheet and sheet.quads[f]
+      if q then
+        local tx = anim.cx * CELL - 8
+        local ty = anim.cy * CELL - 16
+        actors[#actors + 1] = {
+          kind = "field_effect_cut_tree",
+          elevation = 3,
+          sortY = anim.cy * CELL,
+          x = tx,
+          y = ty,
+          i = 91000 + idx,
+          draw = function(_, camX, camY)
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(sheet.image, q, tx - camX, ty - camY)
+          end,
+        }
+      end
+    elseif anim.kind == "emote" or anim.kind == "exclamation" then
+      local sheet = anim.sheet and load_sheet(anim.sheet) or load_sheet("emoticons", 16, 16, 15)
+      if sheet and sheet.quads[anim.frame] then
+        local t = anim.targetObj
+        local ox = t and (t.px or (t.cellX and t.cellX * CELL) or (t.x and t.x * CELL)) or 0
+        local oy = t and (t.py or (t.cellY and t.cellY * CELL) or (t.y and t.y * CELL)) or 0
+        local sx = ox
+        local sy = oy - 16
+        if anim.rse then
+          -- pokeemerald/src/trainer_see.c:758
+          local Ow = modOwSprites()
+          local gid = t and (t.graphicsId or (t.def and t.def.graphicsId))
+          local spr = Ow and gid and Ow.get and Ow.get(gid)
+          local h = spr and spr.height or 32
+          sy = oy - math.floor(h / 2) - 8 + (anim.yOffset or 0)
+        end
+        actors[#actors + 1] = {
+          kind = "field_effect_emote",
+          elevation = t and t.elevation or 3,
+          -- pokeemerald/src/trainer_see.c:733
+          oamPriority = 1,
+          sortY = oy + 0.5,
+          x = sx,
+          y = sy,
+          i = 91000 + idx,
+          draw = function(_, camX, camY)
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(sheet.image, sheet.quads[anim.frame], sx - camX, sy - camY)
+          end,
+        }
+      end
+    end
+  end
+  local R = rse()
+  if R then R.collectActors(actors) end
+end
+
+--- Draw in front of all actors (floating/airborne particles, rock smash rubble, bird)
+function FieldEffects.drawFront(camX, camY, playerPy)
+  camX, camY = camX or 0, camY or 0
+  local R = rse()
+  if R then R.drawFront(camX, camY) end
+  lazyReq("src.core.game3.warp_arrow").draw(camX, camY)
+
+  -- Transient airborne particle animations
+  for _, anim in ipairs(FieldEffects._anims) do
+    if anim.kind == "cut_grass_scatter" then
+      local sheet = load_sheet("cut_grass", 8, 8, 1)
+      if sheet then
+        for _, p in ipairs(anim.particles or {}) do
+          local q = sheet.quads[0]
+          if q then
+            local sx = p.x - camX
+            local sy = p.y - camY
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(sheet.image, q, sx, sy)
+          end
+        end
+      end
+    elseif anim.kind == "rock_smash" then
+      local sheet = load_sheet("rock_smash", 16, 16, 4)
+      if sheet then
+        for _, p in ipairs(anim.particles or {}) do
+          local q = sheet.quads[p.frame % 4]
+          if q then
+            local sx = p.x - camX
+            local sy = p.y - camY
+            love.graphics.setColor(1, 1, 1, 1)
+            love.graphics.draw(sheet.image, q, sx, sy)
+          end
+        end
+      end
+    elseif anim.kind == "deoxys_rock_destroy" and anim.state == "shatter" then
+      -- pokefirered/src/field_effect.c:3975 CreateDeoxysRockFragments (4x 8x8 sprites)
+      local sheet = load_sheet("deoxys_rock_fragments", 8, 8, 4)
+      if sheet then
+        for _, f in ipairs(anim.frags or {}) do
+          if not f.off then
+            local q = sheet.quads[f.frame]
+            if q then
+              love.graphics.setColor(1, 1, 1, 1)
+              love.graphics.draw(sheet.image, q, f.x - camX, f.y - camY)
+            end
+          end
+        end
+      end
+    elseif (anim.kind == "fly_out" or anim.kind == "fly_in") and anim.bird then
+      draw_bird(anim.bird, camX, camY)
+    end
+  end
+end
+
+function FieldEffects.draw(camX, camY, playerPy)
+  FieldEffects.drawFront(camX, camY, playerPy)
+end
+
+--- Screen-space overlay (Flash screen glow, Sweet scent aroma, Pokemon Center heal)
+function FieldEffects.drawOverlay(camX, camY)
+  -- 1) Flash screen illumination
+  for _, anim in ipairs(FieldEffects._anims) do
+    if anim.kind == "flash" and anim.alpha > 0 then
+      local Renderer = modRenderer()
+      if Renderer and Renderer.canvas then
+        Renderer.screenVeil = { 1, 1, 1, anim.alpha }
+      else
+        love.graphics.setColor(1, 1, 1, anim.alpha)
+        local w, h = 240, 160
+        local curCanvas = love.graphics.getCanvas()
+        if curCanvas then
+          local okW, cw, ch = pcall(function() return curCanvas:getWidth(), curCanvas:getHeight() end)
+          if okW and cw and ch then w, h = cw, ch end
+        elseif love and love.graphics and love.graphics.getDimensions then
+          local gw, gh = love.graphics.getDimensions()
+          if gw and gh and gw > 0 and gh > 0 then w, h = gw, gh end
+        end
+        love.graphics.rectangle("fill", 0, 0, w, h)
+        love.graphics.setColor(1, 1, 1, 1)
+      end
+    elseif anim.kind == "sweet_scent" then
+      love.graphics.setColor(1, 0.7, 0.9, 0.6 * (1.0 - (anim.timer / anim.maxDur)))
+      love.graphics.circle("line", 120, 80, anim.radius)
+      love.graphics.circle("line", 120, 80, math.max(0, anim.radius - 20))
+      love.graphics.setColor(1, 1, 1, 1)
+    end
+  end
+
+  local R = rse()
+  if R then R.drawOverlay(camX, camY) end
+  local Heal = modHeal()
+  if Heal and Heal.draw then Heal.draw(camX, camY) end
+  local Itemfinder = modItemfinder()
+  if Itemfinder and Itemfinder.draw then Itemfinder.draw() end
+  local ShowMon = modShowMon()
+  if ShowMon and ShowMon.draw then ShowMon.draw() end
+end
+
+function FieldEffects.fldeffName(id)
+  id = tonumber(id)
+  if id == nil then return nil end
+  local ok, name = pcall(function()
+    local Profile = package.loaded["src.core.game3.profile"] or lazyReq("src.core.game3.profile")
+    return lazyReq("src.core.game3.constants").of(Profile.forSession().id):name("field_effects", id, "FLDEFF_")
+  end)
+  return ok and name or nil
+end
+
+local function emote_target()
+  local Objects = package.loaded["src.core.game3.objects"] or lazyReq("src.core.game3.objects")
+  return Objects.find(FieldEffects.fieldEffectArgument(0, 0))
+end
+
+local HANDLERS = {
+  -- pokefirered/src/field_effect.c:3722 FldEff_MoveDeoxysRock reads
+  -- gFieldEffectArguments[0..5] written by setfieldeffectargument.
+  FLDEFF_MOVE_DEOXYS_ROCK = function()
+    local localId = FieldEffects.fieldEffectArgument(0, 1)
+    local x = FieldEffects.fieldEffectArgument(3, 15)
+    local y = FieldEffects.fieldEffectArgument(4, 12)
+    local frames = FieldEffects.fieldEffectArgument(5, 5)
+    return FieldEffects.startMoveDeoxysRock(localId, x, y, frames) ~= nil
+  end,
+  -- pokefirered/src/field_effect.c:3860 FldEff_DestroyDeoxysRock
+  FLDEFF_DESTROY_DEOXYS_ROCK = function()
+    local localId = FieldEffects.fieldEffectArgument(0, 1)
+    return FieldEffects.startDestroyDeoxysRock(localId) ~= nil
+  end,
+  FLDEFF_POKECENTER_HEAL = function()
+    local Heal = modHeal()
+    return Heal and Heal.start() or false
+  end,
+  -- pokeemerald/src/trainer_see.c:696
+  FLDEFF_EXCLAMATION_MARK_ICON = function()
+    if not fieldBlock().emotes then return false end
+    return FieldEffects.startEmote(emote_target(), "exclamation") ~= nil
+  end,
+  -- pokeemerald/src/trainer_see.c:706
+  FLDEFF_QUESTION_MARK_ICON = function()
+    if not fieldBlock().emotes then return false end
+    return FieldEffects.startEmote(emote_target(), "question") ~= nil
+  end,
+  -- pokeemerald/src/trainer_see.c:716
+  FLDEFF_HEART_ICON = function()
+    if not fieldBlock().emotes then return false end
+    return FieldEffects.startEmote(emote_target(), "heart") ~= nil
+  end,
+}
+
+FieldEffects.HANDLERS = HANDLERS
+
+local function handlerFor(name)
+  local fn = HANDLERS[name or ""]
+  if fn or not rse() then return fn end
+  return lazyReq("src.core.game3.fldeff_misc").HANDLERS[name or ""]
+end
+FieldEffects.handlerFor = handlerFor
+
+function FieldEffects.doFieldEffect(id)
+  local fn = handlerFor(FieldEffects.fldeffName(id))
+  if fn then return fn() end
+  return false
+end
+
+function FieldEffects.waitFieldEffect(id, done)
+  local name = FieldEffects.fldeffName(id)
+  if name == "FLDEFF_POKECENTER_HEAL" then
+    local Heal = modHeal()
+    if Heal then
+      Heal.wait(done)
+      return
+    end
+  end
+  if name and FieldEffects.isFieldEffectActive(id) then
+    FieldEffects._waiters[#FieldEffects._waiters + 1] = { id = id, done = done }
+    return
+  end
+  if done then done() end
+end
+
+function FieldEffects.isFieldEffectActive(id)
+  local name = FieldEffects.fldeffName(id)
+  if not name then return false end
+  if name == "FLDEFF_POKECENTER_HEAL" then
+    local Heal = modHeal()
+    return Heal and Heal.isActive() or false
+  end
+  for _, anim in ipairs(FieldEffects._anims) do
+    if anim.effectName == name then return true end
+  end
+  local R = rse()
+  if R then
+    if R.isActive(name) then return true end
+    local Misc = package.loaded["src.core.game3.fldeff_misc"]
+    if Misc and Misc.isActive(name) then return true end
+  end
+  return false
+end
+
+return FieldEffects
