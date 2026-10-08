@@ -33,7 +33,7 @@ if [[ -f "$ARCHIVE_FILE" ]]; then
         sleep 5
         exit 1
     fi
-elif [ ! -f 'modules/classic.zmod' ]; then
+elif [ ! -f 'modules/classic/classic_fonts.dat' ]; then
     pm_message "Error: No game data present and archive file $ARCHIVE_FILE not found."
     sleep 5
     exit 1
@@ -42,7 +42,7 @@ fi
 for zip in quests/*.zip; do
     [ -f "$zip" ] || continue
     pm_message "Unpacking $(basename "$zip")..."
-    if unzip -qo "$zip" -d "${zip%.zip}"; then
+    if unzip -qo "$zip" -d quests; then
         $ESUDO rm -f "$zip"
     else
         pm_message "Error: Could not unpack $(basename "$zip")."
