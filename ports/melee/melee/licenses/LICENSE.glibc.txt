@@ -1,0 +1,12 @@
+The GNU C Library (glibc) is not distributed with this port: the binary loads the device's own
+libc, libm, libpthread, librt, libdl and libgcc_s at run time (LGPL-2.1-or-later, or the
+CFW's licence for those files).
+
+The only glibc-derived objects statically bound into melee.aarch64 are the program start-up
+files (crt1.o, crti.o, crtn.o) and libc_nonshared.a from glibc 2.30, which glibc licenses with
+this exception: "As a special exception, if you link this file with other files to produce an
+executable, this file does not by itself cause the resulting executable to be covered by the
+GNU Lesser General Public License."
+
+glibc source: https://ftp.gnu.org/gnu/glibc/glibc-2.30.tar.xz
+Licence: https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html

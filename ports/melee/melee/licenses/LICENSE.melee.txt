@@ -1,0 +1,18 @@
+Super Smash Bros. Melee (native) - provenance of the game code
+
+Super Smash Bros. Melee is copyright 2001 Nintendo / HAL Laboratory, Inc. This
+port contains no game assets: the disc image must be supplied by the user and is
+read from melee/assets at run time.
+
+The game logic in melee.aarch64 is compiled from the doldecomp/melee
+decompilation project (https://github.com/doldecomp/melee), a
+matching reimplementation of the game's code in C produced by its contributors.
+The doldecomp/melee repository publishes no license file; its code is
+distributed by that project for interoperability and preservation research.
+
+The native runtime, platform and packaging code that turns the decompilation
+into this binary lives in the port's source repository
+(https://github.com/zalo/melee, branch release), together with the build
+instructions in README.md. The GameCube system libraries are reimplemented by
+Aurora (LICENSE.Aurora.txt); everything else bundled in this binary is listed
+by the other files in this directory.
