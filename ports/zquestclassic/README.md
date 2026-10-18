@@ -4,7 +4,7 @@ Thanks to the [ZQuest Classic team](https://github.com/ZQuestClassic/ZQuestClass
 
 The bundled demo quest The Deep is ready to play. For more quests, including the original classic ones, download them from [PureZC](https://www.purezc.net/index.php?page=quests) and drop the downloaded `.zip` as-is into `zquestclassic/quests/`; it's unpacked there on the next launch. Many quests also offer a separate music or support pack: drop that `.zip` in too, or copy its music folder into `zquestclassic/quests/`. Without it, those quests fall back to placeholder MIDI music that can sound badly out of tune. Each new save file asks which quest to play through a file browser, and the slot remembers it from then on.
 
-The script JIT is turned off by default (`jit = 0` under `[ZSCRIPT]` in `zquestclassic/zc.cfg`), because compiling some quests' larger scripts needs several GB of RAM. On devices with plenty of memory you can set it to `1` for faster script-heavy quests.
+The script JIT is on by default and makes script-heavy quests run faster. If a quest misbehaves, you can turn it off with `jit = 0` under `[ZSCRIPT]` in `zquestclassic/zc.cfg`.
 
 ## Controls
 
@@ -47,7 +47,7 @@ ninja -C SDL_mixer-zc/build
 Then ZQuest Classic itself:
 
 ```bash
-git clone --branch "3.0.0-prerelease.226+2026-10-01" --depth 1 https://github.com/ZQuestClassic/ZQuestClassic.git
+git clone --branch "3.0.0-prerelease.229+2026-10-13" --depth 1 https://github.com/ZQuestClassic/ZQuestClassic.git
 cd ZQuestClassic
 git apply ../patches/zquestclassic-portmaster.patch
 CC=gcc-12 CXX=g++-12 cmake -S . -B build -G Ninja \
@@ -56,7 +56,7 @@ CC=gcc-12 CXX=g++-12 cmake -S . -B build -G Ninja \
   -DWANT_X11=OFF -DWANT_OPENAL=OFF -DWANT_NATIVE_DIALOG=OFF \
   -DWANT_NFD=OFF -DWANT_WEBSOCKETS=OFF -DCMAKE_DISABLE_FIND_PACKAGE_CURL=ON \
   -DWANT_SENTRY=OFF -DWANT_ZUPDATER=OFF -DWANT_GIT_HOOKS=OFF -DWANT_ZC_TESTS=OFF \
-  -DWANT_ERROR_CHECKING=FALSE \
+  -DWANT_ERROR_CHECKING=FALSE -DCMAKE_DISABLE_FIND_PACKAGE_TBB=ON \
   "-DCMAKE_C_FLAGS=-fsigned-char -include $PWD/../patches/glibc-compat.h" \
   "-DCMAKE_CXX_FLAGS=-fsigned-char -include $PWD/../patches/glibc-compat.h" \
   -DSDL2_MIXER_INCLUDE_DIR=$PWD/../SDL_mixer-zc/include \
@@ -64,4 +64,4 @@ CC=gcc-12 CXX=g++-12 cmake -S . -B build -G Ninja \
 ninja -C build zplayer
 ```
 
-Requires SDL2, GLES2/EGL, libuuid, bison and flex development packages, plus CMake 3.27 or newer. The patch lets Allegro run on its SDL2 backend with GLES2 (skipping the vendored SDL2 and the X11-only window raise), plays MIDI music through ZQuest Classic's SDL_mixer fork (Timidity) with upstream's web-player patch set, exactly like ZQuest Classic's own web build, makes Allegro's SDL audio buffer size configurable, and adds an optional software-drawn mouse cursor for displays without a hardware cursor plane. `patches/glibc-compat.h` pins `hypot`/`hypotf` and `std::condition_variable::wait` to older symbol versions so the build runs on glibc 2.34 and GCC 11-era libstdc++.
+Requires SDL2, GLES2/EGL, libuuid, bison and flex development packages, plus CMake 3.27 or newer. The patch lets Allegro run on its SDL2 backend with GLES2 (skipping the vendored SDL2, and backing up textures before a window resize so they don't go blank), plays MIDI music through ZQuest Classic's SDL_mixer fork (Timidity) with upstream's web-player patch set, exactly like ZQuest Classic's own web build, makes Allegro's SDL audio buffer size configurable, and adds an optional software-drawn mouse cursor for displays without a hardware cursor plane. `patches/glibc-compat.h` pins `hypot`/`hypotf` and `std::condition_variable::wait` to older symbol versions so the build runs on glibc 2.34 and GCC 11-era libstdc++.
