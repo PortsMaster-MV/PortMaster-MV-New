@@ -1,0 +1,523 @@
+-- Cartridge Studio: flat graphite surfaces, quiet borders and bright actions.
+-- The version rail is the only animated color treatment. Other depth comes
+-- from solid value steps; no canvases, blur passes or per-card meshes.
+-- Colors are 0-255 RGB. These primitives also work with the headless stub.
+
+local Theme = {}
+
+local PAL = {
+  -- Solid graphite surfaces; raised controls use a lighter value.
+  field       = { 20, 24, 29 },     -- the page BEHIND the cards
+  bg          = { 20, 24, 29 },       -- light black
+  surface     = { 29, 34, 41 },    -- card interiors
+  rowBg       = { 24, 29, 35 },    -- rows inside a card, one step below it
+  raised      = { 42, 49, 59 },    -- hover feedback
+  ink         = { 240, 244, 249 }, -- the selected/focused fill
+  -- outlines.  Two weights only: a hairline for structure, solid for focus.
+  line        = { 139, 157, 180 }, -- hairline, drawn at alpha 0.35
+  lineStrong  = { 255, 255, 255 }, -- focus / selection, drawn at alpha 1
+  -- text
+  heading     = { 245, 247, 250 },
+  text        = { 234, 239, 245 },
+  detail      = { 200, 200, 200 },
+  muted       = { 161, 172, 187 },
+  caption     = { 170, 170, 170 }, -- letterspaced section captions
+  faint       = { 110, 110, 110 }, -- slot indices, hints
+  inverse     = { 0, 0, 0 },       -- ink on a white (selected/focused) fill
+  -- Action colors and status accents.
+  green       = { 85, 232, 135 },   -- safe / confirmed / installed
+  yellow      = { 255, 214, 0 },   -- attention / update available
+  red         = { 255, 80, 90 },   -- destructive
+  blue        = { 76, 163, 240 },  -- links, in-panel navigation
+  buttonBlue  = { 36, 106, 181 }, -- darker fill for white action labels
+  steel       = { 120, 120, 120 }, -- disabled
+  -- the version rail is the one piece of brand colour that stays
+  railRed     = { 255, 60, 72 },
+  railBlue    = { 70, 150, 255 },
+  railGold    = { 255, 203, 5 },   -- Yellow cartridge (bright)
+  railAmber   = { 218, 145, 32 },  -- Gold cartridge (deeper metal)
+  railSilver  = { 190, 198, 210 }, -- Silver cartridge (cool light metal)
+  railCrystal = { 132, 196, 228 }, -- Crystal cartridge (translucent ice blue)
+  railLeafGreen = { 38, 162, 78 }, -- LeafGreen cartridge (vibrant deep forest green)
+  railFireRed = { 220, 48, 48 },   -- FireRed cartridge (deeper red than Red)
+  railEmerald = { 31, 158, 110 },
+  railRuby = { 185, 46, 50 },
+  railSapphire = { 53, 94, 196 },
+}
+-- Semantic aliases kept so ported call sites read the same as before.
+PAL.cardBorder = PAL.line
+PAL.greenInk   = PAL.inverse
+PAL.blueInk    = PAL.blue
+PAL.redSoft    = PAL.red
+PAL.greenDark  = PAL.green
+Theme.PAL = PAL
+
+-- Standard alphas, so "hairline" means one thing everywhere.
+Theme.A = {
+  hairline = 0.35,
+  hover    = 0.65,
+  focus    = 1.0,
+  fillHover= 1.0,
+  disabled = 0.30,
+}
+
+Theme.BUTTON = {
+  radius = 8,
+  ringPad = 2,
+  ringWidth = 2,
+  labelInset = 16,
+  labelPad = 10,
+  iconPad = 0.24,
+  letterGap = 4,
+  disabledA = 0.45,
+  embossHot = 0.35,
+  embossRest = 0.25,
+  embossDisabled = 0.4,
+  glowHz = 3,
+  glowBase = 0.25,
+  glowAmp = 0.75,
+  iconRestA = 0.85,
+}
+
+Theme.CARD = {
+  radius = 9,
+  shadow = false,
+  fill = PAL.surface,
+  fillA = 1,
+  stroke = PAL.line,
+  strokeA = Theme.A.hairline,
+}
+
+Theme.CARD_VARIANT = {
+  emphasis = { strokeA = Theme.A.focus },
+  muted = {
+    fill = PAL.bg, fillA = 0.8, stroke = PAL.muted, strokeA = 0.25, shadow = false,
+  },
+  mutedHot = {
+    fill = PAL.bg, fillA = 0.8, stroke = PAL.muted, strokeA = Theme.A.hover, shadow = false,
+  },
+  empty = { fillA = 0, strokeA = 0.22, shadow = false, radius = "ctl" },
+  warn = {
+    fill = PAL.rowBg, stroke = PAL.yellow, strokeA = Theme.A.hover,
+    shadow = false, radius = "ctl",
+  },
+  row = {
+    fill = PAL.rowBg, stroke = PAL.line, strokeA = Theme.A.hairline,
+    shadow = false, radius = "ctl",
+  },
+  rowHover = {
+    fill = PAL.raised, stroke = PAL.line, strokeA = Theme.A.hover,
+    shadow = false, radius = "ctl",
+  },
+  rowSelected = {
+    fill = PAL.ink, strokeA = 0, shadow = false, radius = "ctl",
+  },
+  hairline = {
+    fillA = 0, stroke = PAL.line, strokeA = Theme.A.hairline,
+    shadow = false, radius = "ctl",
+  },
+  badge = {
+    fill = PAL.bg, stroke = PAL.yellow, strokeA = Theme.A.hover,
+    shadow = false, radius = 0,
+  },
+}
+
+local G = love and love.graphics or nil
+
+local has = {}
+local function probe(name)
+  if has[name] == nil then has[name] = (G and type(G[name]) == "function") or false end
+  return has[name]
+end
+Theme.probe = probe
+
+function Theme.col(c, a)
+  if not G then return end
+  G.setColor(c[1] / 255, c[2] / 255, c[3] / 255, a or 1)
+end
+local col = Theme.col
+
+function Theme.clamp(n, lo, hi)
+  if n < lo then return lo end
+  if n > hi then return hi end
+  return n
+end
+local clamp = Theme.clamp
+
+-- --------------------------------------------------------------- primitives
+-- Square, flat, snapped to whole pixels.  Snapping matters at 1px line width:
+-- a rect on a half pixel renders as a 2px grey smear instead of a crisp white
+-- hairline, which is the whole look.
+local function snap(v) return math.floor(v + 0.5) end
+Theme.snap = snap
+
+function Theme.fill(x, y, w, h, c, a)
+  if not G or w <= 0 or h <= 0 then return end
+  col(c or PAL.bg, a or 1)
+  G.rectangle("fill", snap(x), snap(y), snap(w), snap(h))
+end
+
+-- Corner radius for controls.  Fixed rather than scaled: LOVE tessellates a
+-- rounded rect by radius, so a scale-driven radius would change the vertex
+-- count with the window size, and these are the two tiers the design needs.
+-- Controls get the smaller one, containers the larger, so a button never
+-- looks like a card and a card never looks like a button.
+function Theme.radius()
+  return Theme.BUTTON.radius
+end
+
+function Theme.cardRadius()
+  return Theme.CARD.radius
+end
+
+-- DROP SHADOW.  Three stacked rounded rects at low alpha, each one step wider
+-- and one step lower than the last -- a cheap falloff that needs no blur, no
+-- canvas and no blend-mode change, so it stays inside the pipeline budget the
+-- rest of this file is written to.  Drawn BEFORE the surface it belongs to,
+-- and never for a control (only containers cast one, or the whole screen
+-- reads as floating debris).
+function Theme.shadow(x, y, w, h, r)
+  if not G or w <= 0 or h <= 0 then return end
+  r = r or Theme.cardRadius()
+  for i = 1, 3 do
+    local spread = i * 2
+    col(PAL.bg, 0.13)
+    G.rectangle("fill", snap(x - spread), snap(y - spread + i * 3),
+      snap(w + 2 * spread), snap(h + 2 * spread), r + spread, r + spread)
+  end
+end
+
+function Theme.fillRounded(x, y, w, h, c, a, r, segments)
+  if not G or w <= 0 or h <= 0 then return end
+  r = r or Theme.radius()
+  col(c or PAL.bg, a or 1)
+  x, y, w, h = snap(x), snap(y), snap(w), snap(h)
+  if segments and r > 1 and w > 2 and h > 2 and (a or 1) == 1 and probe("setLineWidth") then
+    -- Filled polygons have no edge antialiasing on a non-MSAA canvas.
+    -- Inset the opaque body, then finish its boundary with a smooth 1px
+    -- line in the same colour. Translucent overlays keep a single fill so
+    -- their opacity does not accumulate at the edge.
+    local innerRadius = math.min(r, w / 2, h / 2) - 0.5
+    local oldWidth = probe("getLineWidth") and G.getLineWidth() or 1
+    local oldStyle = probe("getLineStyle") and G.getLineStyle() or nil
+    G.rectangle("fill", x + 0.5, y + 0.5, w - 1, h - 1, innerRadius, innerRadius, segments)
+    G.setLineWidth(1)
+    if oldStyle and probe("setLineStyle") then G.setLineStyle("smooth") end
+    G.rectangle("line", x + 0.5, y + 0.5, w - 1, h - 1, innerRadius, innerRadius, segments)
+    G.setLineWidth(oldWidth)
+    if oldStyle and probe("setLineStyle") then G.setLineStyle(oldStyle) end
+  else
+    G.rectangle("fill", x, y, w, h, r, r, segments)
+  end
+end
+
+function Theme.strokeRounded(x, y, w, h, c, a, lw, r, segments)
+  if not G or w <= 0 or h <= 0 then return end
+  lw = lw or 1
+  r = r or Theme.radius()
+  if probe("setLineWidth") then G.setLineWidth(lw) end
+  col(c or PAL.line, a or Theme.A.hairline)
+  -- Explicitly tessellated controls keep the outline's outer arc aligned
+  -- with the fill, including thicker selection rings.
+  local insetRadius = segments and math.max(0, r - lw / 2) or r
+  G.rectangle("line", snap(x) + lw / 2, snap(y) + lw / 2,
+    snap(w) - lw, snap(h) - lw, insetRadius, insetRadius, segments)
+  if probe("setLineWidth") then G.setLineWidth(1) end
+end
+
+-- EMBOSS.  A lit top edge and a shaded bottom edge inside the control, which
+-- is what makes a flat fill read as a raised key.  Two thin rects on top of
+-- the fill -- no gradient mesh, no stencil, no blend-mode change, so it costs
+-- the same pipeline state as everything around it.
+function Theme.emboss(x, y, w, h, strength)
+  if not G or w <= 2 or h <= 2 then return end
+  strength = strength or 1
+  local t = math.max(1, math.floor(h * 0.10))
+  -- The inset must clear the corner arc, but a narrow control (a stepper, a
+  -- row chip) is thinner than two radii -- clamp or the highlight rect goes
+  -- negative-width and vanishes.
+  local r = math.min(Theme.radius(), math.floor(w / 3))
+  -- highlight along the top
+  col(PAL.ink, 0.28 * strength)
+  G.rectangle("fill", snap(x) + r, snap(y) + 1, snap(w) - 2 * r, t)
+  -- shadow along the bottom
+  col(PAL.bg, 0.30 * strength)
+  G.rectangle("fill", snap(x) + r, snap(y + h) - t - 1, snap(w) - 2 * r, t)
+end
+
+-- Faux bold: the UI face ships in one weight, so a bold run is the same text
+-- drawn a second time one pixel across.  Callers do this only for button
+-- labels, where the extra draw is bounded by the number of controls on
+-- screen and the text is already a cached Text object.
+Theme.BOLD_OFFSET = 1
+
+-- A 1px outline drawn INSIDE the rect, so a bordered control never bleeds
+-- into its neighbour's pixel and adjacent outlines never double up to 2px.
+function Theme.stroke(x, y, w, h, c, a, lw)
+  if not G or w <= 0 or h <= 0 then return end
+  lw = lw or 1
+  if probe("setLineWidth") then G.setLineWidth(lw) end
+  col(c or PAL.line, a or Theme.A.hairline)
+  G.rectangle("line", snap(x) + lw / 2, snap(y) + lw / 2,
+    snap(w) - lw, snap(h) - lw)
+  if probe("setLineWidth") then G.setLineWidth(1) end
+end
+
+-- The design's only container: a rounded surface a few values above the
+-- field, its own drop shadow, and a white hairline.  `emphasis` raises the
+-- outline to full white (used for the focused/active card).
+function Theme.card(x, y, w, h, variant)
+  local spec = Theme.CARD
+  local v
+  if variant == true then
+    v = Theme.CARD_VARIANT.emphasis
+  elseif type(variant) == "string" then
+    v = Theme.CARD_VARIANT[variant]
+  elseif type(variant) == "table" then
+    v = variant
+  end
+  local radius = (v and v.radius) or spec.radius
+  if radius == "ctl" then radius = Theme.BUTTON.radius end
+  local fill = (v and v.fill) or spec.fill
+  local fillA = spec.fillA
+  if v and v.fillA ~= nil then fillA = v.fillA end
+  local stroke = (v and v.stroke) or spec.stroke
+  local strokeA = spec.strokeA
+  if v and v.strokeA ~= nil then strokeA = v.strokeA end
+  local shadow = spec.shadow
+  if v and v.shadow ~= nil then shadow = v.shadow end
+  local strokeW = (v and v.strokeW) or 1
+  if fillA > 0 and fill then
+    if shadow then Theme.shadow(x, y, w, h, radius) end
+    Theme.fillRounded(x, y, w, h, fill, fillA, radius)
+  end
+  if strokeA > 0 and stroke then
+    Theme.strokeRounded(x, y, w, h, stroke, strokeA, strokeW, radius)
+  end
+end
+
+function Theme.row(x, y, w, h, state)
+  if state == "selected" then
+    Theme.card(x, y, w, h, "rowSelected")
+    return PAL.inverse
+  end
+  Theme.card(x, y, w, h, state == "hover" and "rowHover" or "row")
+  return PAL.text
+end
+
+-- A percentage meter (HP, box fill, dex completion, import progress).
+-- pct is 0-100.  Outline + solid fill, rounded to the track's own half-height
+-- so a thin bar reads as a capsule instead of a clipped rectangle.
+function Theme.meter(x, y, w, h, pct, c)
+  if not G then return end
+  local r = math.min(Theme.radius(), h / 2)
+  Theme.strokeRounded(x, y, w, h, PAL.line, Theme.A.hairline, 1, r)
+  local fill = (w - 2) * clamp((pct or 0) / 100, 0, 1)
+  if fill > 0 then
+    Theme.fillRounded(x + 1, y + 1, fill, h - 2, c or PAL.ink, 1,
+      math.min(r, fill / 2))
+  end
+end
+
+local railColors = {
+  PAL.railRed, PAL.railBlue, PAL.railGold, PAL.railAmber, PAL.railSilver,
+  PAL.railCrystal, PAL.railFireRed, PAL.railLeafGreen, PAL.railEmerald,
+  PAL.railRuby, PAL.railSapphire,
+}
+
+-- One seamless sweep every 24 seconds. Pixel strips keep this in the same
+-- batched rectangle pipeline as the rest of the theme, without a shader.
+function Theme.versionRail(x, y, w, h, colors)
+  if not G then return end
+  local railColors = (colors and #colors > 0) and colors or railColors
+  x, y, w, h = snap(x), snap(y), snap(w), snap(h)
+  if w <= 0 or h <= 0 then return end
+  local now = love.timer and love.timer.getTime and love.timer.getTime() or 0
+  local phase = (now % 24) / 24
+  for px = 0, w - 1 do
+    local pos = ((px / w - phase) % 1) * #railColors
+    local index = math.floor(pos)
+    local a = railColors[index + 1]
+    local b = railColors[(index + 1) % #railColors + 1]
+    local t = pos - index
+    G.setColor((a[1] + (b[1] - a[1]) * t) / 255,
+      (a[2] + (b[2] - a[2]) * t) / 255,
+      (a[3] + (b[3] - a[3]) * t) / 255, 1)
+    G.rectangle("fill", x + px, y, 1, h)
+  end
+end
+
+-- ------------------------------------------------------------------- text
+-- Letterspaced caption text.  The UI font has no tracking control, so this
+-- advances glyph by glyph; captions are short by construction.
+-- Measuring never throws.  Third-party strings (mod names from an index,
+-- translated captions) reach these primitives unvalidated.
+local function safeWidthOrZero(font, s)
+  local ok, w = pcall(font.getWidth, font, s)
+  return ok and w or 0
+end
+
+-- Steps CODEPOINTS, not bytes: a translated caption (the JP strings) is
+-- multi-byte, and printing half a sequence is a "UTF-8 decoding error" that
+-- takes the frame down.
+local function eachChar(text, fn)
+  local i = 1
+  local n = #text
+  while i <= n do
+    local j = i + 1
+    while j <= n do
+      local b = text:byte(j)
+      if b < 0x80 or b >= 0xC0 then break end
+      j = j + 1
+    end
+    fn(text:sub(i, j - 1))
+    i = j
+  end
+end
+
+function Theme.spaced(font, text, x, y, spacing)
+  if not G or not font then return 0 end
+  local cx = x
+  eachChar(tostring(text), function(ch)
+    pcall(G.print, ch, cx, y)
+    cx = cx + safeWidthOrZero(font, ch) + spacing
+  end)
+  return math.max(0, cx - x - spacing)
+end
+
+function Theme.spacedWidth(font, text, spacing)
+  if not font then return 0 end
+  local w = 0
+  eachChar(tostring(text), function(ch)
+    w = w + safeWidthOrZero(font, ch) + spacing
+  end)
+  return math.max(0, w - spacing)
+end
+
+-- UTF-8 stepping.  Truncation MUST move whole codepoints: LOVE's Font:getWidth
+-- raises "UTF-8 decoding error" on a string cut through a multi-byte sequence,
+-- and a launcher listing mods with non-ASCII names (the JP index) hits that on
+-- the first frame.  A continuation byte is 10xxxxxx (0x80..0xBF).
+local function prevCharStart(s, i)
+  -- largest j < i where s:byte(j) starts a codepoint
+  local j = i - 1
+  while j > 1 do
+    local b = s:byte(j)
+    if b < 0x80 or b >= 0xC0 then break end
+    j = j - 1
+  end
+  return j
+end
+
+local function nextCharStart(s, i)
+  local j = i + 1
+  while j <= #s do
+    local b = s:byte(j)
+    if b < 0x80 or b >= 0xC0 then break end
+    j = j + 1
+  end
+  return j
+end
+
+-- Width that never throws on malformed input: a mod name can carry anything.
+local function safeWidth(font, s)
+  local ok, w = pcall(font.getWidth, font, s)
+  return ok and w or math.huge
+end
+Theme.safeWidth = safeWidth
+
+-- Clip text to a pixel width with a trailing ellipsis.  Results are memoised
+-- per (font, text, width) in Kit's measurement cache -- this function is the
+-- single hottest string operation in a list-heavy frame, and it is O(n) in
+-- glyphs with a getWidth call per step.
+function Theme.ellipsize(font, text, maxW)
+  text = tostring(text or "")
+  if not font then return text end
+  -- A non-positive budget means "nothing fits", not "everything fits".
+  if maxW <= 0 then return "" end
+  if safeWidth(font, text) <= maxW then return text end
+  local ell = "..."
+  local ew = safeWidth(font, ell)
+  local last = #text + 1              -- one past the end of the kept prefix
+  while last > 1 do
+    last = prevCharStart(text, last)
+    local head = text:sub(1, last - 1)
+    if safeWidth(font, head) + ew <= maxW then return head .. ell end
+  end
+  return ell
+end
+
+-- Save paths truncate from the LEFT so the filename survives.
+function Theme.ellipsizeLeft(font, text, maxW)
+  text = tostring(text or "")
+  if not font then return text end
+  if maxW <= 0 then return "" end
+  if safeWidth(font, text) <= maxW then return text end
+  local ell = "..."
+  local ew = safeWidth(font, ell)
+  local i = 1
+  while i <= #text do
+    i = nextCharStart(text, i)
+    local tail = text:sub(i)
+    if safeWidth(font, tail) + ew <= maxW then return ell .. tail end
+  end
+  return ell
+end
+
+-- The background: one flat clear to the faintly red-cast field colour.  One
+-- call, no mesh, no fan, no allocation -- the old radial field built a
+-- 66-vertex mesh EVERY frame.  The tint is deliberately small (a handful of
+-- points of red at near-black): enough that the cards read as sitting ON
+-- something, not enough to compete with the tri-colour rail for brand duty.
+function Theme.field()
+  if not G then return end
+  G.clear(PAL.field[1] / 255, PAL.field[2] / 255, PAL.field[3] / 255, 1)
+end
+
+-- ------------------------------------------------------------------- fonts
+-- Font set, rebuilt only when the scale changes.  Sizes are integers by
+-- construction: fractional sizes measure and render at different widths,
+-- which is what made ported launcher text overrun its measured box.
+function Theme.fonts(s)
+  if not probe("newFont") then return {} end
+  -- Every face goes through UiFont.attach, which hangs a kana/CJK fallback
+  -- off it.  Without that a translated build renders the entire launcher as
+  -- tofu boxes -- LOVE's default face is Latin-only.
+  local UiFont
+  local okUi, mod = pcall(require, "src.render.UiFont")
+  if okUi then UiFont = mod end
+  local cache = {}
+  local function f(px)
+    local n = math.max(8, math.floor(px + 0.5))
+    if not cache[n] then
+      local face = G.newFont(n)
+      if UiFont and UiFont.attach then
+        local ok, attached = pcall(UiFont.attach, face, n)
+        if ok and attached then face = attached end
+      end
+      cache[n] = face
+    end
+    return cache[n]
+  end
+  return {
+    scale     = s,
+    wordmark  = f(14 * s),
+    brand     = f(11 * s),
+    chip      = f(11 * s),
+    tile      = f(13 * s),
+    tab       = f(13 * s),
+    button    = f(14 * s),
+    small     = f(12 * s),
+    tiny      = f(11 * s),
+    micro     = f(10 * s),
+    caption   = f(12 * s),
+    mono      = f(12 * s),
+    monoRow   = f(13 * s),
+    monoBig   = f(18 * s),
+    title     = f(24 * s),
+    headline  = f(26 * s),
+    stat      = f(19 * s),
+  }
+end
+
+return Theme

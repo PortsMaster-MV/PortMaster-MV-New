@@ -1,0 +1,574 @@
+-- FireRed 1:1 battle AI — BattleAI_ChooseMoveOrAction scoring loop.
+
+local AiVm = require("src.core.game3.battle.ai_vm")
+local BattleProfile = require("src.core.game3.battle.profile")
+
+local choose_move_core
+
+local Ai = {}
+
+Ai._pack = nil
+Ai._packTried = false
+
+function Ai.loadPack(opts)
+  opts = opts or {}
+  if Ai._pack and not opts.force then return Ai._pack end
+  Ai._packTried = true
+  local rel = "data/generated/gba/battle_ai/pack.lua"
+  local src
+  local ok, cache = pcall(function() return require("src.core.game3.dataset").cache() end)
+  if ok and cache and cache.read then
+    src = cache:read(rel)
+  end
+  if not src then
+    if opts.required then
+      error("battle AI: " .. rel .. " is missing from the cache")
+    end
+    return nil
+  end
+  local t = assert(load(src, "@" .. rel, "t", {}))()
+  if type(t) ~= "table" or type(t.table) ~= "table" or type(t.scripts) ~= "table" then
+    error("battle AI: " .. rel .. " is not a script pack")
+  end
+  Ai._pack = t
+  return t
+end
+
+local function rng_fn(st, opts)
+  if opts and opts.rng then return opts.rng end
+  if st and type(st.rng) == "function" then return st.rng end
+  local okR, Rng = pcall(require, "src.core.game3.rng")
+  local Guard = require("src.core.game3.battle.link_guard")
+  if okR and Rng and Rng.compat then return Guard.source("ai.rng", Rng.compat) end
+  return Guard.source("ai.rng", math.random)
+end
+
+local function roll(rng, lo, hi)
+  local ok, v = pcall(rng, lo, hi)
+  if ok and type(v) == "number" then return v end
+  ok, v = pcall(rng)
+  if ok and type(v) == "number" then
+    return lo + (math.floor(v) % (hi - lo + 1))
+  end
+  return require("src.core.game3.battle.link_guard").fallback("ai.roll", lo, hi)
+end
+
+local function to_u32(n)
+  n = tonumber(n) or 0
+  n = math.floor(n) % 4294967296
+  if n < 0 then n = n + 4294967296 end
+  return n
+end
+
+local function bit_and_flags(a, b)
+  a, b = to_u32(a), to_u32(b)
+  local r, bitv = 0, 1
+  for _ = 1, 32 do
+    if (a % 2) > 0 and (b % 2) > 0 then r = r + bitv end
+    a, b, bitv = math.floor(a / 2), math.floor(b / 2), bitv * 2
+  end
+  return r
+end
+
+local function bit_or_flags(a, b)
+  a, b = to_u32(a), to_u32(b)
+  return to_u32(a + b - bit_and_flags(a, b))
+end
+
+local function run_scripts(pack, aiFlags, st, user, target, userSide, targetSide, scores, simulatedRNG, rng)
+  local aiAction = 0
+  local logicId = 0
+  local flags = to_u32(aiFlags)
+  while flags ~= 0 and logicId < 32 do
+    if (flags % 2) == 1 then
+      local scriptName = pack.table[logicId + 1] -- Lua 1-based; pret index 0
+      if scriptName and pack.scripts[scriptName] then
+        for movesetIndex = 1, 4 do
+          local vm = AiVm.new({
+            pack = pack,
+            st = st,
+            user = user,
+            target = target,
+            userSide = userSide,
+            targetSide = targetSide,
+            scores = scores,
+            simulatedRNG = simulatedRNG,
+            movesetIndex = movesetIndex,
+            rng = rng,
+          })
+          AiVm.run(vm, scriptName)
+          aiAction = bit_or_flags(aiAction, vm.aiAction or 0)
+          if bit_and_flags(aiAction, 0x8) ~= 0 then break end
+        end
+      end
+    end
+    flags = math.floor(flags / 2)
+    logicId = logicId + 1
+  end
+  return aiAction
+end
+
+local MOVE_TARGET_BOTH = 0x08
+local MOVE_TARGET_SELF = 0x12
+
+local function move_num(mv)
+  local n = tonumber(mv)
+  if n then return n end
+  if mv == nil or mv == "" then return 0 end
+  local Moves = require("src.core.game3.battle.moves")
+  return Moves.numForName and Moves.numForName(mv) or 0
+end
+
+local function move_target_byte(mv)
+  if move_num(mv) == 0 then return 0 end
+  local Moves = require("src.core.game3.battle.moves")
+  local ok, m = pcall(Moves.get, mv)
+  return tonumber(ok and m and m.target) or 0
+end
+
+local function random_u16(rng)
+  return roll(rng, 0, 65535)
+end
+
+local ad_cache = setmetatable({}, { __mode = "k" })
+local function adapter_for(st, opts)
+  if opts and opts.adapter then return opts.adapter end
+  local Battle = package.loaded["src.core.game3.battle"]
+  local ad = Battle and Battle._adapter
+  if ad and ad._st == st then return ad end
+  ad = ad_cache[st]
+  if not ad then
+    ad = require("src.core.game3.battle.adapter").new(st, function() end)
+    ad_cache[st] = ad
+  end
+  return ad
+end
+
+-- pokeemerald/src/battle_ai_script_commands.c:396
+local function pret_pick_rse(scores, rng, mon)
+  local best = scores[1] or 0
+  local considered = { 1 }
+  for i = 2, 4 do
+    if move_num(mon and mon.moves and mon.moves[i]) ~= 0 then
+      local s = scores[i] or 0
+      if best == s then considered[#considered + 1] = i end
+      if best < s then
+        best = s
+        considered = { i }
+      end
+    end
+  end
+  return considered[roll(rng, 1, #considered)], best
+end
+
+-- src/battle_ai_script_commands.c:370
+local function pret_pick(scores, rng)
+  local best = scores[1] or 0
+  local considered = { 1 }
+  for i = 2, 4 do
+    local s = scores[i] or 0
+    if best < s then
+      best = s
+      considered = { i }
+    end
+    if best == s then considered[#considered + 1] = i end
+  end
+  return considered[roll(rng, 1, #considered)], best
+end
+
+local function double_first_usable(mon, id, bad)
+  for i = 1, 4 do
+    local mv = mon and mon.moves and mon.moves[i]
+    if move_num(mv) ~= 0 and not (bad and bad[i]) then
+      return { kind = "move", move = mv, slot = i, user = "enemy", battler = id }
+    end
+  end
+  return { kind = "move", move = "STRUGGLE", slot = nil, user = "enemy", battler = id }
+end
+
+local AI_SCRIPT_CHECK_BAD_MOVE = 0x00000001
+local AI_SCRIPT_CHECK_VIABILITY = 0x00000002
+local AI_SCRIPT_TRY_TO_FAINT = 0x00000004
+local AI_SCRIPT_SETUP_FIRST_TURN = 0x00000008
+local AI_SCRIPT_RISKY = 0x00000010
+local AI_SCRIPT_PREFER_STRONGEST_MOVE = 0x00000020
+local AI_SCRIPT_PREFER_BATON_PASS = 0x00000040
+local AI_SCRIPT_DOUBLE_BATTLE = 0x00000080
+local AI_SCRIPT_HP_AWARE = 0x00000100
+local AI_SCRIPT_ROAMING = 0x20000000
+local AI_SCRIPT_SAFARI = 0x40000000
+local AI_SCRIPT_FIRST_BATTLE = 0x80000000
+
+local function uses_ai(st)
+  if not st then return false end
+  if not st.wild then return true end
+  if BattleProfile.of(st).aiVariant == "rse" then
+    -- pokeemerald/src/battle_controller_opponent.c:1563
+    return (st.kinds and st.kinds.firstBattle or st.safari or st.roamer) and true or false
+  end
+  if st.roamer or st.safari or st.firstBattle or st.wildScripted or st.legendary then return true end
+  local flags = to_u32(st.aiFlags)
+  return flags ~= 0
+end
+
+-- src/battle_controller_opponent.c:1350
+function choose_move_core(st, id, opts)
+  local State = require("src.core.game3.battle.state")
+  local Engine = require("src.core.game3.battle.engine")
+  local b = State.battler(st, id)
+  local mon = b and b.mon
+  if not mon then return nil end
+  local rng = rng_fn(st, opts)
+  local ad = adapter_for(st, opts)
+  local double = st.double and true or false
+  local function shape(act)
+    if not double then
+      act.target = nil
+      if opts.battler == nil then act.battler = nil end
+    end
+    return act
+  end
+
+  local bad = {}
+  local okL, lim = pcall(Engine.moveLimitations, b, ad)
+  if okL and type(lim) == "table" then bad = lim end
+  -- src/battle_main.c:3147
+  if bad[1] and bad[2] and bad[3] and bad[4] then
+    return shape({ kind = "move", move = "STRUGGLE", slot = nil, user = "enemy", battler = id })
+  end
+
+  if not uses_ai(st) then
+    -- src/battle_controller_opponent.c:1389
+    local slot, mv
+    for _ = 1, 1000 do
+      slot = roll(rng, 0, 3) + 1
+      mv = mon.moves and mon.moves[slot]
+      if move_num(mv) ~= 0 then break end
+    end
+    if move_num(mv) == 0 then return shape(double_first_usable(mon, id, bad)) end
+    local tid
+    if bit_and_flags(move_target_byte(mv), MOVE_TARGET_SELF) ~= 0 then
+      tid = id
+    elseif double then
+      tid = bit_and_flags(random_u16(rng), 2)
+    else
+      tid = State.OPPOSITE(id)
+    end
+    return shape({ kind = "move", move = mv, slot = slot, user = "enemy", battler = id, target = tid,
+      scores = { 0, 0, 0, 0 } })
+  end
+
+  local bp = BattleProfile.of(st)
+  local rse = bp.aiVariant == "rse"
+  local aiFlags = Ai.flagsFor(st, opts)
+  local pack = opts.pack
+  if aiFlags ~= 0 and not pack then pack = Ai.loadPack() end
+
+  -- src/battle_ai_script_commands.c:301
+  local scores = { 100, 100, 100, 100 }
+  local simulatedRNG = {}
+  for i = 1, 4 do
+    if bad[i] then scores[i] = 0 end
+    simulatedRNG[i] = 100 - roll(rng, 0, 15)
+  end
+  -- src/battle_ai_script_commands.c:317
+  local tid
+  if double and rse and bp.rules.aiDoubles == "per_target" then
+    -- pokeemerald/src/battle_ai_script_commands.c:350
+    tid = bit_and_flags(random_u16(rng), 2) + ((b.side == "player") and 1 or 0)
+    if State.isAbsent(st, tid) then tid = (tid >= 2) and (tid - 2) or (tid + 2) end
+  elseif double then
+    tid = bit_and_flags(random_u16(rng), 2)
+    if State.isAbsent(st, tid) then tid = 2 - tid end
+  else
+    tid = State.OPPOSITE(id)
+  end
+  local target = State.battler(st, tid)
+  local userSide = (b.side == "player") and st.playerSide or st.enemySide
+  local targetSide = (b.side == "player") and st.enemySide or st.playerSide
+
+  if double and rse and bp.rules.aiDoubles == "per_target" and aiFlags ~= 0 and pack and pack.table then
+    local slot2, tid2, action = Ai.chooseDoubles(st, b, id, aiFlags, pack, rng, bad)
+    if action == "run" or action == "watch" then
+      return shape({ kind = action, user = "enemy", battler = id, scores = scores })
+    end
+    local mv2 = slot2 and mon.moves and mon.moves[slot2]
+    if move_num(mv2) == 0 then
+      local fb = double_first_usable(mon, id, bad)
+      fb.scores = scores
+      return shape(fb)
+    end
+    -- pokeemerald/src/battle_controller_opponent.c:1581
+    local tt2 = move_target_byte(mv2)
+    if bit_and_flags(tt2, MOVE_TARGET_SELF) ~= 0 then tid2 = id end
+    if bit_and_flags(tt2, MOVE_TARGET_BOTH) ~= 0 then
+      tid2 = 0
+      if State.isAbsent(st, tid2) then tid2 = 2 end
+    end
+    return shape({ kind = "move", move = mv2, slot = slot2, user = "enemy", battler = id, target = tid2,
+      scores = scores })
+  end
+  if rse then Ai.recordLastUsedMove(st, tid) end
+
+  local aiAction = 0
+  if aiFlags ~= 0 and pack and pack.table and pack.scripts and target then
+    aiAction = run_scripts(pack, aiFlags, st, b, target, userSide, targetSide, scores, simulatedRNG, rng)
+  elseif st.roamer then
+    -- data/battle_ai_scripts.s: BattleAI_Roaming checks if_can_escape
+    local okCmd, Cmds = pcall(require, "src.core.game3.battle.ai_cmds")
+    local canEscape = true
+    if okCmd and Cmds and Cmds.canEscape then
+      canEscape = Cmds.canEscape(b, target)
+    end
+    if canEscape then
+      aiAction = 0x2
+    end
+  elseif st.safari then
+    -- data/battle_ai_scripts.s:3242
+    local okR, Rules = pcall(require, "src.core.game3.battle.rules")
+    local rate = okR and Rules.safari.fleeRate(st.safariState) or 0
+    aiAction = (random_u16(rng) % 100 < rate) and 0x2 or 0x4
+  end
+  -- src/battle_ai_script_commands.c:383
+  if bit_and_flags(aiAction, 0x2) ~= 0 then
+    return shape({ kind = "run", user = "enemy", battler = id, scores = scores })
+  end
+  if bit_and_flags(aiAction, 0x4) ~= 0 then
+    return shape({ kind = "watch", user = "enemy", battler = id, scores = scores })
+  end
+
+  local slot
+  if rse and bp.rules.aiMoveSelection ~= "rs" then
+    slot = pret_pick_rse(scores, rng, mon)
+  else
+    slot = pret_pick(scores, rng)
+  end
+  local mv = mon.moves and mon.moves[slot]
+  if move_num(mv) == 0 then
+    local fb = double_first_usable(mon, id, bad)
+    fb.scores = scores
+    return shape(fb)
+  end
+  -- src/battle_controller_opponent.c:1370
+  local tt = move_target_byte(mv)
+  if bit_and_flags(tt, MOVE_TARGET_SELF) ~= 0 then tid = id end
+  if bit_and_flags(tt, MOVE_TARGET_BOTH) ~= 0 then
+    tid = double and 0 or State.OPPOSITE(id)
+    if double and State.isAbsent(st, tid) then tid = 2 end
+  end
+  return shape({
+    kind = "move",
+    move = mv,
+    slot = slot,
+    user = "enemy",
+    battler = id,
+    target = tid,
+    scores = scores,
+  })
+end
+
+-- pokeemerald/src/battle_ai_script_commands.c:618
+function Ai.recordLastUsedMove(st, tid)
+  local State = require("src.core.game3.battle.state")
+  local t = State.battler(st, tid)
+  if not t then return end
+  local h = require("src.core.game3.battle.ai_items").history(st)
+  -- pokeruby/src/battle_ai_script_commands.c:440
+  if BattleProfile.rule(st, "aiMoveHistory") == "rs_position" then
+    h.rsUsedMoves = h.rsUsedMoves or {}
+    local index = math.floor(tid / 2)
+    local history = h.rsUsedMoves[index] or { 0, 0, 0, 0, 0, 0, 0, 0 }
+    h.rsUsedMoves[index] = history
+    for i = 1, 8 do
+      if history[i] == 0 then
+        history[i] = move_num(t.lastMoveId or t.lastMove)
+        return
+      end
+    end
+    return
+  end
+  h.usedMoves = h.usedMoves or {}
+  local row = h.usedMoves[tid]
+  -- pokeemerald/src/battle_main.c:3260
+  if not row or row.mon ~= State.partyMon(t) then
+    row = { mon = State.partyMon(t), 0, 0, 0, 0 }
+    h.usedMoves[tid] = row
+  end
+  local last = move_num(t.lastMoveId or t.lastMove)
+  for i = 1, 4 do
+    if row[i] == last then break end
+    if row[i] == 0 then
+      row[i] = last
+      break
+    end
+  end
+end
+
+function Ai.usedMoves(st, tid)
+  local State = require("src.core.game3.battle.state")
+  local t = State.battler(st, tid)
+  local h = st and st._aiHistory
+  if BattleProfile.rule(st, "aiMoveHistory") == "rs_position" then
+    return h and h.rsUsedMoves and h.rsUsedMoves[math.floor(tid / 2)] or { 0, 0, 0, 0, 0, 0, 0, 0 }
+  end
+  local row = h and h.usedMoves and h.usedMoves[tid]
+  if not row or not t or row.mon ~= State.partyMon(t) then return { 0, 0, 0, 0 } end
+  return row
+end
+
+-- pokeemerald/src/battle_ai_script_commands.c:448
+function Ai.chooseDoubles(st, b, id, aiFlags, pack, rng, bad)
+  local State = require("src.core.game3.battle.state")
+  local mon = b.mon
+  local bestPoints, actionOrMove = {}, {}
+  for i = 0, 3 do
+    local t = State.battler(st, i)
+    if i == id or State.isAbsent(st, i) or not t or (tonumber(t.mon and t.mon.hp) or 0) <= 0 then
+      actionOrMove[i] = nil
+      bestPoints[i] = -1
+    else
+      -- pokeemerald/src/battle_ai_script_commands.c:315
+      local scores, simulatedRNG = { 100, 100, 100, 100 }, {}
+      for k = 1, 4 do
+        if bad and bad[k] then scores[k] = 0 end
+        simulatedRNG[k] = 100 - roll(rng, 0, 15)
+      end
+      random_u16(rng)
+      if (i % 2) ~= (id % 2) then Ai.recordLastUsedMove(st, i) end
+      local userSide = (b.side == "player") and st.playerSide or st.enemySide
+      local targetSide = (t.side == "player") and st.playerSide or st.enemySide
+      local aiAction = run_scripts(pack, aiFlags, st, b, t, userSide, targetSide, scores, simulatedRNG, rng)
+      if bit_and_flags(aiAction, 0x2) ~= 0 then
+        actionOrMove[i] = "run"
+        bestPoints[i] = -1
+      elseif bit_and_flags(aiAction, 0x4) ~= 0 then
+        actionOrMove[i] = "watch"
+        bestPoints[i] = -1
+      else
+        local slot, best = pret_pick_rse(scores, rng, mon)
+        actionOrMove[i] = slot
+        bestPoints[i] = best
+        if i == State.PARTNER(id) and best < 100 then bestPoints[i] = -1 end
+      end
+    end
+  end
+  local most = bestPoints[0]
+  local targets = { 0 }
+  for i = 1, 3 do
+    if most == bestPoints[i] then targets[#targets + 1] = i end
+    if most < bestPoints[i] then
+      most = bestPoints[i]
+      targets = { i }
+    end
+  end
+  local tid = targets[roll(rng, 1, #targets)]
+  local pick = actionOrMove[tid]
+  if pick == "run" or pick == "watch" then return nil, tid, pick end
+  return pick, tid
+end
+
+-- src/battle_ai_script_commands.c:331
+function Ai.flagsFor(st, opts)
+  opts = opts or {}
+  local bp = BattleProfile.of(st)
+  local rse = bp.aiVariant == "rse"
+  local double = st.double and true or false
+  local aiFlags
+  if rse then
+    -- pokeemerald/src/battle_ai_script_commands.c:361
+    if st.safari then
+      aiFlags = BattleProfile.aiBit(bp, "SAFARI")
+    elseif st.roamer then
+      aiFlags = BattleProfile.aiBit(bp, "ROAMING")
+    elseif st.kinds and st.kinds.firstBattle then
+      aiFlags = BattleProfile.aiBit(bp, "FIRST_BATTLE")
+    else
+      aiFlags = tonumber(opts.aiFlags or st.aiFlags) or 0
+    end
+    -- pokeemerald/src/battle_ai_script_commands.c:378
+    if double and bp.rules.aiDoublesFlag ~= false then
+      aiFlags = bit_or_flags(aiFlags, BattleProfile.aiBit(bp, "DOUBLE_BATTLE"))
+    end
+  elseif st.safari then
+    aiFlags = AI_SCRIPT_SAFARI
+  elseif st.roamer then
+    aiFlags = AI_SCRIPT_ROAMING
+  elseif st.legendary then
+    aiFlags = bit_or_flags(AI_SCRIPT_CHECK_BAD_MOVE, bit_or_flags(AI_SCRIPT_TRY_TO_FAINT, AI_SCRIPT_CHECK_VIABILITY))
+  elseif st.wildScripted then
+    aiFlags = AI_SCRIPT_CHECK_BAD_MOVE
+  else
+    aiFlags = tonumber(opts.aiFlags or st.aiFlags) or 0
+  end
+  return aiFlags
+end
+
+--- Choose enemy move via pret AI scripts.
+-- @return { kind="move", move=..., slot=i, user="enemy", scores=... }
+function Ai.chooseMove(st, opts)
+  opts = opts or {}
+  if not st then return nil end
+  local id = opts.battler or 1
+  return choose_move_core(st, id, opts)
+end
+
+-- src/battle_main.c:3125
+function Ai.chooseAction(st, id, opts)
+  opts = opts or {}
+  id = id or 1
+  if not st then return nil end
+  local State = require("src.core.game3.battle.state")
+  local b = State.battler(st, id)
+  if not b or not b.mon then return nil end
+  if b.expLockedMove or b.expMustRecharge then
+    local act = { kind = "move", move = b.expLockedMove, slot = b.expLockedSlot, user = "enemy", battler = id }
+    if not act.move then act = double_first_usable(b.mon, id) end
+    return act
+  end
+  local rng = rng_fn(st, opts)
+  local ad = adapter_for(st, opts)
+  -- src/battle_ai_switch_items.c:358
+  if not st.wild and not st.pokedude and not st.oldManTutorial then
+    local AiSwitch = require("src.core.game3.battle.ai_switch")
+    local pick = AiSwitch.trySwitch(st, ad, id, rng)
+    if pick then
+      st.monToSwitchInto = st.monToSwitchInto or {}
+      st.monToSwitchInto[id] = pick
+      return { kind = "switch", slot = pick, user = "enemy", battler = id }
+    end
+    local AiItems = require("src.core.game3.battle.ai_items")
+    -- pokeemerald/src/battle_ai_switch_items.c:815
+    local use = (id % 2 == 1) and AiItems.shouldUseItem(st, id) or nil
+    if use then
+      return {
+        kind = "item",
+        item = use.item,
+        aiItemType = use.aiItemType,
+        aiItemFlags = use.aiItemFlags,
+        user = "enemy",
+        battler = id,
+        target = id,
+      }
+    end
+  end
+  return choose_move_core(st, id, {
+    battler = id,
+    rng = rng,
+    adapter = ad,
+    pack = opts.pack,
+    aiFlags = opts.aiFlags,
+  })
+end
+
+-- src/battle_controllers.c:59
+function Ai.battleStart(st, opts)
+  opts = opts or {}
+  if not st then return end
+  st._aiHistory = nil
+  require("src.core.game3.battle.ai_items").history(st)
+  local rng = rng_fn(st, opts)
+  for _ = 1, 4 do roll(rng, 0, 15) end
+  if st.double then random_u16(rng) end
+end
+
+return Ai

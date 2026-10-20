@@ -1,0 +1,737 @@
+-- Write game3 script/event cache blobs from ROM MapEvents + BFS.
+
+local Disasm = require("src.core.game3.scripting.disasm")
+local TextIR = require("src.core.game3.scripting.text_ir")
+local Movement = require("src.core.game3.scripting.movement")
+local Versions = require("src.import.gba.versions")
+local Opcodes = require("src.core.game3.scripting.opcodes")
+local ExtractMapEvents = require("src.import.gba.extract_map_events")
+local GameVersion = require("src.core.GameVersion")
+
+local ExtractScripts = {}
+
+ExtractScripts.CACHE_SUB = "scripts"
+ExtractScripts.RS_BRAILLE_FORMAT = 1
+
+ExtractScripts.REQUIRED = {
+  "scripts/scripts.lua",
+  "scripts/text.lua",
+  "scripts/text_tables.lua",
+  "scripts/movements.lua",
+  "scripts/events.lua",
+  "scripts/meta.json",
+  "scripts/marts.lua",
+  "scripts/labels.lua",
+  "trainers/dialogs.lua",
+}
+
+local SCRIPT_CHUNK = 8192
+local TEXT_MAX = 1024
+local MOVE_MAX = 256
+local BFS_MAX = 16000
+
+local function json_escape(s)
+  return (tostring(s):gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"))
+end
+
+local function serialize_lua(val, indent)
+  indent = indent or 0
+  local sp = string.rep("  ", indent)
+  local sp1 = string.rep("  ", indent + 1)
+  local t = type(val)
+  if t == "nil" then return "nil" end
+  if t == "boolean" then return val and "true" or "false" end
+  if t == "number" then return tostring(val) end
+  if t == "string" then
+    return string.format("%q", val)
+  end
+  if t ~= "table" then return "nil" end
+  local n = #val
+  local isArr = n > 0
+  if isArr then
+    for k in pairs(val) do
+      if type(k) ~= "number" or k < 1 or k > n or k % 1 ~= 0 then isArr = false; break end
+    end
+  end
+  local parts = { "{\n" }
+  if isArr then
+    for i = 1, n do
+      parts[#parts + 1] = sp1 .. serialize_lua(val[i], indent + 1) .. ",\n"
+    end
+  else
+    local keys = {}
+    for k in pairs(val) do keys[#keys + 1] = k end
+    table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+    for _, k in ipairs(keys) do
+      local key
+      if type(k) == "string" and k:match("^[%a_][%w_]*$") then
+        key = k
+      else
+        key = "[" .. serialize_lua(k) .. "]"
+      end
+      parts[#parts + 1] = sp1 .. key .. " = " .. serialize_lua(val[k], indent + 1) .. ",\n"
+    end
+  end
+  parts[#parts + 1] = sp .. "}"
+  return table.concat(parts)
+end
+
+local function is_rom_ptr(ptr)
+  ptr = tonumber(ptr) or 0
+  return ptr >= 0x08000000 and ptr < 0x0A000000
+end
+
+local function read_text_ir(rom, gbaPtr, opts)
+  local off = rom:ptrOffset(gbaPtr)
+  if not off then return nil end
+  local bytes = {}
+  for i = 0, TEXT_MAX - 1 do
+    local b = rom:get(off + i)
+    bytes[#bytes + 1] = b
+    if b == 0xFF then break end
+  end
+  return TextIR.decode(bytes, opts)
+end
+
+local function text_opts(battle)
+  local dialect = TextIR.dialectOf(Opcodes.active().game)
+  if dialect == TextIR.DEFAULT_DIALECT then
+    return battle and { battle = true } or nil
+  end
+  return { battle = battle or nil, dialect = dialect }
+end
+
+local function table_key(name, i, inner)
+  if inner then
+    return string.format("%s[%d][%d]", name, math.floor(i / inner), i % inner)
+  end
+  return string.format("%s[%d]", name, i)
+end
+
+-- src/battle_message.c:517, include/constants/battle_string_ids.h:393
+local function extract_text_tables(rom, text)
+  local counts = {}
+  local battle = text_opts(true)
+  local plain = text_opts(false)
+  for _, t in ipairs(Versions.TEXT_TABLES) do
+    local slots = t.count * (t.inner or 1)
+    for i = 0, slots - 1 do
+      local key
+      if t.ids then
+        key = assert(Versions.BATTLE_STRING_IDS[i + t.ids], t.name .. " has no string id for " .. i)
+      else
+        key = table_key(t.name, i, t.inner)
+      end
+      local ir
+      if t.inline then
+        ir = assert(read_text_ir(rom, 0x08000000 + t.addr + i * t.stride, plain),
+          "ROM text " .. key .. " is not readable")
+      else
+        local ptr = rom:u32(t.addr + i * t.stride)
+        if ptr ~= 0 then
+          assert(rom:ptrOffset(ptr), string.format("%s entry is not a ROM pointer (0x%08X)", key, ptr))
+          ir = read_text_ir(rom, ptr, t.battle and battle or plain)
+        end
+      end
+      text[key] = ir
+    end
+    counts[t.name] = t.inner and { t.count, t.inner } or t.count
+  end
+  return counts
+end
+
+-- pokefirered/include/characters.h:285
+local BRAILLE_CHARMAP = {
+  [0x00] = " ",
+  [0x01] = "A", [0x03] = "C", [0x04] = ",", [0x05] = "B", [0x06] = "I",
+  [0x07] = "F", [0x09] = "E", [0x0B] = "D", [0x0C] = ":", [0x0D] = "H",
+  [0x0E] = "J", [0x0F] = "G", [0x10] = "'", [0x11] = "K", [0x12] = "/",
+  [0x13] = "M", [0x14] = ";", [0x15] = "L", [0x16] = "S", [0x17] = "P",
+  [0x19] = "O", [0x1B] = "N", [0x1C] = "!", [0x1D] = "R", [0x1E] = "T",
+  [0x1F] = "Q", [0x2C] = ".", [0x2E] = "W", [0x30] = "-", [0x31] = "U",
+  [0x33] = "X", [0x34] = "?", [0x35] = "V", [0x38] = '"', [0x39] = "Z",
+  [0x3A] = "#", [0x3B] = "Y", [0x3C] = "(",
+}
+
+local function decode_braille(bytes)
+  local out, buf = {}, {}
+  local function flush()
+    if #buf > 0 then
+      out[#out + 1] = { t = "text", s = table.concat(buf) }
+      buf = {}
+    end
+  end
+  local n = #bytes
+  for i = 1, n do
+    local c = bytes[i]
+    if c == 0xFF then
+      flush()
+      out[#out + 1] = { t = "eos" }
+      break
+    elseif c == 0xFE then
+      flush()
+      out[#out + 1] = { t = "nl" }
+    else
+      buf[#buf + 1] = BRAILLE_CHARMAP[c] or "?"
+    end
+  end
+  flush()
+  return out
+end
+
+local function read_braille_ir(rom, gbaPtr, skip, keepFormat)
+  local off = rom:ptrOffset(gbaPtr)
+  if not off then return nil end
+  local format
+  if keepFormat and (skip or 0) > 0 then
+    format = {}
+    for i = 0, skip - 1 do format[#format + 1] = rom:get(off + i) or 0 end
+  end
+  off = off + (skip or 0)
+  local bytes = {}
+  for i = 0, TEXT_MAX - 1 do
+    local b = rom:get(off + i)
+    if not b then break end
+    bytes[#bytes + 1] = b
+    if b == 0xFF then break end
+  end
+  local ir = decode_braille(bytes)
+  if format then
+    -- pokeruby/src/scrcmd.c:1421
+    table.insert(ir, 1, { t = "ext", cmd = "brailleformat", args = format })
+  end
+  return ir
+end
+
+ExtractScripts.BRAILLE_CHARMAP = BRAILLE_CHARMAP
+ExtractScripts.decodeBraille = decode_braille
+
+local function read_movement(rom, gbaPtr, mv, unknownMoves)
+  local off = rom:ptrOffset(gbaPtr)
+  if not off then return nil end
+  local bytes = rom:readBytes(off, MOVE_MAX)
+  local out = Disasm.decodeMovement(bytes, 1)
+  if mv then
+    local unknown
+    out, unknown = mv.translate(out)
+    for _, b in ipairs(unknown or {}) do
+      unknownMoves[b] = (unknownMoves[b] or 0) + 1
+    end
+  end
+  return out
+end
+
+local function movement_table(game)
+  if GameVersion.layout(game) == "rse" then
+    return require("src.import.gba.movement_emerald").forGame(game)
+  end
+  return nil
+end
+
+local function data_label_stop(game)
+  if Versions.GAME ~= game or not Versions.SYMS then return nil end
+  local S = Versions.SYMS
+  return function(off)
+    if Versions.SCRIPT_DATA_OFFSETS and Versions.SCRIPT_DATA_OFFSETS[off] then return true end
+    local names = S.namesAt(off)
+    if #names == 0 then return false end
+    local data = false
+    for _, n in ipairs(names) do
+      if n:find("Script", 1, true) then return false end
+      if n:find("Movement", 1, true) or n:find("Text", 1, true) then data = true end
+    end
+    return data
+  end
+end
+
+ExtractScripts.movementTable = movement_table
+
+--- BFS disasm from seed GBA pointers → scripts / text / movements tables.
+-- Annotates IR so goto/call/message/applymovement use stable keys.
+function ExtractScripts.bfsFromSeeds(rom, seedPtrs)
+  local scripts, text, movements, marts = {}, {}, {}, {}
+  local opInventory, specialInventory = {}, {}
+  local unknownMoves, stoppedAtData = {}, 0
+  local queue = {}
+  local queued = {}
+  local function enqueue(ptr)
+    ptr = tonumber(ptr) or 0
+    if not is_rom_ptr(ptr) then return end
+    if queued[ptr] then return end
+    queued[ptr] = true
+    queue[#queue + 1] = ptr
+  end
+  for _, p in ipairs(seedPtrs or {}) do enqueue(p) end
+  local opset = Opcodes.active()
+  local mv = movement_table(opset.game)
+  local stopAt = data_label_stop(opset.game)
+  local textOpts = text_opts(false)
+  local function read_text(ptr)
+    return read_text_ir(rom, ptr, textOpts)
+  end
+  local function read_move(ptr)
+    return read_movement(rom, ptr, mv, unknownMoves)
+  end
+
+  local processed = 0
+  while #queue > 0 and processed < BFS_MAX do
+    local ptr = table.remove(queue, 1)
+    processed = processed + 1
+    local key = Opcodes.key(ptr)
+    if scripts[key] then goto continue end
+    local off = rom:ptrOffset(ptr)
+    if not off then goto continue end
+    local bytes = rom:readBytes(off, SCRIPT_CHUNK)
+    local rows = {}
+    local i = 1
+    local guard = 0
+    while i <= #bytes and guard < 4096 do
+      guard = guard + 1
+      if i > 1 and stopAt and stopAt(off + i - 1) then
+        stoppedAtData = stoppedAtData + 1
+        break
+      end
+      local row
+      row, i = Disasm.decodeOne(bytes, i, opset)
+      opInventory[row.op] = (opInventory[row.op] or 0) + 1
+      if row.op == "special" or row.op == "specialvar" then
+        local id = row.id or row[1]
+        if id then specialInventory[id] = (specialInventory[id] or 0) + 1 end
+      end
+      if row.op == "unknown" or (row.op == "trainerbattle" and row.opaque) then
+        rows[#rows + 1] = row
+        break
+      end
+      -- Remap pointer operands to keys + enqueue.
+      if row.target and is_rom_ptr(row.target) then
+        enqueue(row.target)
+        row.target = Opcodes.key(row.target)
+      end
+      if row.op == "trainerbattle" then
+        -- Remap embedded text / continue-script pointers; keep scanning so
+        -- the post-battle ret addr (e.g. goto EndRivalBattle) is enqueued.
+        for _, field in ipairs({ "introText", "defeatText", "victoryText",
+            "notEnoughText", "eventScript" }) do
+          local tp = row[field]
+          if is_rom_ptr(tp) then
+            local tk = Opcodes.key(tp)
+            if field == "eventScript" then
+              enqueue(tp)
+            elseif not text[tk] then
+              text[tk] = read_text(tp)
+            end
+            row[field] = tk
+          end
+        end
+      elseif row.op == "goto" or row.op == "call" or row.op == "goto_if"
+          or row.op == "call_if" or row.op == "vgoto" or row.op == "vcall"
+          or row.op == "vgoto_if" or row.op == "vcall_if" then
+        -- target already remapped
+      elseif row.op == "braillemessage" or row.op == "getbraillestringwidth" then
+        -- pokefirered/asm/macros/event.inc:1845
+        local tp = row.ptr or row[1]
+        if is_rom_ptr(tp) then
+          local tk = Opcodes.key(tp)
+          -- pokeemerald/src/scrcmd.c:1494
+          local ir = read_braille_ir(rom, tp,
+            row.op == "braillemessage" and opset.brailleFormatSize or 0,
+            opset.game == "ruby")
+          if ir then text[tk] = ir end
+          row.ptr = tk
+          row[1] = tk
+        end
+      elseif row.op == "message" or row.op == "vmessage"
+          or row.op == "messageautoscroll" or row.op == "messageinstant"
+          or row.op == "pokenavcall" then
+        local tp = row.ptr or row[1]
+        if is_rom_ptr(tp) then
+          local tk = Opcodes.key(tp)
+          if not text[tk] then text[tk] = read_text(tp) end
+          row.ptr = tk
+          row[1] = tk
+        end
+      elseif row.op == "loadword" then
+        local val = row.value or row[2]
+        if is_rom_ptr(val) then
+          local tk = Opcodes.key(val)
+          if not text[tk] then text[tk] = read_text(val) end
+          row.value = tk
+          row[2] = tk
+        end
+      elseif row.op == "bufferstring" then
+        local sp = row.src or row[2]
+        if is_rom_ptr(sp) then
+          local tk = Opcodes.key(sp)
+          if not text[tk] then text[tk] = read_text(sp) end
+          row.src = tk
+          row[2] = tk
+        end
+      elseif row.op == "applymovement" or row.op == "applymovementat" then
+        local mp = row.movement or row[2]
+        if is_rom_ptr(mp) then
+          local mk = Opcodes.key(mp)
+          if not movements[mk] then movements[mk] = read_move(mp) end
+          row.movement = mk
+          row[2] = mk
+        end
+      elseif row.op == "pokemart" or row.op == "pokemartdecoration"
+          or row.op == "pokemartdecoration2" then
+        local MartsExtract = require("src.import.gba.marts_extract")
+        MartsExtract.remapRow(rom, row, marts)
+      end
+      rows[#rows + 1] = row
+      if row.op == "end" or row.op == "return" then
+        break
+      end
+    end
+    scripts[key] = rows
+    ::continue::
+  end
+  assert(#queue == 0, "script BFS stopped at BFS_MAX with " .. #queue .. " scripts queued")
+
+  local unknownOps = (opInventory.unknown or 0)
+  for _, rows in pairs(scripts) do
+    local last = rows[#rows]
+    if last and last.op == "trainerbattle" and last.opaque then unknownOps = unknownOps + 1 end
+  end
+
+  return {
+    scripts = scripts,
+    text = text,
+    movements = movements,
+    marts = marts,
+    opInventory = opInventory,
+    specialInventory = specialInventory,
+    scriptCount = processed,
+    unknownOps = unknownOps,
+    unknownMoves = unknownMoves,
+    stoppedAtData = stoppedAtData,
+  }
+end
+
+function ExtractScripts.extractFromRom(rom, version)
+  local events, seeds = ExtractMapEvents.extractIsland1(rom, version)
+  local aliases = {}
+  -- data/event_scripts.s:77
+  for i = 0, Versions.STD_SCRIPTS_COUNT - 1 do
+    local ptr = rom:u32(Versions.STD_SCRIPTS + i * 4)
+    assert(rom:ptrOffset(ptr), "gStdScripts entry " .. i .. " is not a ROM pointer")
+    seeds[#seeds + 1] = ptr
+    aliases["std:" .. i] = Opcodes.key(ptr)
+  end
+  -- data/scripts/pc.inc:1
+  for name, off in pairs(Versions.NAMED_SCRIPTS or {}) do
+    local ptr = 0x08000000 + off
+    seeds[#seeds + 1] = ptr
+    aliases[name] = Opcodes.key(ptr)
+  end
+  local extraSeeds = Versions.SEED_SCRIPTS
+  if type(extraSeeds) == "function" then extraSeeds = extraSeeds() end
+  for _, off in ipairs(extraSeeds or {}) do
+    seeds[#seeds + 1] = 0x08000000 + off
+  end
+  local bfs = ExtractScripts.bfsFromSeeds(rom, seeds)
+  local scripts = {}
+  for k, v in pairs(bfs.scripts) do scripts[k] = v end
+  for name, key in pairs(aliases) do
+    scripts[name] = assert(scripts[key], "ROM script " .. name .. " was not extracted")
+  end
+  local text = {}
+  for k, v in pairs(bfs.text) do text[k] = v end
+  for name, off in pairs(Versions.NAMED_TEXTS) do
+    text[name] = assert(read_text_ir(rom, 0x08000000 + off, text_opts(false)),
+      "ROM text " .. name .. " is not readable")
+  end
+  for name, off in pairs(Versions.NAMED_BATTLE_TEXTS) do
+    text[name] = assert(read_text_ir(rom, 0x08000000 + off, text_opts(true)),
+      "ROM text " .. name .. " is not readable")
+  end
+  local textTables = extract_text_tables(rom, text)
+  -- src/script_menu.c:574
+  for i = 0, Versions.STD_STRING_COUNT - 1 do
+    local ptr = rom:u32(Versions.STD_STRING_PTRS + i * 4)
+    text["stdstring:" .. i] = assert(read_text_ir(rom, ptr, text_opts(false)), "gStdStringPtrs entry " .. i .. " is not a ROM pointer")
+  end
+  local movements = {}
+  for k, v in pairs(bfs.movements) do movements[k] = v end
+  local labels
+  if type(Versions.SCRIPT_LABELS) == "function" then
+    labels = {}
+    for _, row in ipairs(Versions.SCRIPT_LABELS()) do
+      local key = Opcodes.key(0x08000000 + row.off)
+      if scripts[key] then labels[row.name] = key end
+    end
+  end
+  return {
+    labels = labels,
+    events = events,
+    scripts = scripts,
+    text = text,
+    textTables = textTables,
+    movements = movements,
+    marts = bfs.marts or {},
+    opInventory = bfs.opInventory,
+    specialInventory = bfs.specialInventory,
+    seedCount = #seeds,
+    scriptCount = bfs.scriptCount,
+    unknownOps = bfs.unknownOps,
+    unknownMoves = bfs.unknownMoves,
+    stoppedAtData = bfs.stoppedAtData,
+    fromRom = true,
+  }
+end
+
+local CHUNK_ENTRIES = 256
+
+local function serialize_chunked(val)
+  local keys = {}
+  for k in pairs(val) do keys[#keys + 1] = k end
+  table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+  local parts = { "local T = {}\n" }
+  for i = 1, #keys, CHUNK_ENTRIES do
+    parts[#parts + 1] = "do (function(T)\n"
+    for j = i, math.min(i + CHUNK_ENTRIES - 1, #keys) do
+      local k = keys[j]
+      parts[#parts + 1] = "T[" .. serialize_lua(k) .. "] = " .. serialize_lua(val[k], 1) .. "\n"
+    end
+    parts[#parts + 1] = "end)(T) end\n"
+  end
+  parts[#parts + 1] = "return T\n"
+  return table.concat(parts)
+end
+
+ExtractScripts.serializeChunked = serialize_chunked
+
+local function write_tables(cache, root, scripts, text, movements, events, metaExtra)
+  root = root or "data/generated/gba"
+  local base = root .. "/" .. ExtractScripts.CACHE_SUB
+  local function put(name, val)
+    if metaExtra and metaExtra.chunked then
+      cache:write(base .. "/" .. name, serialize_chunked(val))
+    else
+      cache:write(base .. "/" .. name, "return " .. serialize_lua(val) .. "\n")
+    end
+  end
+  put("scripts.lua", scripts)
+  put("text.lua", text)
+  if metaExtra and metaExtra.textTables then
+    cache:write(base .. "/text_tables.lua", "return " .. serialize_lua(metaExtra.textTables) .. "\n")
+  end
+  put("movements.lua", movements)
+  put("events.lua", events)
+  if metaExtra and metaExtra.labels then
+    put("labels.lua", metaExtra.labels)
+  end
+  local meta = {
+    cache_version = Versions.CACHE_VERSION,
+    kind = "game3",
+    source = metaExtra and metaExtra.source or "rom",
+    maps = {},
+  }
+  for mapId in pairs(events or {}) do
+    meta.maps[#meta.maps + 1] = mapId
+  end
+  table.sort(meta.maps)
+  if metaExtra and metaExtra.opInventory then
+    -- Compact inventory for smoke / ISA growth tracking.
+    local inv = {}
+    for op, n in pairs(metaExtra.opInventory) do
+      inv[#inv + 1] = string.format("%s:%d", op, n)
+    end
+    table.sort(inv)
+    meta.ops = inv
+  end
+  local parts = { "{" }
+  parts[#parts + 1] = string.format('"cache_version":%d', meta.cache_version)
+  parts[#parts + 1] = string.format(',"kind":%q', meta.kind)
+  parts[#parts + 1] = string.format(',"source":%q', meta.source)
+  parts[#parts + 1] = ',"maps":['
+  for i, m in ipairs(meta.maps) do
+    if i > 1 then parts[#parts + 1] = "," end
+    parts[#parts + 1] = string.format("%q", m)
+  end
+  parts[#parts + 1] = "]"
+  if meta.ops then
+    parts[#parts + 1] = ',"ops":['
+    for i, o in ipairs(meta.ops) do
+      if i > 1 then parts[#parts + 1] = "," end
+      parts[#parts + 1] = string.format("%q", o)
+    end
+    parts[#parts + 1] = "]"
+  end
+  if metaExtra and metaExtra.movement then
+    parts[#parts + 1] = string.format(',"movement":%q', metaExtra.movement)
+  end
+  if Opcodes.active().game == "ruby" then
+    parts[#parts + 1] = string.format(',"brailleFormat":%d', ExtractScripts.RS_BRAILLE_FORMAT)
+  end
+  parts[#parts + 1] = "}\n"
+  cache:write(base .. "/meta.json", table.concat(parts))
+  return true
+end
+
+--- Primary write path: ROM MapEvents + BFS.
+function ExtractScripts.writeBundleFromRom(rom, cache, root, version, extracted, opts)
+  local bundle = extracted or ExtractScripts.extractFromRom(rom, version)
+  write_tables(cache, root, bundle.scripts, bundle.text, bundle.movements, bundle.events, {
+    source = "rom",
+    opInventory = bundle.opInventory,
+    textTables = assert(bundle.textTables, "ROM text tables were not extracted"),
+    labels = bundle.labels,
+    movement = opts and opts.movement,
+    chunked = opts and opts.chunked,
+  })
+  do
+    local MartsExtract = require("src.import.gba.marts_extract")
+    local marts = bundle.marts
+    if not marts or not next(marts) then
+      marts = select(1, MartsExtract.build(rom, bundle.scripts))
+    end
+    local n = 0
+    local seen = {}
+    for k, e in pairs(marts or {}) do
+      if type(k) == "number" and e and not seen[e.ptr] then
+        seen[e.ptr] = true
+        n = n + 1
+      end
+    end
+    MartsExtract.write(cache, root, marts, { count = n })
+    bundle.martListCount = n
+  end
+  if not (opts and opts.skipFlags) then
+    local FlagsExtract = require("src.import.gba.flags_extract")
+    FlagsExtract.write(cache, root)
+  end
+  return bundle
+end
+
+function ExtractScripts.headersFromCensus(rom, version)
+  local MapTree = require("src.import.gba.map_tree")
+  local MapCatalog = require("src.import.gba.map_catalog")
+  local census, err = MapTree.walk(rom, version)
+  if not census then error("scripts: map census failed: " .. tostring(err), 0) end
+  local headers, n = {}, 0
+  for _, entry in ipairs(census.maps) do
+    local id = MapCatalog.mapIdFor(entry.group, entry.num) or MapCatalog.pretToEngine(entry.pretName)
+    if id and entry.header and entry.header.headerOff then
+      headers[id] = entry.header.headerOff
+      n = n + 1
+    end
+  end
+  return headers, n, census.map_count
+end
+
+function ExtractScripts.run(rom, cache, opts)
+  opts = opts or {}
+  local root = opts.cacheRoot or "data/generated/gba"
+  local headers, n, total = ExtractScripts.headersFromCensus(rom, opts.version)
+  if n ~= total then
+    error(string.format("scripts: %d of %d map headers resolved", n, total), 0)
+  end
+  local bundle = ExtractScripts.extractFromRom(rom, { map_headers = headers })
+  local badMoves = 0
+  for _, c in pairs(bundle.unknownMoves or {}) do badMoves = badMoves + c end
+  if opts.strict ~= false and (bundle.unknownOps > 0 or badMoves > 0) then
+    error(string.format("scripts: %d unknown opcodes, %d untranslated movement bytes",
+      bundle.unknownOps, badMoves), 0)
+  end
+  ExtractScripts.writeBundleFromRom(rom, cache, root, nil, bundle, {
+    skipFlags = true,
+    movement = "canonical",
+    chunked = true,
+  })
+  require("src.import.gba.trainer_extract").writeDialogs(cache, root, bundle.scripts, bundle.text)
+  return {
+    maps = n,
+    seedCount = bundle.seedCount,
+    scriptCount = bundle.scriptCount,
+    unknownOps = bundle.unknownOps,
+    unknownMoves = badMoves,
+    stoppedAtData = bundle.stoppedAtData,
+  }
+end
+
+function ExtractScripts.ready(cache, cacheRoot)
+  local root = cacheRoot or "data/generated/gba"
+  for _, rel in ipairs(ExtractScripts.REQUIRED) do
+    if not cache:exists(root .. "/" .. rel) then return false end
+  end
+  local meta = cache:read(root .. "/" .. ExtractScripts.CACHE_SUB .. "/meta.json")
+  return type(meta) == "string"
+    and tonumber(meta:match('"cache_version":(%d+)')) == Versions.CACHE_VERSION
+    and meta:find('"movement":"canonical"', 1, true) ~= nil
+    and (Opcodes.active().game ~= "ruby"
+      or tonumber(meta:match('"brailleFormat":(%d+)')) == ExtractScripts.RS_BRAILLE_FORMAT)
+end
+
+--- Cache contract: ready extract has events+scripts+text.
+function ExtractScripts.bundleReady(bundle)
+  if not bundle then return false, "nil bundle" end
+  if not bundle.scripts or not next(bundle.scripts) then
+    return false, "missing scripts"
+  end
+  if not bundle.events or not next(bundle.events) then
+    return false, "missing events"
+  end
+  if not bundle.text then
+    return false, "missing text"
+  end
+  return true
+end
+
+function ExtractScripts.loadBundle(cache, root, opts)
+  opts = opts or {}
+  root = root or "data/generated/gba"
+  local base = root .. "/" .. ExtractScripts.CACHE_SUB
+  local function load_lua(rel)
+    local src = cache:read(rel)
+    if not src then return nil end
+    local chunk, err = load(src, "@" .. rel, "t", {})
+    if not chunk then return nil, err end
+    return chunk()
+  end
+  local scripts = load_lua(base .. "/scripts.lua")
+  local text = load_lua(base .. "/text.lua")
+  local movements = load_lua(base .. "/movements.lua")
+  local events = load_lua(base .. "/events.lua")
+  local textTables = load_lua(base .. "/text_tables.lua")
+  if scripts and events then
+    local objects=load_lua(root .. "/objects/pack.lua")
+    require("src.core.game3.scripting.interaction_scripts").install(objects)
+    require("src.core.game3.encounters").installEncounterTypes(objects and objects.encounterTypes)
+    if objects then
+      text=text or {};movements=movements or {}
+      for k,v in pairs(objects.scripts or {}) do scripts[k]=v end
+      for k,v in pairs(objects.text or {}) do text[k]=v end
+      for k,v in pairs(objects.movements or {}) do movements[k]=v end
+    end
+    local bundle = {
+      scripts = scripts,
+      text = text or {},
+      textTables = textTables,
+      movements = movements or {},
+      events = events,
+      fromCache = true,
+    }
+    do
+      local Marts = require("src.core.game3.marts")
+      local n = Marts.load(cache, root)
+      bundle.martListCount = n
+    end
+    local ok, why = ExtractScripts.bundleReady(bundle)
+    if not ok and not opts.allowIncomplete then
+      if opts.strict then
+        return nil, why
+      end
+    end
+    return bundle
+  end
+  return nil, "extract cache missing"
+end
+
+ExtractScripts.Disasm = Disasm
+ExtractScripts.TextIR = TextIR
+ExtractScripts.Movement = Movement
+ExtractScripts.serialize_lua = serialize_lua
+
+return ExtractScripts

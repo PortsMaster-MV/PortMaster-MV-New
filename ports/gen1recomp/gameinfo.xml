@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList><game>
+<path>./Gen1Recomp.sh</path><name>Gen1Recomp</name>
+<desc>Native Pokemon recreation. Supply your own supported US ROM.
+Based on the Pokemon Gen 1 Recompilation Project by BOIS CLUB GAMES, LLC
+(https://github.com/bryanthaboi/gen1recomp)</desc>
+<releasedate>20261006T000000</releasedate><developer>BOIS CLUB GAMES, LLC</developer>
+<publisher>BOIS CLUB GAMES, LLC</publisher><genre>RPG</genre>
+<image>./gen1recomp/screenshot.png</image>
+</game></gameList>

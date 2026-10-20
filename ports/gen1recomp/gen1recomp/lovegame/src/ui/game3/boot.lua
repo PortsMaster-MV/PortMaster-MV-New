@@ -1,0 +1,634 @@
+-- Fire Red boot UI: copyright → title → main menu → Oak speech → field.
+-- Oak onboarding lives in oak_speech.lua (pret oak_speech.c task chain).
+
+local Display = require("src.core.game3.display")
+local Window = require("src.ui.game3.window")
+local Audio = require("src.core.game3.audio")
+local SE = require("src.core.game3.se_ids")
+local NewGameScene = require("src.ui.game3.new_game_scene")
+local NamingChrome = require("src.ui.game3.naming_chrome")
+local Pal = require("src.core.game3.pal_fade")
+local IntroMovie = require("src.ui.game3.intro_movie")
+local TitleScreen = require("src.ui.game3.title_screen")
+local FrlgFont = require("src.ui.game3.frlg_font")
+local Chrome = require("src.ui.game3.chrome")
+local RomText = require("src.core.game3.rom_text")
+local MysteryGift = require("src.core.game3.mystery_gift")
+local MysteryGiftUi = require("src.ui.game3.mystery_gift")
+local ListMenu = require("src.ui.game3.list_menu")
+local BootModules = require("src.ui.game3.boot_modules")
+
+local Boot = {}
+
+Boot.PHASE = {
+  INTRO = "intro",
+  COPYRIGHT = "copyright",
+  TITLE = "title",
+  TITLE_RESTART = "title_restart",
+  TITLE_CRY = "title_cry",
+  MENU = "menu",
+  MYSTERY_GIFT = "mystery_gift",
+  CONTROLS = "controls",
+  PIKACHU = "pikachu",
+  OAK = "oak",
+}
+
+local INTRO_FALLBACK = "data/generated/gba/intro"
+
+local function loadIntroIndex()
+  if not (love and love.filesystem) then return nil end
+  local ok, chunk = pcall(love.filesystem.load, "data/generated/intro.lua")
+  if not ok or type(chunk) ~= "function" then return nil end
+  local ok2, t = pcall(chunk)
+  if ok2 and type(t) == "table" and not t.stub then return t end
+  return nil
+end
+
+local function loadImage(rel)
+  if not rel or not (love and love.filesystem and love.filesystem.getInfo(rel)) then
+    return nil
+  end
+  local ok, img = pcall(love.graphics.newImage, rel)
+  if ok then
+    if img.setFilter then img:setFilter("nearest", "nearest") end
+    return img
+  end
+  return nil
+end
+
+function Boot.new(game)
+  local mods = BootModules.resolve(require("src.core.game3.profile").active())
+  if mods.custom then return BootModules.newState(Boot, mods, game) end
+  local index = loadIntroIndex()
+  local base = INTRO_FALLBACK
+  local function path(key, file)
+    if index and index[key] then return index[key] end
+    return base .. "/" .. file
+  end
+
+  local platform = loadImage(path("platform", "platform.png"))
+  local platformQuad = nil
+  if platform and love and love.graphics and love.graphics.newQuad then
+    local pw, ph = platform:getDimensions()
+    if pw >= 32 and ph >= 32 then
+      platformQuad = love.graphics.newQuad(0, 0, 32, 32, pw, ph)
+    end
+  end
+
+  local titleFlamesImg = loadImage(path("titleFlames", "title_flames.png"))
+
+  local assets = {
+    oakSprite = loadImage(path("oakPic", "oak.png")),
+    boySprite = loadImage(path("playerPic", "boy.png")),
+    girlSprite = loadImage(path("playerPicFemale", "girl.png")),
+    rivalSprite = loadImage(path("rivalPic", "rival.png")),
+    platform = platform,
+    platformQuad = platformQuad,
+    oakSpeechBg = loadImage(path("oakSpeechBg", "oak_speech_bg.png")),
+    controlsPage1 = loadImage(path("controlsPage1", "controls_page1.png")),
+    controlsPage2 = loadImage(path("controlsPage2", "controls_page2.png")),
+    controlsPage3 = loadImage(path("controlsPage3", "controls_page3.png")),
+    pikachuBg = loadImage(path("pikachuIntroBg", "pikachu_intro_bg.png")),
+    pikachuBody = loadImage(path("pikachuBody", "pikachu_body.png")),
+    pikachuEars = loadImage(path("pikachuEars", "pikachu_ears.png")),
+    pikachuEyes = loadImage(path("pikachuEyes", "pikachu_eyes.png")),
+    nidoranFront = loadImage(path("nidoranFront", "nidoran_f.png")),
+    ballPoke = loadImage(path("ballPoke", "ball_poke.png")),
+    -- Intro Movie Assets
+    introCopyright = loadImage(path("introCopyright", "intro_copyright.png")),
+    introGfBg = loadImage(path("introGfBg", "intro_gf_bg.png")),
+    introGfText = loadImage(path("introGfText", "intro_gf_text.png")),
+    introGfLogo = loadImage(path("introGfLogo", "intro_gf_logo.png")),
+    introStar = loadImage(path("introStar", "intro_star.png")),
+    introSparklesSmall = loadImage(path("introSparklesSmall", "intro_sparkles_small.png")),
+    introSparklesBig = loadImage(path("introSparklesBig", "intro_sparkles_big.png")),
+    introPresents = loadImage(path("introPresents", "intro_presents.png")),
+    introScene1Grass = loadImage(path("introScene1Grass", "intro_scene1_grass.png")),
+    introScene1Bg = loadImage(path("introScene1Bg", "intro_scene1_bg.png")),
+    introScene2Bg = loadImage(path("introScene2Bg", "intro_scene2_bg.png")),
+    introScene2Plants = loadImage(path("introScene2Plants", "intro_scene2_plants.png")),
+    introScene2GengarClose = loadImage(path("introScene2GengarClose", "intro_scene2_gengar_close.png")),
+    introScene2NidorinoClose = loadImage(path("introScene2NidorinoClose", "intro_scene2_nidorino_close.png")),
+    introScene2Gengar = loadImage(path("introScene2Gengar", "intro_scene2_gengar.png")),
+    introScene2Nidorino = loadImage(path("introScene2Nidorino", "intro_scene2_nidorino.png")),
+    introScene3Bg = loadImage(path("introScene3Bg", "intro_scene3_bg.png")),
+    introScene3GengarAnim = loadImage(path("introScene3GengarAnim", "intro_scene3_gengar_anim.png")),
+    introScene3Grass = loadImage(path("introScene3Grass", "intro_scene3_grass.png")),
+    introScene3GengarStatic = loadImage(path("introScene3GengarStatic", "intro_scene3_gengar_static.png")),
+    introScene3Nidorino = loadImage(path("introScene3Nidorino", "intro_scene3_nidorino.png")),
+    introScene3Swipe = loadImage(path("introScene3Swipe", "intro_scene3_swipe.png")),
+    introScene3RecoilDust = loadImage(path("introScene3RecoilDust", "intro_scene3_recoil_dust.png")),
+    titleFlames = titleFlamesImg,
+    titleStreak = loadImage(path("titleStreak", "title_streak.png")),
+    titleSlash = loadImage(path("titleSlash", "title_slash.png")),
+    titleBorder = loadImage(path("titleBorder", "title_border_bg.png")),
+  }
+
+  local state = {
+    phase = Boot.PHASE.INTRO,
+    timer = 0,
+    blink = 0,
+    menuIndex = 1,
+    hasContinue = false,
+    introIndex = index,
+    assets = assets,
+    introMovie = nil,
+    oak = nil,
+    titleScreen = loadImage(path("titleScreen", "title_screen.png")),
+    titleLogo = loadImage(path("titleLogo", "title_logo.png")),
+    titleMon = loadImage(path("boxArtMon", "box_art_mon.png")),
+    titleBorder = assets.titleBorder,
+    pressStart = loadImage(path("pressStart", "press_start.png")),
+    copyrightLayer = loadImage(path("copyrightPressStart", "copyright_press_start.png")),
+  }
+  return state
+end
+
+function Boot.setHasContinue(state, yes)
+  state.hasContinue = yes and true or false
+  state.menuIndex = 1
+end
+
+function Boot.setContinueInfo(state, info)
+  state.continueInfo = info
+end
+
+function Boot.setSaveStatus(state, status)
+  state.saveStatus = status
+end
+
+function Boot.continueInfoFromSave(save)
+  if type(save) ~= "table" then return nil end
+  local Flags = require("src.core.game3.scripting.flags")
+  local store = { flags = type(save.flags) == "table" and save.flags or {} }
+  local pt = type(save.playTime) == "table" and save.playTime
+    or type(save.playtime) == "table" and save.playtime or {}
+  local n = require("src.core.game3.dex").summaryCount(save)
+  local name = tostring(save.name or save.playerName or "")
+  local ids = (type(save.version) == "string" and Flags.forVersion(save.version) or Flags).IDS
+  return {
+    name = FrlgFont.truncate(name, 7),
+    gender = tonumber(save.gender) or 0,
+    hours = tonumber(pt.hours) or 0,
+    minutes = tonumber(pt.minutes) or 0,
+    hasDex = Flags.getFlag(store, nil, ids.SYS_POKEDEX_GET) == true,
+    -- pokefirered/src/main_menu.c:236 IsMysteryGiftEnabled
+    mysteryGift = Flags.getFlag(store, nil,
+      ids.SYS_MYSTERY_GIFT_ENABLED or ids.FLAG_SYS_MYSTERY_GIFT_ENABLE or 0x839) == true,
+    dexCount = n,
+    badges = Flags.countBadges(store),
+    frameType = tonumber(type(save.options) == "table"
+      and require("src.core.game3.options").block(save.options).frameType or nil) or 0,
+  }
+end
+
+-- pokefirered/src/main_menu.c:370 MAIN_MENU_MYSTERYGIFT
+local function hasMysteryGift(state)
+  return state.hasContinue == true
+end
+
+Boot.hasMysteryGift = hasMysteryGift
+
+local MENU_SCROLL_TILES = 4
+
+local function menuItems(state)
+  if state.hasContinue then
+    if hasMysteryGift(state) then
+      return { "CONTINUE", "NEW GAME", "MYSTERY GIFT", "EXIT" }
+    end
+    return { "CONTINUE", "NEW GAME", "EXIT" }
+  end
+  return { "NEW GAME", "EXIT" }
+end
+
+Boot.menuItems = menuItems
+
+local function beginNewGame(state)
+  NamingChrome.install()
+  state.phase = Boot.PHASE.CONTROLS
+  state.newGame = NewGameScene.new(state.assets, { textSpeed = state.textSpeed })
+  state.timer = 0
+  return nil
+end
+
+function Boot.setTextSpeed(state, speed)
+  state.textSpeed = tonumber(speed)
+end
+
+local function beginMenuFade(state, color, from, to, after)
+  state.fadeColor = color
+  state.fadeTarget = to
+  state.fadeThen = after
+  state.menuFade = Pal.new()
+  state.menuFade:beginFade(Pal.ALL, 0, from, to, color == "white" and Pal.WHITE or Pal.BLACK) -- pokefirered/src/main_menu.c:574
+  state.fadeT = state.menuFade.slots[0].y
+end
+
+-- pokefirered/src/mystery_gift_menu.c:1095 CreateMysteryGiftTask
+local function openMysteryGift(state)
+  local SaveData = require("src.core.SaveData")
+  local okLoad, raw = false, nil
+  if SaveData.load then okLoad, raw = pcall(SaveData.load) end
+  local loaded = okLoad and type(raw) == "table"
+  local save = loaded and raw or {}
+  state.giftSave = save
+  state.gift = MysteryGiftUi.new({
+    session = MysteryGift.sessionFromSave(save),
+    onSave = function(sess)
+      if not loaded then return false end
+      MysteryGift.applyToSave(sess, save)
+      if not SaveData.save then return false end
+      local okSave, written = pcall(SaveData.save, save)
+      return okSave and written ~= false
+    end,
+  })
+  state.phase = Boot.PHASE.MYSTERY_GIFT
+  state.timer = 0
+end
+
+Boot.openMysteryGift = openMysteryGift
+
+-- pokefirered/src/mystery_gift_menu.c:455 MainCB_FreeAllBuffersAndReturnToInitTitleScreen
+local function closeMysteryGift(state)
+  if state.giftSave then
+    Boot.setContinueInfo(state, Boot.continueInfoFromSave(state.giftSave))
+  end
+  if state.gift then MysteryGiftUi.close(state.gift) end
+  state.gift = nil
+  state.giftSave = nil
+  state.phase = Boot.PHASE.MENU
+  state.menuIndex = 1
+  beginMenuFade(state, "white", 16, 0, nil) -- pokefirered/src/main_menu.c:398
+end
+
+local function enterTitle(state)
+  TitleScreen.enter(state)
+end
+
+function Boot.enterTitle(state)
+  if state.custom then return BootModules.enterTitle(Boot, state) end
+  enterTitle(state)
+end
+
+local function leaveTitle(state)
+  if state._titleActive then
+    TitleScreen.leave(state)
+  end
+end
+
+local function saveErrorPages(status)
+  -- pokefirered/src/main_menu.c:249
+  local key = status == "invalid" and "gText_SaveFileHasBeenDeleted" or "gText_SaveFileCorrupted"
+  local pages = {}
+  for page in (RomText.ascii(key) .. "\\p"):gmatch("(.-)\\p") do
+    if page ~= "" then pages[#pages + 1] = page end
+  end
+  return pages
+end
+
+local ARROW_FRAMES = { 0, 1, 2, 1 } -- pokefirered/src/text.c:35
+
+local function beginSaveError(state)
+  local pages = saveErrorPages(state.saveStatus)
+  state.saveError = {
+    pages = pages, page = 1, revealed = 0, delay = 0,
+    total = FrlgFont.countChars(pages[1]) + 1,
+    arrowIdx = 0, arrowDelay = 0,
+  }
+  state.menuIndex = 1
+  beginMenuFade(state, "white", 16, 0, nil) -- pokefirered/src/main_menu.c:283
+end
+
+local function tickSaveError(state, pressed)
+  local e = state.saveError
+  if e.waiting == "prompt" then
+    if e.arrowDelay ~= 0 then -- pokefirered/src/text.c:478
+      e.arrowDelay = e.arrowDelay - 1
+    else
+      e.arrowFrame = ARROW_FRAMES[e.arrowIdx + 1]
+      e.arrowIdx = (e.arrowIdx + 1) % 4
+      e.arrowDelay = 8 -- pokefirered/src/text.c:516
+    end
+    if pressed("a") or pressed("b") then -- pokefirered/src/text.c:560
+      Audio.playSe(SE.SE_SELECT)
+      e.page = e.page + 1
+      e.revealed = 0
+      e.total = FrlgFont.countChars(e.pages[e.page]) + 1
+      e.waiting, e.arrowFrame, e.arrowIdx, e.arrowDelay = nil, nil, 0, 0
+    end
+    return nil
+  elseif e.waiting == "done" then
+    if pressed("a") then -- pokefirered/src/main_menu.c:293
+      state.saveError = nil
+      state.phase = Boot.PHASE.MENU
+      state.menuIndex = 1
+      beginMenuFade(state, "white", 16, 0, nil) -- pokefirered/src/main_menu.c:398
+    end
+    return nil
+  end
+  if e.delay > 0 then -- pokefirered/src/text.c:642
+    e.delay = e.delay - 1
+    return nil
+  end
+  e.delay = 1 -- pokefirered/src/text_printer.c:93
+  e.revealed = e.revealed + 1
+  if e.revealed >= e.total then
+    e.waiting = (e.page < #e.pages) and "prompt" or "done"
+  end
+  return nil
+end
+
+function Boot.update(state, input, dt)
+  if state.custom then return BootModules.update(Boot, state, input, dt) end
+  dt = dt or (1 / 60)
+  state.timer = (state.timer or 0) + dt
+  state.blink = (state.blink or 0) + dt
+
+  local function a()
+    return input and input.wasPressed and (input:wasPressed("a") or input:wasPressed("start"))
+  end
+  local function up()
+    return input and input.wasPressed and input:wasPressed("up")
+  end
+  local function down()
+    return input and input.wasPressed and input:wasPressed("down")
+  end
+
+  if state.phase == Boot.PHASE.INTRO then
+    if not state.introMovie then
+      state.introMovie = IntroMovie.new(state.assets)
+    end
+    if state.introMovie:update(input, dt) then
+      state.introMovie:destroy()
+      state.introMovie = nil
+      state.phase = Boot.PHASE.TITLE
+      state.timer = 0
+      enterTitle(state)
+    end
+    return nil
+  end
+
+  if state.phase == Boot.PHASE.COPYRIGHT then
+    state.phase = Boot.PHASE.INTRO
+    state.introMovie = IntroMovie.new(state.assets)
+    state.timer = 0
+    return nil
+  end
+
+  if state.phase == Boot.PHASE.TITLE or state.phase == Boot.PHASE.TITLE_CRY
+      or state.phase == Boot.PHASE.TITLE_RESTART then
+    local result = TitleScreen.update(state, input, dt)
+    local scene = TitleScreen.scene(state)
+    if scene == TitleScreen.SCENE.CRY then
+      state.phase = Boot.PHASE.TITLE_CRY
+    elseif scene == TitleScreen.SCENE.RESTART then
+      state.phase = Boot.PHASE.TITLE_RESTART
+    else
+      state.phase = Boot.PHASE.TITLE
+    end
+    if result == "restart" then
+      leaveTitle(state)
+      state.phase = Boot.PHASE.INTRO -- pokefirered/src/title_screen.c:703
+      state.introMovie = IntroMovie.new(state.assets)
+      state.timer = 0
+    elseif result == "menu" then
+      leaveTitle(state)
+      state.timer = 0
+      if state.saveStatus == "invalid" or state.saveStatus == "error" then -- pokefirered/src/main_menu.c:246
+        state.phase = Boot.PHASE.MENU
+        beginSaveError(state)
+        return nil
+      end
+      state.phase = Boot.PHASE.MENU
+      state.menuIndex = 1
+      beginMenuFade(state, "white", 16, 0, nil) -- pokefirered/src/main_menu.c:398
+    end
+    return nil
+  end
+
+  if state.phase == Boot.PHASE.MENU then
+    local mf = state.menuFade
+    if mf and mf:fadeActive() then
+      mf:updateFade()
+      state.fadeT = mf.slots[0].y
+      return nil
+    end
+    local pending = state.fadeThen
+    if pending then
+      state.fadeThen = nil
+      if pending == "continue" then
+        state.fadeT, state.fadeTarget = 0, 0
+        require("src.core.game3.link.trade").resumePending()
+        return { action = "continue" }
+      elseif pending == "new_game" then
+        state.fadeT, state.fadeTarget = 0, 0
+        return beginNewGame(state)
+      elseif pending == "exit" then
+        state.fadeT, state.fadeTarget = 0, 0
+        return { action = "exit" }
+      elseif pending == "mystery_gift" then
+        state.fadeT, state.fadeTarget = 0, 0
+        openMysteryGift(state)
+      elseif pending == "title" then
+        state.fadeT, state.fadeTarget = 0, 0
+        state.phase = Boot.PHASE.TITLE
+        state.timer = 0
+        enterTitle(state)
+      end
+      return nil
+    end
+    local items = menuItems(state)
+    local pressed = function(k) return input and input.wasPressed and input:wasPressed(k) end
+    if state.saveError then
+      return tickSaveError(state, pressed)
+    end
+    if pressed("a") then -- pokefirered/src/main_menu.c:570
+      Audio.playSe(SE.SE_SELECT)
+      local choice = items[state.menuIndex]
+      local fadeAction = (choice == "CONTINUE") and "continue"
+        or (choice == "NEW GAME") and "new_game"
+        -- pokefirered/src/main_menu.c:483 MAIN_MENU_MYSTERYGIFT
+        or (choice == "MYSTERY GIFT") and "mystery_gift"
+        or "exit"
+      beginMenuFade(state, "black", 0, 16, fadeAction)
+    elseif pressed("b") then -- pokefirered/src/main_menu.c:577
+      Audio.playSe(SE.SE_SELECT)
+      beginMenuFade(state, "black", 0, 16, "title")
+    elseif up() and state.menuIndex > 1 then
+      state.menuIndex = state.menuIndex - 1
+      if state.menuIndex == 1 then state.menuScroll = 0 end
+    elseif down() and state.menuIndex < #items then
+      state.menuIndex = state.menuIndex + 1
+      if state.menuIndex == 4 then state.menuScroll = MENU_SCROLL_TILES end
+    end
+    return nil
+  end
+
+  if state.phase == Boot.PHASE.MYSTERY_GIFT then
+    local pressed = function(k) return input and input.wasPressed and input:wasPressed(k) end
+    if MysteryGiftUi.update(state.gift, pressed, dt) == "exit" then
+      closeMysteryGift(state)
+    end
+    return nil
+  end
+
+  if state.newGame and (state.phase == Boot.PHASE.CONTROLS or state.phase == Boot.PHASE.PIKACHU
+      or state.phase == Boot.PHASE.OAK) then
+    local result = state.newGame:update(input, dt)
+    local section = state.newGame.section
+    state.phase = (section == "pikachu" and Boot.PHASE.PIKACHU)
+      or (section == "oak" and Boot.PHASE.OAK) or Boot.PHASE.CONTROLS
+    if result then
+      state.newGame:destroy()
+      state.newGame = nil
+      return result
+    end
+    return nil
+  end
+
+  return nil
+end
+
+local MENU_BG = { 139 / 255, 148 / 255, 255 / 255 } -- pokefirered/graphics/main_menu/bg.pal:4
+local MENU_TEXT = { 98 / 255, 98 / 255, 98 / 255, 1 } -- pokefirered/graphics/main_menu/textbox.pal:15
+local MENU_SHADOW = { 213 / 255, 213 / 255, 205 / 255, 1 } -- pokefirered/graphics/main_menu/textbox.pal:16
+local MENU_FILL = { 1, 1, 1, 1 } -- pokefirered/graphics/main_menu/textbox.pal:14
+local ACCENT_MALE = { 4 / 31, 16 / 31, 31 / 31, 1 }
+local ACCENT_FEMALE = { 31 / 31, 3 / 31, 21 / 31, 1 }
+local WIN0V_CONTINUE = { { 0x02, 0x5E }, { 0x62, 0x7E }, { 0x82, 0x9E }, { 0xA2, 0xBE } }
+local WIN0V_NOCONTINUE = { { 0x02, 0x1E }, { 0x22, 0x3E } }
+
+local function darkenOutside(W, H, x0, y0, x1, y1)
+  love.graphics.setColor(0, 0, 0, 7 / 16) -- pokefirered/src/main_menu.c:231
+  love.graphics.rectangle("fill", 0, 0, W, y0)
+  love.graphics.rectangle("fill", 0, y1, W, H - y1)
+  love.graphics.rectangle("fill", 0, y0, x0, y1 - y0)
+  love.graphics.rectangle("fill", x1, y0, W - x1, y1 - y0)
+end
+
+local function drawMainMenu(state, W, H)
+  love.graphics.clear(MENU_BG[1], MENU_BG[2], MENU_BG[3], 1) -- pokefirered/src/main_menu.c:199
+  local info = state.continueInfo or {}
+  local head = { fg = MENU_TEXT, shadow = MENU_SHADOW, bg = MENU_FILL }
+  local stat = {
+    fg = (info.gender == 1) and ACCENT_FEMALE or ACCENT_MALE, -- pokefirered/src/main_menu.c:342
+    shadow = MENU_SHADOW,
+    bg = MENU_FILL,
+  }
+  local frameType = info.frameType or 0 -- pokefirered/src/main_menu.c:680
+  local x, y = 24, 8
+
+  if state.hasContinue then
+    local gift = hasMysteryGift(state)
+    local scroll = (gift and state.menuIndex ~= 1) and (state.menuScroll or 0) or 0
+    local dy = scroll * 8
+    y = y - dy
+    Window.userFrame(Window.template(3, 1 - scroll, 24, 10), frameType) -- pokefirered/src/main_menu.c:84
+    Window.userFrame(Window.template(3, 13 - scroll, 24, 2), frameType) -- pokefirered/src/main_menu.c:93
+    Window.userFrame(Window.template(3, 17 - scroll, 24, 2), frameType) -- pokefirered/src/main_menu.c:102
+    if gift then
+      Window.userFrame(Window.template(3, 21 - scroll, 24, 2), frameType)
+    end
+    Window.printPx(RomText.plain("gText_Continue"), x + 2, y + 2, { colors = head })
+    Window.printPx(RomText.plain("gText_Player"), x + 2, y + 18, { colors = stat }) -- pokefirered/src/main_menu.c:623
+    Window.printPx(info.name or "", x + 62, y + 18, { colors = stat })
+    Window.printPx(RomText.plain("gText_Time"), x + 2, y + 34, { colors = stat }) -- pokefirered/src/main_menu.c:636
+    Window.printPx(string.format("%d:%02d", info.hours or 0, info.minutes or 0), x + 62, y + 34, { colors = stat })
+    if info.hasDex then -- pokefirered/src/main_menu.c:648
+      Window.printPx(RomText.plain("gText_Pokedex"), x + 2, y + 50, { colors = stat })
+      Window.printPx(tostring(info.dexCount or 0), x + 62, y + 50, { colors = stat })
+    end
+    Window.printPx(RomText.plain("gText_Badges"), x + 2, y + 66, { colors = stat }) -- pokefirered/src/main_menu.c:672
+    Window.printPx(tostring(info.badges or 0), x + 62, y + 66, { colors = stat })
+    Window.printPx(RomText.plain("gText_NewGame"), 24 + 2, 104 + 2 - dy, { colors = head })
+    -- pokefirered/src/main_menu.c:377 gText_MysteryGift
+    Window.printPx(RomText.plain(gift and "gText_MysteryGift" or "gText_MenuExit"),
+      24 + 2, 136 + 2 - dy, { colors = head })
+    if gift then
+      Window.printPx(RomText.plain("gText_MenuExit"), 24 + 2, 168 + 2 - dy, { colors = head })
+    end
+    local rows = WIN0V_CONTINUE[state.menuIndex] or WIN0V_CONTINUE[1] -- pokefirered/src/main_menu.c:565
+    darkenOutside(W, H, 18, math.max(0, rows[1] - dy), 222, rows[2] - dy)
+    if gift and scroll == 0 then
+      ListMenu.drawArrow("down", W / 2, H - 8, math.floor((state.blink or 0) * 60))
+    end
+  else
+    Window.userFrame(Window.template(3, 1, 24, 2), frameType)
+    Window.userFrame(Window.template(3, 5, 24, 2), frameType)
+    Window.printPx(RomText.plain("gText_NewGame"), 24 + 2, 8 + 2, { colors = head })
+    Window.printPx(RomText.plain("gText_MenuExit"), 24 + 2, 40 + 2, { colors = head })
+    local rows = WIN0V_NOCONTINUE[state.menuIndex] or WIN0V_NOCONTINUE[1]
+    darkenOutside(W, H, 18, rows[1], 222, rows[2])
+  end
+
+  local t = state.fadeT or 0
+  if t > 0 then
+    if state.fadeColor == "white" then
+      love.graphics.setColor(1, 1, 1, t / 16)
+    else
+      love.graphics.setColor(0, 0, 0, t / 16)
+    end
+    love.graphics.rectangle("fill", 0, 0, W, H)
+  end
+  love.graphics.setColor(1, 1, 1, 1)
+end
+
+local function drawSaveError(state, W, H)
+  local e = state.saveError
+  love.graphics.clear(MENU_BG[1], MENU_BG[2], MENU_BG[3], 1)
+  Window.stdFrame(Window.template(3, 15, 24, 4)) -- pokefirered/src/main_menu.c:687
+  local page = e.pages[e.page] or ""
+  local limit = math.min(e.revealed, FrlgFont.countChars(page))
+  local _, endX, endY = FrlgFont.draw(page, 24, 120 + 2, { -- pokefirered/src/main_menu.c:603
+    maxWidth = 192,
+    limitChars = limit,
+    colors = { fg = MENU_TEXT, shadow = MENU_SHADOW, bg = MENU_FILL },
+  })
+  if e.waiting == "prompt" and e.arrowFrame and endX then
+    Chrome.promptArrow(endX, endY, e.arrowFrame) -- pokefirered/src/text.c:503
+  end
+  darkenOutside(W, H, 19, 115, 221, 157) -- pokefirered/src/main_menu.c:606
+  local t = state.fadeT or 0
+  if t > 0 then
+    love.graphics.setColor(1, 1, 1, t / 16)
+    love.graphics.rectangle("fill", 0, 0, W, H)
+  end
+  love.graphics.setColor(1, 1, 1, 1)
+end
+
+function Boot.draw(state)
+  if state.custom then return BootModules.draw(Boot, state) end
+  local W, H = Display.W, Display.H
+  love.graphics.clear(0, 0, 0, 1)
+
+  if state.phase == Boot.PHASE.INTRO and state.introMovie then
+    state.introMovie:draw()
+    return
+  end
+
+  if state.phase == Boot.PHASE.TITLE or state.phase == Boot.PHASE.TITLE_CRY
+      or state.phase == Boot.PHASE.TITLE_RESTART then
+    TitleScreen.draw(state)
+    return
+  end
+
+  if state.phase == Boot.PHASE.MENU then
+    if state.saveError then
+      drawSaveError(state, W, H)
+    else
+      drawMainMenu(state, W, H)
+    end
+    return
+  end
+
+  if state.phase == Boot.PHASE.MYSTERY_GIFT then
+    if state.gift then MysteryGiftUi.draw(state.gift) end
+    return
+  end
+
+  if state.newGame then
+    state.newGame:draw()
+  end
+end
+
+return Boot

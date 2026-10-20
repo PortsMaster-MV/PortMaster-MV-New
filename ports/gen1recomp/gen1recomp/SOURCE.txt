@@ -1,0 +1,6 @@
+https://github.com/bryanthaboi/gen1recomp
+Revision: fce5f08650618846ae35142475441ac65937fd2f
+Version: 0.3.54
+Tracked working-tree changes: False
+Testing candidate; Nexhas28 confirmed operation on TrimUI Brick on 6 October 2026.
+Firmware/version and other device testing are not yet recorded.
