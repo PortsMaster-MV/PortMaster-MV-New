@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index b2f28fa..070e825 100644
+index 033481b..24023c4 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -322,7 +322,7 @@ add_compile_definitions("$<$<CONFIG:ASAN>:DEBUGMODE>")
+@@ -353,7 +353,7 @@ add_compile_definitions("$<$<CONFIG:ASAN>:DEBUGMODE>")
  
  set(MINIMP3_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include/minimp3)
  
@@ -11,15 +11,15 @@ index b2f28fa..070e825 100644
  	# Vendored SDL2, used only by allegro's SDL joystick driver (see
  	# WANT_SDL2_JOYSTICK below); only joystick-related subsystems are built.
  	# Unlike the native evdev/HID/directinput drivers, SDL keeps working when
-@@ -362,6 +362,7 @@ FetchContent_Declare(
+@@ -403,6 +403,7 @@ FetchContent_Declare(
    allegro5
    GIT_REPOSITORY https://github.com/connorjclark/allegro5.git
-   GIT_TAG        7478b2d5a495868b087ae02d80411b99dfea6ce0
+   GIT_TAG        aae80ca3573e19702cfc2338591a575dc75eb647
 +  PATCH_COMMAND  git restore . && git apply ${CMAKE_SOURCE_DIR}/third_party/allegro5.patch
    EXCLUDE_FROM_ALL
  )
  if(EMSCRIPTEN)
-@@ -383,7 +384,9 @@ set(WANT_DUMB ON CACHE BOOL "" FORCE)
+@@ -424,7 +425,9 @@ set(WANT_DUMB ON CACHE BOOL "" FORCE)
  set(WANT_FLAC OFF CACHE BOOL "" FORCE)
  set(WANT_VIDEO OFF CACHE BOOL "" FORCE)
  set(WANT_MEMFILE ON CACHE BOOL "" FORCE)
@@ -30,7 +30,7 @@ index b2f28fa..070e825 100644
  FetchContent_MakeAvailable(allegro5)
  # Allegro 5 CMakeLists sets CMAKE_CONFIGURATION_TYPES in a way that doesn't work for us,
  # so set it back to our value.
-@@ -419,8 +422,9 @@ target_link_libraries(allegro-legacy PRIVATE allegro_headers)
+@@ -460,8 +463,9 @@ target_link_libraries(allegro-legacy PRIVATE allegro_headers)
  
  add_library(allegro_with_legacy INTERFACE)
  target_link_libraries(allegro_with_legacy INTERFACE allegro_headers allegro-legacy allegro_primitives allegro_font allegro_image allegro_audio allegro_acodec allegro_memfile allegro_main)
@@ -41,7 +41,7 @@ index b2f28fa..070e825 100644
  endif()
  
  target_include_directories(allegro_with_legacy INTERFACE 
-@@ -545,7 +549,7 @@ elseif(LINUX)
+@@ -586,7 +590,7 @@ elseif(LINUX)
  	add_definitions(-DALLEGRO_LINUX) # Mistakenly used in the source.
  	add_definitions(-DALLEGRO_LEGACY_NO_FIX_ALIASES)
  
@@ -50,7 +50,7 @@ index b2f28fa..070e825 100644
  		# SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -export-dynamic")
  		SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc")
  		SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -static-libgcc")
-@@ -723,6 +727,10 @@ if(APPLE)
+@@ -764,6 +768,10 @@ if(APPLE)
  		PROPERTIES COMPILE_OPTIONS "-x;objective-c++")
  endif()
  target_link_libraries(zalleg PUBLIC base allegro_with_legacy ${IMAGELIBS})
@@ -61,7 +61,7 @@ index b2f28fa..070e825 100644
  if (USE_NFD)
  	target_link_libraries(zalleg PUBLIC nfd)
  	target_compile_definitions(zalleg PUBLIC HAS_NFD)
-@@ -979,6 +987,17 @@ endif()
+@@ -1020,6 +1028,17 @@ endif()
  
  add_executable(zplayer ${ZELDA_CORE_SOURCES} ${ZELDA_GUI_SOURCES} ${ZELDA_SPRITE_SOURCES} ${ZELDA_SUBSCREEN_SOURCES} ${ZELDA_SCRIPTING_SOURCES} ${ZELDAEXTRASOURCES} ${ZELDA_MODULES})
  target_compile_definitions(zplayer PRIVATE IS_PLAYER)
@@ -417,39 +417,8 @@ index e015f3f..87ad532 100644
  		al_flip_display();
  	}
  	else
-diff --git a/src/zalleg/zalleg.cpp b/src/zalleg/zalleg.cpp
-index ba25a09..25b8906 100644
---- a/src/zalleg/zalleg.cpp
-+++ b/src/zalleg/zalleg.cpp
-@@ -40,7 +40,7 @@ void zalleg_osx_get_main_screen_usable_size(int* w, int* h);
- float zalleg_osx_get_main_screen_scale_factor(void);
- #endif
- 
--#ifdef __linux__
-+#if defined(__linux__) && !defined(ALLEGRO_SDL)
- #include <allegro5/allegro_x.h>
- #endif
- 
-@@ -251,7 +251,7 @@ void zalleg_log_joysticks_if_changed()
- 
- void zalleg_setup_allegro(App id, int argc, char **argv)
- {
--#ifdef ALLEGRO_SDL
-+#if defined(ALLEGRO_SDL) && !defined(NDEBUG)
- 	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_DEBUG);
- #endif
- 
-@@ -533,7 +533,7 @@ void zalleg_bring_window_to_foreground(ALLEGRO_DISPLAY* display)
- 	SetForegroundWindow(hwnd);
- #elif defined(ALLEGRO_MACOSX)
- 	zalleg_osx_bring_window_to_foreground(display);
--#elif defined(__linux__)
-+#elif defined(__linux__) && !defined(ALLEGRO_SDL)
- 	XID window_id = al_get_x_window_id(display);
- 	Display* x_display = XOpenDisplay(nullptr);
- 	if (x_display)
 diff --git a/src/zalleg/zsys.cpp b/src/zalleg/zsys.cpp
-index 104ec5f..91b87fb 100644
+index 3923f72..31fb208 100644
 --- a/src/zalleg/zsys.cpp
 +++ b/src/zalleg/zsys.cpp
 @@ -235,7 +235,7 @@ static void log_console(int32_t attributes, const char* str, bool is_error = fal
