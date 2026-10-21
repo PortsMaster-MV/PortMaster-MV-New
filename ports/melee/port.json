@@ -1,0 +1,24 @@
+{
+  "version": 4,
+  "name": "melee.zip",
+  "items": ["Melee.sh", "melee"],
+  "items_opt": [],
+  "attr": {
+    "title": "Super Smash Bros. Melee (native)",
+    "porter": ["sh1ftmaker"],
+    "desc": "Native reimplementation of Super Smash Bros. Melee, built on the doldecomp decompilation and rendered through Aurora on OpenGL ES.",
+    "desc_md": "Native reimplementation of *Super Smash Bros. Melee*, built on the [doldecomp/melee](https://github.com/doldecomp/melee) decompilation and rendered through [Aurora](https://github.com/encounter/aurora) on OpenGL ES. Port source: [zalo/melee](https://github.com/zalo/melee/tree/release).",
+    "inst": "Place your own legally-dumped Super Smash Bros. Melee US 1.02 GameCube disc image (.iso, .gcm, .ciso or .rvz) in the melee/assets directory.",
+    "inst_md": "Place your own legally-dumped *Super Smash Bros. Melee* US 1.02 (`GALE01`) GameCube disc image (`.iso`, `.gcm`, `.ciso` or `.rvz`) in `ports/melee/assets/`. Answer **Yes** at the memory-card prompt on first launch.",
+    "genres": ["action"],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "availability": "paid",
+    "store": [],
+    "reqs": [],
+    "arch": ["aarch64"],
+    "min_glibc": "2.30"
+  }
+}
