@@ -1,40 +1,40 @@
 {
-  "version": 4,
-  "name": "megamanw.zip",
-  "items": [
-    "Mega Man W.sh",
-    "megamanw"
-  ],
-  "items_opt": [],
-  "attr": {
-    "title": "Mega Man W",
-    "porter": [
-      "armsonic"
+    "version": 4,
+    "name": "megamanw.zip",
+    "items": [
+        "Mega Man W.sh",
+        "megamanw"
     ],
-    "desc": "Mega Man W is a fan made game by Team W which aims to be similar to the original six mega man games. You will face off against a fierce hoard of robots infected by a virus corrupting them and making them go mad!",
-    "desc_md": null,
-    "inst": "Download any version of the game (linux,windows,mac) from https://jumpdashevade.itch.io/mega-man-w and place the .pck file into the MegaManW port folder.",
-    "inst_md": null,
-    "genres": [
-      "action",
-      "platformer"
-    ],
-    "image": null,
-    "rtr": false,
-    "exp": false,
-    "runtime": [
-      "frt_3.5.2.squashfs"
-    ],
-    "store": [
-      {
-        "name": "Itch.io",
-        "gameurl": "https://jumpdashevade.itch.io/mega-man-w",
-        "developerurl": "https://megamanw.com/"
-      }
-    ],
-    "availability": "free",
-    "reqs": [],
-    "arch": [],
-    "min_glibc": ""
-  }
+    "items_opt": null,
+    "attr": {
+        "title": "Mega Man W",
+        "porter": [
+            "armsonic"
+        ],
+        "desc": "Mega Man W is a fan made game by Team W which aims to be similar to the original six mega man games. You will face off against a fierce hoard of robots infected by a virus corrupting them and making them go mad!",
+        "desc_md": null,
+        "inst": "Just Download the port or place the zip into the auto install folder. If you wish to use a updated version download it from https://jumpdashevade.itch.io/mega-man-w and place the .pck into the ports root directory.",
+        "inst_md": null,
+        "genres": [
+            "action",
+            "platformer"
+        ],
+        "image": {},
+        "rtr": true,
+        "exp": false,
+        "runtime": [
+            "frt_3.5.2.squashfs"
+        ],
+        "store": [
+            {
+                "name": "Itch.io",
+                "gameurl": "https://jumpdashevade.itch.io/mega-man-w",
+                "developerurl": "https://megamanw.com/"
+            }
+        ],
+        "availability": "full",
+        "reqs": [],
+        "arch": [],
+        "min_glibc": ""
+    }
 }
