@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Gizmoduck.sh</path>
+    <name>Gizmoduck</name>
+    <desc>This is a fangame about the adventures of Gizmoduck developed by Gektorne.</desc>
+    <releasedate>20260418T000000</releasedate>
+    <developer>Gektorne</developer>
+    <publisher>Gektorne</publisher>
+    <genre>Platformer</genre>
+    <image>./gizmoduck/cover.png</image>
+  </game>
+</gameList>

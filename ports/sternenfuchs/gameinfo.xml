@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<gameList>
+  <game>
+    <path>./Sternenfuchs.sh</path>
+    <name>Sternenfuchs</name>
+    <desc>Packaging of the open-source Star Fox Enhanced runtime, a fan-made SNES Star Fox/Starwing enhancement. Requires your own legally obtained Rev 1 ROM of Starfox (US/JAP) or Rev 1 of Starwing (EU).</desc>
+    <releasedate>19930221T000000</releasedate>
+    <genre>Action</genre>
+    <developer>Argonaut Software, Team SFEX, kandowontu</developer>
+    <publisher>Nintendo (original 1993 game)</publisher>
+    <image>./sternenfuchs/screenshot.png</image>
+  </game>
+</gameList>

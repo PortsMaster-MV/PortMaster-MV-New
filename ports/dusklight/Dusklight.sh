@@ -115,8 +115,8 @@ pm_platform_helper "$GAMEDIR/dusklight.aarch64" > /dev/null
 # --backend opengles stays on the CLI, not in config: a missing or corrupted
 #   config.json resolves backend "auto", and the failed Vulkan attempt breaks the
 #   following EFB present init -> startup abort. This keeps a bad config bootable.
-# --log-level 1 = INFO: drops the per-resource [DEBUG] flood.
-./dusklight.aarch64 --backend opengles --log-level 1 --dvd "${discs[0]}"
+# --log-level info: borealis log levels are words; drops the per-resource flood.
+./dusklight.aarch64 --backend opengles --log-level info --dvd "${discs[0]}"
 
 $ESUDO kill -9 $(pidof gptokeyb2) 2>/dev/null
 restore_governors

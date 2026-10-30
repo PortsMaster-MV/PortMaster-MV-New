@@ -1,0 +1,40 @@
+{
+  "version": 4,
+  "name": "gizmoduck.zip",
+  "items": [
+    "Gizmoduck.sh",
+    "gizmoduck"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Gizmoduck",
+    "porter": [
+      "Ganimoth"
+    ],
+    "desc": "This is a fangame about the adventures of Gizmoduck developed by Gektorne.",
+    "desc_md": null,
+    "inst": "Download the Windows version of the game from Itch.io and copy Gizmoduck.exe into gamedata folder.",
+    "inst_md": "Download the `Windows` version of the game from [Itch.io](https://gektorne.itch.io/httpsxcomgektorne) and copy `Gizmoduck.exe` into `gamedata` folder.",
+    "genres": [
+      "platformer"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [
+      "godot_4.7.1.squashfs",
+      "weston_pkg_0.2.squashfs"
+    ],
+    "store": [
+      {
+        "name": "Itch.io",
+        "gameurl": "https://gektorne.itch.io/httpsxcomgektorne",
+        "developerurl": ""
+      }
+    ],
+    "availability": "free",
+    "reqs": [],
+    "arch": [],
+    "min_glibc": ""
+  }
+}

@@ -1,0 +1,15 @@
+snes_spc 0.9.0 is statically linked into starfox.aarch64 as part of the
+Star Fox Enhanced runtime's audio emulation.
+
+Source: https://github.com/blarggs-audio-libraries/snes_spc
+Pinned by starfox-enhanced at revision: ec8ee2bbe30451614c1d02a83f7af1c97d497d45
+
+Copyright (C) 2004-2007 Shay Green
+
+Licensed under the GNU Lesser General Public License, version 2.1 or (at
+your option) any later version:
+
+    https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+
+The complete license text is distributed in the upstream snes_spc source as
+license.txt.
