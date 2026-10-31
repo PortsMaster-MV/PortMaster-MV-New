@@ -1,0 +1,122 @@
+{
+	"up": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 16777232
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 12
+		}
+	],
+	"right": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 16777233
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 15
+		}
+	],
+	"down": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 16777234
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 13
+		}
+	],
+	"left": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 16777231
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 14
+		}
+	],
+	"shoot": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 88
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 2
+		}
+	],
+	"jump": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 90
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 0
+		}
+	],
+	"slide": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 67
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 1
+		}
+	],
+	"left_swap": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 65
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 4
+		}
+	],
+	"right_swap": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 83
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 5
+		}
+	],
+	"pause": [
+		{
+			"type": "key",
+			"device": 0,
+			"scan_code": 16777221
+		},
+		{
+			"type": "joypad",
+			"device": 0,
+			"scan_code": 11
+		}
+	]
+}

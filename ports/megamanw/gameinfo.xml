@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Mega Man W.sh</path>
+    <name>Mega Man W</name>
+    <desc>Mega Man W is a fan made game by Team W which aims to be similar to the original six mega man games. You will face off against a fierce hoard of robots infected by a virus corrupting them and making them go mad!</desc>
+    <releasedate>20260605T000000</releasedate>
+    <developer>Team W</developer>
+    <publisher>Itch.io</publisher>
+    <genre>platformer</genre>
+    <image>./MegaManW/cover.png</image>
+  </game>
+</gameList>

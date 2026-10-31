@@ -1,0 +1,18 @@
+select = tab
+start = enter
+a = c
+b = z
+x = esc
+y = x
+l1 = a
+r1 = s 
+up = up
+down = down
+left = left
+right = right
+left_analog_up = up
+left_analog_down = down
+left_analog_left = left
+left_analog_right = right
+deadzone_triggers = 3000
+
