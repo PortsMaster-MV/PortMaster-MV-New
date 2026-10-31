@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./Mega Man X Regenesis.sh</path>
+    <name>Mega Man X Regenesis</name>
+    <desc>Set in an alternate timeline following the events of Mega Man X, Sigma has won, X has fallen, and humanity stands on the brink of extinction. Just when all hope appears lost, Dr. Cain unveils his final contingency—Project Regenesis. Given one last chance to rewrite history, X must rise once again and fight to save what remains of humanity.</desc>
+    <releasedate>20260820T000000</releasedate>
+    <developer>Mega Man X Regenesis Team</developer>
+    <publisher>Itch.io</publisher>
+    <genre>Platformer</genre>
+    <image>./megamanxregenesis/cover.png</image>
+  </game>
+</gameList>
