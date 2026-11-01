@@ -3,11 +3,11 @@
   <game>
     <path>./Castlevania Tales of Night Moon.sh</path>
     <name>Castlevania Tales of Night Moon</name>
-    <desc>A Castlevania fan made game where you play as Soma.</desc>
+    <desc>Fight off the awful terrors of Castlevania as Soma, in this fun fanmade love letter to a classic!</desc>
     <releasedate>20231011T000000</releasedate>
     <developer>Ikusatatsu</developer>
     <publisher>Ikusatatsu</publisher>
-    <genre>Action/Adventure/Platformer</genre>
+    <genre>Action/Platformer</genre>
     <image>./castlevaniatales/cover.png</image>
   </game>
 </gameList>
