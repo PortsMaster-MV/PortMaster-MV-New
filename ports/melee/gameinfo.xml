@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<gameList>
+  <game>
+    <path>./Melee.sh</path>
+    <name>Super Smash Bros. Melee (native)</name>
+    <desc>Native reimplementation of Super Smash Bros. Melee, built on the doldecomp decompilation and rendered through Aurora on OpenGL ES. Requires your own legally-dumped US 1.02 disc image in melee/assets.</desc>
+    <releasedate>20011121T000000</releasedate>
+    <developer>HAL Laboratory</developer>
+    <publisher>Nintendo</publisher>
+    <genre>Fighting</genre>
+    <image>./melee/screenshot.jpg</image>
+  </game>
+</gameList>
