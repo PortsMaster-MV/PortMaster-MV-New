@@ -9,19 +9,19 @@
   "attr": {
     "title": "Castlevania Tales of Night Moon",
     "porter": [
+      "Slayer366",
       "MadShmupper"
     ],
-    "desc": "A fan made Castlevania game where you play as Soma.",
+    "desc": "Play as Soma in this Castlevania fan made game. A love letter to classic GBA era Castlevania.",
     "desc_md": null,
-    "inst": "Download free at itch.io https://ikusatatsu.itch.io/castlevania-tales-of-night-moon and copy data.win to assets.",
-    "inst_md": "Download free at [itch.io](https://ikusatatsu.itch.io/castlevania-tales-of-night-moon) and copy data.win to assets.",
+    "inst": "Ready to run.",
+    "inst_md": null,
     "genres": [
       "action",
-      "adventure",
       "platformer"
     ],
     "image": null,
-    "rtr": false,
+    "rtr": true,
     "exp": false,
     "runtime": [],
     "store": [
@@ -31,7 +31,7 @@
         "developerurl": "https://ikusatatsu.itch.io/"
       }
     ],
-    "availability": "free",
+    "availability": "full",
     "reqs": [],
     "arch": [
       "aarch64"

@@ -23,17 +23,11 @@ TOOLDIR="$GAMEDIR/tools"
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
-export LD_LIBRARY_PATH="/usr/lib:$GAMEDIR/lib:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$GAMEDIR/lib:$LD_LIBRARY_PATH"
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 
 $ESUDO chmod +x "$GAMEDIR/gmloadernext.aarch64"
 $ESUDO chmod +x $GAMEDIR/tools/swapabxy.py
-
-if [ -f ./assets/data.win ]; then
-	[ -f "./assets/data.win" ] && mv assets/data.win assets/game.droid
-	zip -r -0 ./castlevaniatales.port ./assets/
-	rm -Rf ./assets/
-fi
 
 swapabxy() {
   if [ "$CFW_NAME" == "knulli" ] && [ -f "$SDL_GAMECONTROLLERCONFIG_FILE" ]; then
@@ -47,9 +41,8 @@ swapabxy() {
 
 swapabxy  
 
-
 $GPTOKEYB "gmloadernext.aarch64" &
-pm_platform_helper "$GAMEDIR/gmloadernext.aarch64"
+pm_platform_helper "$GAMEDIR/gmloadernext.aarch64" >/dev/null
 ./gmloadernext.aarch64 -c "$GMLOADER_JSON"
 
 pm_finish
