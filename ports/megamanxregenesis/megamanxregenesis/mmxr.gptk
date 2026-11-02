@@ -1,5 +1,5 @@
 start = enter
-select = k
+select = tab
 
 a = a
 b = s

@@ -40,12 +40,7 @@
 			"type": "InputEventJoypadMotion"
 		}
 	],
-	"escape": [
-		{
-			"physical_keycode": 4194305,
-			"type": "InputEventKey"
-		}
-	],
+	"escape": [],
 	"fullHealth": [
 		{
 			"physical_keycode": 91,
@@ -250,11 +245,9 @@
 		{
 			"button_index": 4,
 			"type": "InputEventJoypadButton"
-		}
-	],
-	"showFps": [
+		},
 		{
-			"physical_keycode": 53,
+			"physical_keycode": 4194305,
 			"type": "InputEventKey"
 		}
 	],
