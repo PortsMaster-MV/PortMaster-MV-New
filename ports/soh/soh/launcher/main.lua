@@ -44,7 +44,7 @@ for _, it in ipairs(config.items) do items[#items + 1] = it end
 if love.filesystem.getInfo("controls.png") then
     items[#items + 1] = { id = "_controls", label = "Controls", help = "Show the button layout" }
 end
-items[#items + 1] = { id = "_quit", label = "Save and exit" }
+items[#items + 1] = { id = "_quit", label = "Save and quit" }
 local controlsImage, showControls = nil, false
 
 local function choiceIndex(it)

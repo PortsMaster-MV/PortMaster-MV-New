@@ -42,7 +42,8 @@ unzip_assets() {
         else
             pm_message "Failed to unpack extractor.zip!"
             sleep 5
-            exit 1
+            pm_finish
+            exit 0
         fi
     fi
 }
@@ -57,7 +58,8 @@ otr_check() {
         if [ ${#ROMS[@]} -eq 0 ]; then
             pm_message "Missing ROM files! Place a .z64, .n64 or .v64 in baseroms/"
             sleep 5
-            exit 1
+            pm_finish
+            exit 0
         fi
     fi
 }
@@ -73,10 +75,8 @@ rm -f "$GAMEDIR/launch.cfg"
 source $controlfolder/runtimes/"love_11.5"/love.txt
 $LOVE_RUN "$GAMEDIR/launcher" "$GAMEDIR/shipofharkinian.json" "$GAMEDIR/launch.cfg"
 
-LAUNCHER_PLAY=0
-[ -f "$GAMEDIR/launch.cfg" ] && source "$GAMEDIR/launch.cfg"
-if [ "$LAUNCHER_PLAY" != "1" ]; then
-  echo "Launcher exited without starting the game"
+# Continue only if the user chose Play (launcher writes LAUNCHER_PLAY=1 to launch.cfg)
+if ! grep -qx "LAUNCHER_PLAY=1" "$GAMEDIR/launch.cfg" 2>/dev/null; then
   pm_finish
   exit 0
 fi
