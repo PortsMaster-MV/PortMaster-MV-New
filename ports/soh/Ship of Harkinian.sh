@@ -27,89 +27,80 @@ export SDL_GAMECONTROLLERCONFIG=$sdl_controllerconfig
 cd $GAMEDIR
 > "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 $ESUDO chmod +x "$GAMEDIR/soh.elf.${DEVICE_ARCH}"
-$ESUDO chmod +x "$GAMEDIR/assets/otrgen"
 
 # Close the menu if open
 sed -i 's/"Menu": *1/"Menu": 0/' shipofharkinian.json
 
 # -------------------- BEGIN FUNCTIONS --------------------
 
-# Check imgui.ini and modify if needed
-imgui_reset() {
-    input_file="imgui.ini"
-    temp_file="imgui_temp.ini"
-    skip_section=0
-    # Loop through each line in the input file
-    while IFS= read -r line; do
-        # Check if the line is a window header
-        if [[ "$line" =~ ^\[Window\]\[Main\ Game\] || "$line" =~ ^\[Window\]\[Main\ -\ Deck\] ]]; then
-            skip_section=1  # Set the flag to skip modifications for this section
-        elif [[ "$line" =~ ^\[Window\] ]]; then
-            skip_section=0  # Reset the flag for other windows
-        fi
-
-        # Modify Pos and Size only if the current section is not skipped
-        if [[ $skip_section -eq 0 ]]; then
-            if [[ "$line" =~ ^Pos=.* ]]; then
-                echo "Pos=30,30" >> "$temp_file"
-            elif [[ "$line" =~ ^Size=.* ]]; then
-                echo "Size=400,300" >> "$temp_file"
-            else
-                echo "$line" >> "$temp_file"
-            fi
+# SoH 9.3+ extracts roms itself (torch) using the ymls in assets/, so no patcher is needed
+unzip_assets() {
+    if [ -f "$GAMEDIR/assets/extractor.zip" ]; then
+        pm_message "Unpacking extractor assets..."
+        if "$controlfolder/7zzs.${DEVICE_ARCH}" x -y "$GAMEDIR/assets/extractor.zip" -o"$GAMEDIR/assets" >/dev/null; then
+            rm -f "$GAMEDIR/assets/extractor.zip"
         else
-            # If skipping, write the line unchanged
-            echo "$line" >> "$temp_file"
-        fi
-    done < "$input_file"
-
-    # Replace the original file with the modified one
-    mv "$temp_file" "$input_file"
-}
-
-otr_check() {
-    if [ ! -f "oot.o2r" ] && [ ! -f "oot-mq.o2r" ]; then
-        # Ensure we have a rom file before attempting to generate otr
-        if ls "$GAMEDIR/baseroms/"*.*64 1> /dev/null 2>&1; then
-            if [ -f "$controlfolder/utils/patcher.txt" ]; then
-                export PATCHER_FILE="$GAMEDIR/assets/otrgen"
-                export PATCHER_GAME="$(basename "${0%.*}")"
-                export PATCHER_TIME="5 to 10 minutes"
-                export controlfolder
-                export DEVICE_ARCH
-                source "$controlfolder/utils/patcher.txt"
-                $ESUDO kill -9 $(pidof gptokeyb)
-            else
-                pm_message "This port requires the latest version of PortMaster."
-            fi
-        else
-            pm_message "Missing ROM files! Can't generate o2r!"
+            pm_message "Failed to unpack extractor.zip!"
             sleep 5
-            exit
-        fi
-
-        # Check if OTR files were generated
-        if [ ! -f "oot.o2r" ] && [ ! -f "oot-mq.o2r" ]; then
-            pm_message "No o2r files, can't run the game!"
-            exit 1
+            pm_finish
+            exit 0
         fi
     fi
 }
 
+# Pass baseroms to soh.elf when no o2r exists yet; it prompts on screen and then starts the game
+otr_check() {
+    ROMS=()
+    if [ ! -f "oot.o2r" ] && [ ! -f "oot-mq.o2r" ]; then
+        for rom in "$GAMEDIR/baseroms/"*.z64 "$GAMEDIR/baseroms/"*.n64 "$GAMEDIR/baseroms/"*.v64; do
+            [ -f "$rom" ] && ROMS+=("$rom")
+        done
+        if [ ${#ROMS[@]} -eq 0 ]; then
+            pm_message "Missing ROM files! Place a .z64, .n64 or .v64 in baseroms/"
+            sleep 5
+            pm_finish
+            exit 0
+        fi
+    fi
+}
+
+# Temporary swap for rom extraction on <=1GB devices (swap_on/swap_off)
+source "$GAMEDIR/swap.txt"
+
 # --------------------- END FUNCTIONS ---------------------
 
-# Perform functions
-otr_check
+# Launcher (Love2D): Anchor player name / room ID, frame rate and N64 low-res mode;
+# also closes the game menu and enables controller navigation in shipofharkinian.json
+rm -f "$GAMEDIR/launch.cfg"
+source $controlfolder/runtimes/"love_11.5"/love.txt
+$LOVE_RUN "$GAMEDIR/launcher" "$GAMEDIR/shipofharkinian.json" "$GAMEDIR/launch.cfg"
 
-if [ -f "imgui.ini" ]; then
-    imgui_reset
+# Continue only if the user chose Play (launcher writes LAUNCHER_PLAY=1 to launch.cfg)
+if ! grep -qx "LAUNCHER_PLAY=1" "$GAMEDIR/launch.cfg" 2>/dev/null; then
+  pm_finish
+  exit 0
+fi
+
+# Perform functions
+unzip_assets
+otr_check
+swap_on
+trap swap_off EXIT
+
+# torch writes the finished o2r to $TMPDIR before copying it here; /tmp is RAM (tmpfs) on most CFWs
+if [ ${#ROMS[@]} -gt 0 ]; then
+    rm -rf "$GAMEDIR/tmp"
+    mkdir -p "$GAMEDIR/tmp"
+    export TMPDIR="$GAMEDIR/tmp"
 fi
 
 # Run the game
 $GPTOKEYB "soh.elf.${DEVICE_ARCH}" -c "soh.gptk" &
 pm_platform_helper "soh.elf.${DEVICE_ARCH}" >/dev/null
-./soh.elf.${DEVICE_ARCH}
+./soh.elf.${DEVICE_ARCH} "${ROMS[@]}"
 
 # Cleanup
+swap_off
+rm -rf "$GAMEDIR/tmp"
 rm -rf "$GAMEDIR/logs/"
 pm_finish
