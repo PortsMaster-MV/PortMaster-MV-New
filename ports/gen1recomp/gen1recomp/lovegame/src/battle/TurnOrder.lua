@@ -1,0 +1,47 @@
+-- Turn order, from engine/battle/core.asm MainInBattleLoop: compare
+-- effective speed; ties are a coin flip.  Move priority reads the move
+-- record's priority field; the id table below covers pre-existing
+-- imported caches (Gen 1 has only QUICK_ATTACK first and COUNTER last).
+
+local Damage = require("src.battle.Damage")
+local Stats = require("src.pokemon.Stats")
+local Status = require("src.battle.Status")
+
+local TurnOrder = {}
+
+local function effectiveSpeed(battler)
+  local spd = Stats.applyStage(battler.curStats.speed,
+                               battler.stages and battler.stages.speed or 0)
+  -- ApplyBadgeStatBoosts: the SOULBADGE boosts speed; the rows come from
+  -- the battler's merged badgeBoosts with the vanilla list as fallback
+  spd = Damage.applyBadgeBoost(battler, "speed", spd)
+  -- core.asm:6283, effects.asm:414-415
+  return Status.applyPenalty(battler, "speed", spd)
+end
+
+local PRIORITY = { QUICK_ATTACK = 1, COUNTER = -1 }
+
+local function priority(move)
+  if not move then return 0 end
+  if move.priority then return move.priority end
+  return PRIORITY[move.id] or 0
+end
+
+-- Returns true when battler a moves before battler b.  invertTie flips
+-- the coin-flip result only: lockstep link battles share one RNG
+-- stream, so the guest inverts the tie roll to agree with the host on
+-- who moves first.
+function TurnOrder.firstMover(a, aMove, b, bMove, rng, invertTie)
+  rng = rng or love.math.random
+  local pa, pb = priority(aMove), priority(bMove)
+  if pa ~= pb then return pa > pb end
+  local sa, sb = effectiveSpeed(a), effectiveSpeed(b)
+  if sa ~= sb then return sa > sb end
+  local aFirst = rng(0, 1) == 0
+  if invertTie then aFirst = not aFirst end
+  return aFirst
+end
+
+TurnOrder.effectiveSpeed = effectiveSpeed
+
+return TurnOrder

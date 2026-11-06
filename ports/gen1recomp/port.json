@@ -1,0 +1,33 @@
+{
+    "version": 4,
+    "name": "gen1recomp.zip",
+    "items": [
+        "Gen1Recomp.sh",
+        "gen1recomp"
+    ],
+    "items_opt": [],
+    "attr": {
+        "title": "Gen1Recomp",
+        "porter": [
+            "Nexhas28"
+        ],
+        "desc": "Native Pokemon recreation in L\u00d6VE. Requires your own supported US ROM; no ROM is included.",
+        "desc_md": null,
+        "inst": "Copy a supported canonical US ROM into gen1recomp/lovegame/, then launch and choose the ROM. Start with Red or Blue. Update through PortMaster.",
+        "inst_md": null,
+        "genres": [
+            "adventure",
+            "rpg"
+        ],
+        "image": null,
+        "rtr": false,
+        "exp": false,
+        "runtime": [],
+        "store": [],
+        "reqs": [],
+        "arch": [
+            "aarch64"
+        ],
+        "min_glibc": ""
+    }
+}

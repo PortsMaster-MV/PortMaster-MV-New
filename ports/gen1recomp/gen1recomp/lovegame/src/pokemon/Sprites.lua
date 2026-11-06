@@ -1,0 +1,147 @@
+-- Runtime Pokémon art resolution.  Content registries freeze after load,
+-- so a mod that lets the player pick an alternate skin mid-session cannot
+-- patch pokemon.spriteFront / icons.bySpecies.  These helpers are the
+-- sanctioned seam: every battle pic and party icon load goes through
+-- pokemon.sprite / pokemon.icon, which stay live for the whole process.
+--
+-- playerPath is the same seam for the player's own trainer art, whose
+-- vanilla paths are data (field.playerPics) rather than a species record.
+
+local Runtime = require("src.mods.Runtime")
+local FieldDefaults = require("src.world.FieldDefaults")
+
+local Sprites = {}
+
+local function samePath(path) return path end
+
+-- Resolve a battle / menu front or back pic path for `species`.
+-- side: "front" | "back"
+-- opts.mon: the live mon when available (per-instance skins)
+-- opts.kind: "battle" | "summary" | "dex" | "evolution" | "hof" | "trade"
+--            | "title" | "oak" | "credits" | "overworld" | "box" | "hatch"
+--            | "photo" | "unown_printer" | "online", or "<kind>_anim"
+-- Returns path, trueColor.
+function Sprites.path(data, species, side, opts)
+  opts = opts or {}
+  local def = data and data.pokemon and data.pokemon[species]
+  if not def then return nil, false end
+  local path = side == "back" and def.spriteBack or def.spriteFront
+  return Sprites.pic(path, {
+    species = species,
+    side = side,
+    kind = opts.kind,
+    mon = opts.mon,
+    trueColor = def.trueColor and true or false,
+    data = data,
+  })
+end
+
+function Sprites.pic(path, ctx)
+  ctx = ctx or {}
+  ctx.side = ctx.side == "back" and "back" or "front"
+  ctx.kind = ctx.kind or "battle"
+  if ctx.trueColor == nil then
+    local def = ctx.data and ctx.data.pokemon and ctx.species
+      and ctx.data.pokemon[ctx.species]
+    ctx.trueColor = (def and def.trueColor) and true or false
+  end
+  if path and Runtime.wantsHook("pokemon.sprite") then
+    local hooked = Runtime.call("pokemon.sprite", samePath, path, ctx)
+    if type(hooked) == "string" and hooked ~= "" then path = hooked end
+  end
+  return path, ctx.trueColor and true or false
+end
+
+-- Resolve the player's own trainer pic path.
+-- side: "back" (the battle intro pic) | "front" (intro / card / Hall of Fame)
+-- opts.kind: "battle" | "intro" | "trainer_card" | "hof"
+-- opts.demo: the catch tutorial, where the old man fights in the player's
+--            place and stands in for the back pic
+-- opts.oakDemo: the Yellow variant of that demo (BATTLE_TYPE_PIKACHU), where
+--            PROF.OAK fights in the player's place behind his own back pic
+-- opts.battle: the live battle, for kind == "battle"
+-- Returns path, trueColor.
+function Sprites.playerPath(data, side, opts)
+  opts = opts or {}
+  side = side == "back" and "back" or "front"
+  -- one key per pic, so a conversion can replace the back and inherit the
+  -- rest; fieldValue folds data.field over FieldDefaults per key.  The two
+  -- demo keys mirror LoadPlayerBackPic's wBattleType branch (#557).
+  local key = side == "front" and "front"
+              or (opts.oakDemo and "oakBack")
+              or (opts.demo and "demoBack" or "back")
+  local path = FieldDefaults.fieldValue(data, "playerPics", key)
+  -- ProfOakPicBack is a Yellow-only rip, so a cache imported before it
+  -- existed has no file there; fall back to the old man rather than hand a
+  -- missing path to getImage (#557)
+  if key == "oakBack" and path
+     and not require("src.render.Assets").exists(path) then
+    path = FieldDefaults.fieldValue(data, "playerPics", "demoBack")
+  end
+  local ctx = {
+    side = side,
+    kind = opts.kind or "battle",
+    demo = opts.demo and true or false,
+    oakDemo = opts.oakDemo and true or false,
+    battle = opts.battle,
+    trueColor = false,
+    data = data,
+  }
+  return Sprites.playerPic(path, ctx)
+end
+
+-- Raise player.sprite over an ALREADY-resolved path.  Gold's trainer art is
+-- not in field.playerPics -- its back pic comes off gen2MenuGfx.battleHud, its
+-- card and Hall of Fame off their own tables -- so its call sites resolve
+-- their own path and hand it here, which keeps one hook name, one payload and
+-- one mod source across both generations (src/ui/gen2/BattleState.lua).
+-- ctx wants { side, kind, demo, oakDemo, battle, trueColor, data }.
+-- Returns path, trueColor.
+function Sprites.playerPic(path, ctx)
+  ctx = ctx or {}
+  ctx.side = ctx.side == "back" and "back" or "front"
+  ctx.kind = ctx.kind or "battle"
+  ctx.demo = ctx.demo and true or false
+  ctx.oakDemo = ctx.oakDemo and true or false
+  if path and Runtime.wantsHook("player.sprite") then
+    local hooked = Runtime.call("player.sprite", samePath, path, ctx)
+    if type(hooked) == "string" and hooked ~= "" then path = hooked end
+  end
+  return path, ctx.trueColor and true or false
+end
+
+-- Resolve a party-menu icon image path for `mon`.
+-- vanillaPath is the path PartyMenu already picked from icons.bySpecies /
+-- def.icon / icons.byDex; the hook may replace it.
+-- opts.trueColor is the icon record's own flag: an icons.bySpecies table
+-- entry may carry one, the way a pokemon record carries it for a battle pic.
+-- A hook may also set ctx.trueColor, to flag art it substitutes for art that
+-- carried no flag -- the same ctx contract pokemon.sprite has, and the reason
+-- the flag is read back off ctx rather than trusted from opts alone.
+-- Returns path (possibly nil), trueColor.
+function Sprites.iconPath(data, mon, vanillaPath, opts)
+  opts = opts or {}
+  local trueColor = opts.trueColor and true or false
+  if not vanillaPath and not Runtime.wantsHook("pokemon.icon") then
+    return vanillaPath, trueColor
+  end
+  -- checked before the ctx table: party menus ask every drawn frame, and
+  -- an unhooked call must not allocate
+  if not Runtime.wantsHook("pokemon.icon") then return vanillaPath, trueColor end
+  local species = mon and mon.species
+  local ctx = {
+    species = species,
+    mon = mon,
+    name = opts.name,
+    data = data,
+    kind = "icon",
+    trueColor = trueColor,
+  }
+  local hooked = Runtime.call("pokemon.icon", samePath, vanillaPath, ctx)
+  trueColor = ctx.trueColor and true or false
+  if type(hooked) == "string" and hooked ~= "" then return hooked, trueColor end
+  if hooked == nil or hooked == false then return nil, false end
+  return vanillaPath, trueColor
+end
+
+return Sprites

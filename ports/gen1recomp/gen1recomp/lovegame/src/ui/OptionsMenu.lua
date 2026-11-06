@@ -1,0 +1,895 @@
+-- Options: text speed, battle animation on/off, battle style SHIFT/SET
+-- (engine/menus/main_menu.asm DisplayOptionMenu), the battle ruleset
+-- (cycles the merged rulesets registry; gen1_faithful keeps the original
+-- quirks), plus the port's audio rows and display rows: music/SFX
+-- volume (0-7), PIKACHU VOL (0-7, Yellow only: trims the PCM voice clips
+-- under SFX VOL), music low-pass filter (OFF/1X/2X/3X), COLORS / TILT /
+-- SHADER FX / ZOOM / VOID FILL / VIDEO MODE, and the MODS row that opens
+-- the mod manager.
+-- Rows are descriptors fed through the ui.options.rows hook, so mods can
+-- add their own; CANCEL is appended after the hook and stays fixed on the
+-- bottom line like pokered's.
+
+local PaletteFX = require("src.render.PaletteFX")
+local Palette = require("src.render.Palette")
+local Pipelines = require("src.render.Pipelines")
+local Tilt = require("src.render.Tilt")
+local ShaderFX = require("src.render.ShaderFX")
+local Zoom = require("src.render.Zoom")
+local Letterbox = require("src.render.Letterbox")
+local TileRenderer = require("src.render.TileRenderer")
+local GameSpeed = require("src.core.GameSpeed")
+local GameVersion = require("src.core.GameVersion")
+local VideoMode = require("src.core.VideoMode")
+local Orientation = require("src.core.Orientation")
+local FaithfulRes = require("src.core.FaithfulRes")
+local ScreenPosition = require("src.core.ScreenPosition")
+local FrameCap = require("src.core.FrameCap")
+local VSync = require("src.core.VSync")
+local LogicClock = require("src.core.LogicClock")
+local Performance = require("src.core.Performance")
+local Logger = require("src.core.Logger")
+local Runtime = require("src.mods.Runtime")
+local OptionRows = require("src.ui.OptionRows")
+local Renderer = require("src.render.Renderer")
+local Strings = require("src.core.Strings")
+
+local OptionsMenu = { isMenu = true }
+OptionsMenu.__index = OptionsMenu
+OptionsMenu.isOpaque = true
+
+-- Shared by the three GameSpeed rows below (overworld/battle/menu): mirrors
+-- src/ui/gen2/OptionsMenu.lua's own speed row so the translated "NORMAL"/
+-- "%dX" catalog keys apply on both generations' options screens.
+local function gameSpeedLabel(v)
+  local speed = tonumber(v) or GameSpeed.DEFAULT
+  if speed == 1 then return Strings("NORMAL") end
+  return Strings("%dX", speed)
+end
+
+-- Opaque full-screen menu: own MEWMON so opening OPTION from the title
+-- (or over the overworld) does not inherit TitleState's LOGO1 band -- that
+-- zone covers UI rows 8-9, which is the third options box label line
+-- (pink "MODS" strip when Blue's ROM LOGO1 white is {255,239,255}).
+function OptionsMenu:sgbPalettes(game)
+  return PaletteFX.wholeNamed(game.data, "MEWMON")
+end
+
+-- TextSpeedOptionData frame delays with the original labels
+local SPEEDS = { { 1, "FAST" }, { 3, "MEDIUM" }, { 5, "SLOW" } }
+-- no-loader fallback for the ruleset row, same pair BattleState keeps
+local Rulesets = {
+  gen1_faithful = require("src.battle.rulesets.gen1_faithful"),
+  modern_clean = require("src.battle.rulesets.modern_clean"),
+}
+local FILTERS = { "OFF", "1X", "2X", "3X" }
+local DATE_FORMATS = {
+  { "device", "DEVICE" }, { "dmy", "DD-MM-YYYY" },
+  { "mdy", "MM-DD-YYYY" }, { "ymd", "YYYY-MM-DD" },
+}
+local TIME_FORMATS = {
+  { "device", "DEVICE" }, { "24h", "24 HOUR" }, { "12h", "12 HOUR" },
+}
+
+local function preferenceIndex(rows, value)
+  for index, row in ipairs(rows) do
+    if row[1] == value then return index end
+  end
+  return 1
+end
+
+local function preferenceStep(rows, value, direction)
+  local index = preferenceIndex(rows, value)
+  direction = direction and direction < 0 and -1 or 1
+  return rows[((index - 1 + direction) % #rows) + 1][1]
+end
+
+local function preferenceLabel(rows, value)
+  return rows[preferenceIndex(rows, value)][2]
+end
+
+local function speedIndex(game)
+  -- default matches InitOptions' TEXT_DELAY_MEDIUM in wOptions
+  local cur = game.save.options.textSpeed or 3
+  for i, s in ipairs(SPEEDS) do
+    if s[1] == cur then return i end
+  end
+  return 2 -- MEDIUM
+end
+
+-- the ruleset row cycles the sorted non-hidden ids of the merged
+-- registry (07-battle-extensibility.md 4.6), so mod-registered
+-- rulesets are selectable; hidden marks a total conversion's exclusions
+local function rulesetIds(game)
+  local rulesets = game.data and game.data.rulesets or Rulesets
+  local ids = {}
+  for id, record in pairs(rulesets) do
+    if not record.hidden then ids[#ids + 1] = id end
+  end
+  table.sort(ids)
+  return ids
+end
+
+local function rulesetIndex(game, ids)
+  local constants = game.data and game.data.constants
+  local cur = game.save.options.ruleset
+              or (constants and constants.defaultRuleset) or "gen1_faithful"
+  for i, id in ipairs(ids) do
+    if id == cur then return i end
+  end
+  return 1
+end
+
+local function rulesetName(game)
+  local rulesets = game.data and game.data.rulesets or Rulesets
+  local ids = rulesetIds(game)
+  local id = ids[rulesetIndex(game, ids)] or game.save.options.ruleset
+  local record = id and rulesets[id]
+  return Strings(record and record.name or id or "----")
+end
+
+-- 0-7 volume level display (0 = OFF)
+local function volLabel(v)
+  v = v or 7
+  return v == 0 and "OFF" or tostring(v)
+end
+
+-- volume rows clamp at the ends, like pokered's text-speed cursor
+-- (.pressedLeftInTextSpeed stays at FAST rather than wrapping)
+local function stepVolume(v, dir)
+  return math.max(0, math.min(7, (v or 7) + dir))
+end
+
+local function wrapIndex(i, n)
+  i = i % n
+  if i < 0 then i = i + n end
+  return i
+end
+
+local function sameRows(_, rows) return rows end
+
+-- "OFF" plus every entry's display name, extension stripped -- a
+-- Strings() lookup like RULESET's own record.name so a translation catalog
+-- could rewrite "OFF" without needing to know about arbitrary preset
+-- filenames.
+local function shaderfxLabel(entry)
+  if not entry then return Strings("OFF") end
+  return Strings((entry.name:gsub("%.slangp$", "")))
+end
+
+-- Dual-shader slots: "main" backs the original SHADER
+-- FX row (unchanged save key, unchanged default OFF), "secondary" backs the
+-- new SHADER FX 2 row below it -- when both are set, ShaderFX.render() runs
+-- main's chain into secondary's, same as stacking two RetroArch presets.
+
+local function bgLocked(o)
+  return o.battleLayout == "wide" and o.battleFit == "fill"
+     and o.battleHud == "extended"
+end
+
+-- the vanilla rows as descriptors; each step body is the old per-index
+-- ladder's, so the save.options mutations are unchanged
+local function buildRows(game)
+  local rows = {
+    { id = "textSpeed", label = Strings("TEXT SPEED"),
+      value = function(g) return Strings(SPEEDS[speedIndex(g)][2]) end,
+      step = function(g)
+        local i = speedIndex(g) % #SPEEDS + 1
+        g.save.options.textSpeed = SPEEDS[i][1]
+        return true
+      end },
+    { id = "animations", label = Strings("BATTLE ANIMATION"),
+      value = function(g)
+        return g.save.options.animations == false and Strings("OFF") or Strings("ON")
+      end,
+      step = function(g)
+        local o = g.save.options
+        o.animations = o.animations == false and true or false
+        return true
+      end },
+    { id = "battleStyle", label = Strings("BATTLE STYLE"),
+      value = function(g)
+        return g.save.options.battleStyle == "set" and Strings("SET") or Strings("SHIFT")
+      end,
+      step = function(g)
+        local o = g.save.options
+        o.battleStyle = o.battleStyle == "set" and "shift" or "set"
+        return true
+      end },
+    -- OG is the classic 160x144 battle screen; WIDE is the 304x144
+    -- widescreen composition (src/battle/WideBattle.lua)
+    { id = "battleLayout", label = Strings("BATTLE LAYOUT"),
+      value = function(g)
+        return g.save.options.battleLayout == "wide" and Strings("WIDE") or Strings("OG")
+      end,
+      step = function(g)
+        local o = g.save.options
+        o.battleLayout = o.battleLayout == "wide" and "og" or "wide"
+        if o.battleLayout ~= "wide" then
+          o.battleHud = "standard"
+        end
+        return true
+      end },
+    -- FIXED keeps the classic integer-scaled letterbox -- a GB pixel is a
+    -- whole number of screen pixels and the battle is the same size at any
+    -- zoom.  FILL scales the battle surface to the window so it fills
+    -- vertically; that needs a fractional scale, so pixels stop being evenly
+    -- sized.  Battle only: the overworld is untouched either way.
+    { id = "battleFit", label = Strings("BATTLE SIZE"),
+      value = function(g)
+        return g.save.options.battleFit == "fill" and Strings("FILL")
+               or Strings("FIXED")
+      end,
+      step = function(g)
+        local o = g.save.options
+        o.battleFit = o.battleFit == "fill" and "fixed" or "fill"
+        return true
+      end },
+    { id = "battleHud", label = Strings("BATTLE HUD"),
+      value = function(g)
+        local o = g.save.options
+        return o.battleLayout == "wide" and o.battleHud == "extended"
+               and Strings("EXTENDED")
+               or Strings("STANDARD")
+      end,
+      step = function(g)
+        local o = g.save.options
+        -- The extended HUD is a widescreen-only composition. Keep OG locked
+        -- to the author's standard HUD even if an older save says otherwise.
+        if o.battleLayout ~= "wide" then
+          o.battleHud = "standard"
+          return false
+        end
+        o.battleHud = o.battleHud == "extended" and "standard" or "extended"
+        return true
+      end },
+    -- What sits behind and around the battle.  WHITE is the classic paper
+    -- field; BLACK swaps it for black bars; WORLD leaves the frozen overworld
+    -- visible underneath, dimmed (the battle stops being opaque, so the map
+    -- shows through everywhere the battle does not paint).
+    { id = "battleBg", label = Strings("BATTLE BG"),
+      value = function(g)
+        local o = g.save.options
+        if bgLocked(o) then return Strings("AUTO (FILL HUD)") end
+        local m = o.battleBg
+        if m == "black" then return Strings("BLACK") end
+        if m == "world" then return Strings("WORLD") end
+        return Strings("WHITE")
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        if bgLocked(o) then return false end
+        local order = { "white", "black", "world" }
+        local cur = 1
+        for i, m in ipairs(order) do if o.battleBg == m then cur = i break end end
+        o.battleBg = order[(cur - 1 + (dir or 1)) % #order + 1]
+        return true
+      end },
+    -- CENTERED is a fixed letterbox: elements stay inside the 160x144 canvas
+    -- and the UI does not follow the survey zoom, so nothing moves or resizes
+    -- under the player.  The composition the port shipped with.  DYNAMIC docks
+    -- the dialogue box to the window's bottom edge and the START menu to its
+    -- top right, and steps the UI down with the zoom -- easier to read zoomed
+    -- out, but it moves furniture the original never moved, so it is opt-in.
+    -- BATTLE SIZE is independent of this and works under either.
+    { id = "uiLayout", label = Strings("UI LAYOUT"),
+      value = function(g)
+        return g.save.options.uiLayout == "dynamic" and Strings("DYNAMIC")
+               or Strings("CENTERED")
+      end,
+      step = function(g)
+        local o = g.save.options
+        o.uiLayout = o.uiLayout == "dynamic" and "centered" or "dynamic"
+        return true
+      end },
+    { id = "ruleset", label = Strings("RULESET"),
+      value = function(g) return rulesetName(g) end,
+      step = function(g, dir)
+        local ids = rulesetIds(g)
+        if #ids == 0 then return false end
+        local i = rulesetIndex(g, ids)
+        g.save.options.ruleset = ids[wrapIndex(i - 1 + dir, #ids) + 1]
+        return true
+      end },
+    { id = "musicVol", label = Strings("MUSIC VOL"),
+      value = function(g) return volLabel(g.save.options.musicVol) end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.musicVol = stepVolume(o.musicVol, dir)
+        require("src.core.Music").setVolumeLevel(o.musicVol)
+        return true
+      end },
+    { id = "sfxVol", label = Strings("SFX VOL"),
+      value = function(g) return volLabel(g.save.options.sfxVol) end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.sfxVol = stepVolume(o.sfxVol, dir)
+        require("src.core.Sound").setVolumeLevel(o.sfxVol)
+        return true
+      end },
+    -- Yellow only (filtered out below on Red/Blue): trims Pikachu's voice
+    -- clips under the SFX level, since Yellow plays them constantly (every
+    -- follower interaction, the title screen, the dex) and they are mixed
+    -- much hotter than the chip cries.
+    { id = "pikaVol", label = Strings("PIKACHU VOL"),
+      value = function(g) return volLabel(g.save.options.pikaVol) end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.pikaVol = stepVolume(o.pikaVol, dir)
+        require("src.core.Sound").setPikaVolumeLevel(o.pikaVol)
+        return true
+      end },
+    { id = "musicFilter", label = Strings("MUSIC FILTER"),
+      value = function(g)
+        return FILTERS[(g.save.options.musicFilter or 0) + 1]
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.musicFilter = ((o.musicFilter or 0) + dir) % #FILTERS
+        require("src.core.Music").setFilterLevel(o.musicFilter)
+        return true
+      end },
+    -- Heads the port's display group: one tier that scales the heavy extras
+    -- (TILT / survey ZOOM) and the FPS ceiling for weaker devices.
+    -- AUTO picks a default from the hardware; every tier is overridable.
+    -- Re-applies live so the extras clamp (or, on a higher tier, restore to
+    -- the player's stored TILT / ZOOM) the moment the row changes.
+    { id = "performance", label = Strings("PERFORMANCE"),
+      value = function(g)
+        return Strings(Performance.label(g.save.options.performance))
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.performance = Performance.cycle(o.performance, dir)
+        g:applyOptions(o)
+        return true
+      end },
+    { id = "colors", label = Strings("COLORS"),
+      value = function(g)
+        local id = g.save.options.palette
+        if id and id ~= "" then
+          return Palette.label(id) or PaletteFX.modeLabel(g.save.options.colors or "gbc")
+        end
+        return PaletteFX.modeLabel(g.save.options.colors or "gbc")
+      end,
+      activate = function(g)
+        require("src.ui.Screens").push(g, "PaletteScreen")
+      end },
+    { id = "tilt", label = Strings("TILT"),
+      value = function(g) return Tilt.levelLabel(g.save.options.tilt or 0) end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.tilt = wrapIndex((o.tilt or 0) + dir, 4)
+        Tilt.setLevel(o.tilt)
+        -- tilt and a mod's world pipeline are two answers to the same
+        -- question; turning this on switches that off (Pipelines does the
+        -- same in the other direction)
+        if o.tilt > 0 then
+          for _, entry in ipairs(Pipelines.list()) do
+            if entry.def.drawWorld then Pipelines.setLevel(entry.id, 0) end
+          end
+          Pipelines.syncOptions(o)
+        end
+        return true
+      end },
+    -- The generalized slang-shader-preset feature: a picker over
+    -- ShaderFX.list()'s real drop-in presets -- replaced GBCFX.lua's fixed
+    -- level ladder entirely (GBCFX.lua removed). A pushes a real list
+    -- screen -- OFF plus one row per .slangp found -- the same
+    -- "activate, not step" shape CONTROLS/MODS already use, rather than
+    -- cycling in place on this row.
+    -- ShaderFXScreen.lua does the actual list/activate; this row only opens
+    -- it and shows what is currently active.
+    { id = "uiLetterbox", label = Strings("UI LETTERBOX"),
+      value = function(g)
+        return Strings(Letterbox.label(g.save.options.uiLetterbox))
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.uiLetterbox = Letterbox.cycle(o.uiLetterbox, dir)
+        Letterbox.setMode(o.uiLetterbox)
+        return true
+      end },
+    { id = "shaderfx", label = Strings("SHADER FX"),
+      value = function(g)
+        return shaderfxLabel(ShaderFX.activeEntry("main"))
+      end,
+      activate = function(g)
+        require("src.ui.Screens").push(g, "ShaderFXScreen", "main")
+      end },
+    -- The secondary slot: same picker screen, opened on "secondary" instead
+    -- -- its own row so both slots are visible/settable independently
+    -- without a submenu inside a submenu.
+    { id = "shaderfx2", label = Strings("SHADER FX 2"),
+      value = function(g)
+        return shaderfxLabel(ShaderFX.activeEntry("secondary"))
+      end,
+      activate = function(g)
+        require("src.ui.Screens").push(g, "ShaderFXScreen", "secondary")
+      end },
+    { id = "zoom", label = Strings("ZOOM"),
+      value = function(g)
+        local offset = math.floor(tonumber(g.save.options.zoom) or 0)
+        if offset == 0 then return Strings("FIT") end
+        return offset < 0 and Strings("OUT%d", -offset) or Strings("IN%d", offset)
+      end,
+      step = function(g, dir)
+        Zoom.nudgeOptions(g.save.options, dir, Renderer:fitScale())
+        return true
+      end },
+    { id = "voidFill", label = Strings("VOID FILL"),
+      value = function(g)
+        return TileRenderer.voidFillLabel(g.save.options.voidFill)
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        local modes = TileRenderer.VOID_FILLS
+        local cur = o.voidFill or "trees"
+        local i = 1
+        for idx, m in ipairs(modes) do
+          if m == cur then i = idx; break end
+        end
+        o.voidFill = modes[wrapIndex(i - 1 + dir, #modes) + 1]
+        TileRenderer.setVoidFill(o.voidFill)
+        return true
+      end },
+    { id = "videoMode", label = Strings("VIDEO MODE"),
+      value = function(g)
+        return VideoMode.modeLabel(g.save.options.videoMode)
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.videoMode = VideoMode.cycle(o.videoMode, dir)
+        VideoMode.apply(o.videoMode)
+        return true
+      end },
+    -- Android orientation lock (#592): AUTO / PORTRAIT / LANDSCAPE /
+    -- REVERSE LANDSCAPE, live-applied through SDL's orientation hint.
+    -- Filtered out below on everything that is not Android.
+    { id = "orientation", label = Strings("ORIENTATION"),
+      value = function(g)
+        return Strings(Orientation.modeLabel(g.save.options.orientation))
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.orientation = Orientation.cycle(o.orientation, dir)
+        Orientation.apply(o.orientation)
+        return true
+      end },
+    -- Lock the window to an exact 160x144 multiple, so the surface IS the
+    -- Game Boy screen with no letterbox at all.  Sits next to VIDEO MODE
+    -- because it overrides it: holding an exact size means dropping
+    -- fullscreen.
+    { id = "faithfulRes", label = Strings("FAITHFUL RATIO"),
+      value = function(g)
+        return FaithfulRes.label(g.save.options.faithfulRes)
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.faithfulRes = FaithfulRes.cycle(o.faithfulRes, dir)
+        FaithfulRes.apply(o.faithfulRes)
+        return true
+      end },
+    { id = "screenPos", label = Strings("SCREEN POS"),
+      value = function(g)
+        return Strings(ScreenPosition.label(g.save.options.screenPos))
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.screenPos = ScreenPosition.cycle(o.screenPos, dir)
+        ScreenPosition.setMode(o.screenPos)
+        return true
+      end },
+    -- hard render cap (issue #88): bounds the present rate so a
+    -- driver-forced vsync-off run cannot spin at thousands of FPS.  Logic
+    -- is fixed-step off dt, so this touches presentation only.
+    { id = "fpsCap", label = Strings("MAX FPS"),
+      value = function(g)
+        local value = FrameCap.normalize(g.save.options.fpsCap)
+        if value == FrameCap.DISPLAY then
+          local label = FrameCap.label(value)
+          local hz = tonumber(label:match("^DISPLAY %((%d+)HZ%)$"))
+          return hz and Strings("DISPLAY (%dHZ)", hz) or Strings("DISPLAY")
+        end
+        return FrameCap.label(value)
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.fpsCap = FrameCap.cycle(o.fpsCap, dir)
+        FrameCap.apply(o.fpsCap)
+        return true
+      end },
+    { id = "vsync", label = Strings("VSYNC"),
+      value = function(g)
+        local ok, PS = pcall(require, "src.core.PresentSync")
+        if ok and PS.vsyncEnableBlocked and PS.vsyncEnableBlocked() then
+          return Strings("UNAVAILABLE")
+        end
+        return Strings(VSync.label(g.save.options.vsync))
+      end,
+      step = function(g, dir)
+        local ok, PS = pcall(require, "src.core.PresentSync")
+        if ok and PS.vsyncStepAllowed
+           and not PS.vsyncStepAllowed(g.save.options.vsync, dir) then
+          return false
+        end
+        local o = g.save.options
+        o.vsync = VSync.cycle(o.vsync, dir)
+        VSync.apply(o.vsync)
+        return true
+      end },
+    { id = "logicClock", label = Strings("LOGIC CLOCK"),
+      value = function(g)
+        return Strings(LogicClock.label(g.save.options.logicClock))
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.logicClock = LogicClock.cycle(o.logicClock, dir)
+        LogicClock.apply(o.logicClock)
+        return true
+      end },
+    -- fast-forward the logic clock only; music and sfx keep their tempo
+    -- (src/core/GameSpeed.lua), so this is safe to leave on.
+    { id = "speedOverworld", label = Strings("OVERWORLD SPEED"),
+      value = function(g)
+        return gameSpeedLabel(g.save.options.speedOverworld)
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.speedOverworld = GameSpeed.cycle(o.speedOverworld, dir)
+        return true
+      end },
+    { id = "speedBattle", label = Strings("BATTLE SPEED"),
+      value = function(g)
+        return gameSpeedLabel(g.save.options.speedBattle)
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.speedBattle = GameSpeed.cycle(o.speedBattle, dir)
+        return true
+      end },
+    { id = "speedMenu", label = Strings("MENU SPEED"),
+      value = function(g)
+        return gameSpeedLabel(g.save.options.speedMenu)
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        o.speedMenu = GameSpeed.cycle(o.speedMenu, dir)
+        return true
+      end },
+    -- the manager's discoverable home (18-mod-manager-ux); inert until
+    -- opened, so the row costs a vanilla install nothing
+    { id = "mods", label = Strings("MODS"),
+      value = function(g)
+        local status = g.modStatus or {}
+        return Strings("%d INSTALLED", #(status.available or {}))
+      end,
+      activate = function(g)
+        require("src.ui.Screens").push(g, "ManagerState")
+      end },
+    -- rebinding UI (gap C2, 12-ui-extensibility 4.4); captured inputs
+    -- live in options.bindings, so the row costs a vanilla install nothing
+    { id = "controls", label = Strings("CONTROLS"),
+      activate = function(g)
+        require("src.ui.Screens").push(g, "BindingsMenu")
+      end },
+    { id = "dateFormat", label = Strings("DATE FORMAT"),
+      value = function(g)
+        return Strings(preferenceLabel(DATE_FORMATS, g.save.options.dateFormat))
+      end,
+      step = function(g, dir)
+        g.save.options.dateFormat = preferenceStep(
+          DATE_FORMATS, g.save.options.dateFormat, dir)
+        return true
+      end },
+    { id = "timeFormat", label = Strings("TIME FORMAT"),
+      value = function(g)
+        return Strings(preferenceLabel(TIME_FORMATS, g.save.options.timeFormat))
+      end,
+      step = function(g, dir)
+        g.save.options.timeFormat = preferenceStep(
+          TIME_FORMATS, g.save.options.timeFormat, dir)
+        return true
+      end },
+    -- permanent on-screen pad toggle (#327); layout editing stays in the
+    -- launcher.  Hidden where the overlay never appears (desktop without
+    -- POKEPORT_TOUCH), so the row costs a non-mobile install nothing.
+    { id = "touchControls", label = Strings("TOUCH PAD"),
+      value = function(g)
+        local tc = g.save.options.touchControls
+        local on = not (type(tc) == "table" and tc.enabled == false)
+        return on and Strings("ON") or Strings("OFF")
+      end,
+      step = function(g)
+        local o = g.save.options
+        local tc = type(o.touchControls) == "table" and o.touchControls or {}
+        local on = not (tc.enabled == false)
+        tc.enabled = not on
+        -- keep any saved positions when toggling
+        o.touchControls = tc
+        require("src.core.TouchControls"):applyOptions(o)
+        return true
+      end },
+    -- Haptic feedback for on-screen pad presses (#806): OFF / LIGHT /
+    -- NORMAL / STRONG, where the intensity is a vibration duration --
+    -- love.system.vibrate takes nothing else.  Hidden with TOUCH PAD below,
+    -- since the only thing that buzzes is a virtual button press.
+    { id = "haptics", label = Strings("VIBRATION"),
+      value = function(g)
+        local TC = require("src.core.TouchControls")
+        return Strings(TC.hapticLabel(g.save.options.haptics))
+      end,
+      step = function(g, dir)
+        local o = g.save.options
+        local TC = require("src.core.TouchControls")
+        o.haptics = TC.cycleHaptics(o.haptics, dir)
+        TC:applyOptions(o)
+        -- sample the level being selected: stepping the row is the only way
+        -- to compare LIGHT against STRONG without leaving the menu
+        TC.buzz(o.haptics)
+        return true
+      end },
+    { id = "hotbar", label = Strings("KEY BAR"),
+      value = function(g)
+        return g.save.options.hotbar == false and Strings("OFF")
+               or Strings("ON")
+      end,
+      step = function(g)
+        local o = g.save.options
+        o.hotbar = o.hotbar == false
+        require("src.core.TouchControls"):applyOptions(o)
+        return true
+      end },
+  }
+  -- ORIENTATION only on the platforms Orientation.apply reaches (#1638).
+  if not (Orientation.isAndroid() or Orientation.isIOS()) then
+    local filtered = {}
+    for _, row in ipairs(rows) do
+      if row.id ~= "orientation" then filtered[#filtered + 1] = row end
+    end
+    rows = filtered
+  end
+  if require("src.core.Platform").isNX() then
+    local filtered = {}
+    for _, row in ipairs(rows) do
+      if row.id ~= "videoMode" then filtered[#filtered + 1] = row end
+    end
+    rows = filtered
+  end
+  -- TOUCH PAD and VIBRATION only where the overlay can appear (mobile, or
+  -- desktop with POKEPORT_TOUCH=1).  POKEPORT_TOUCH=0 forces it off
+  -- everywhere.  VIBRATION rides the same gate: nothing else in the port
+  -- vibrates, and love.system.vibrate is a no-op on desktop anyway.
+  do
+    local env = os.getenv("POKEPORT_TOUCH")
+    local osName = love.system and love.system.getOS and love.system.getOS()
+    local show = env == "1"
+      or (env ~= "0" and (osName == "Android" or osName == "iOS"))
+    if not show then
+      local filtered = {}
+      for _, row in ipairs(rows) do
+        if row.id ~= "touchControls" and row.id ~= "haptics"
+           and row.id ~= "hotbar" then
+          filtered[#filtered + 1] = row
+        end
+      end
+      rows = filtered
+    end
+  end
+  -- PIKACHU VOL only means something where the voice clips exist: Yellow
+  -- (data.audio.pikaCries is the clip count the importer wrote).  Red/Blue
+  -- keep the row list they always had.
+  local audio = game and game.data and game.data.audio
+  if not (GameVersion.isYellow() and audio and audio.pikaCries) then
+    local filtered = {}
+    for _, row in ipairs(rows) do
+      if row.id ~= "pikaVol" then filtered[#filtered + 1] = row end
+    end
+    rows = filtered
+  end
+  -- A mod's render pipelines are display modes like TILT, so their rows sit
+  -- with it rather than at the end of the list where a mod's own
+  -- ui.options.rows additions land.  Nothing registered means nothing
+  -- spliced, so a vanilla install sees the list it always had.
+  local pipelineRows = Pipelines.rows(game)
+  if pipelineRows[1] then
+    local merged = {}
+    for _, row in ipairs(rows) do
+      merged[#merged + 1] = row
+      if row.id == "tilt" then
+        for _, extra in ipairs(pipelineRows) do merged[#merged + 1] = extra end
+      end
+    end
+    -- no TILT row to anchor to (a future build could drop it): append
+    -- rather than silently lose the modes
+    if #merged == #rows then
+      for _, extra in ipairs(pipelineRows) do merged[#merged + 1] = extra end
+    end
+    rows = merged
+  end
+  return rows
+end
+
+-- Grouping runs AFTER the ui.options.rows hook and never touches self.rows,
+-- so a mod still sees and edits the flat list it always did; a row in no
+-- group stays where it is, which is where a mod's own additions land.
+local GROUPS = {
+  { id = "group.battle", label = "BATTLE OPTIONS",
+    members = { "animations", "battleStyle", "battleLayout", "battleFit",
+                "battleHud", "battleBg" } },
+  { id = "group.audio", label = "AUDIO",
+    members = { "musicVol", "sfxVol", "pikaVol", "musicFilter" } },
+  { id = "group.video", label = "VIDEO",
+    members = { "uiLayout", "videoMode", "orientation", "faithfulRes",
+                "screenPos", "fpsCap", "vsync", "logicClock" } },
+  { id = "group.speed", label = "SPEED",
+    members = { "textSpeed", "speedOverworld", "speedBattle", "speedMenu" } },
+  { id = "group.graphics", label = "GRAPHICS",
+    members = { "colors", "uiLetterbox", "shaderfx", "shaderfx2" } },
+  -- A mod's Pipelines row splices in after TILT and is in no group, so it
+  -- stays on the top level rather than being swallowed into this page.
+  { id = "group.extras", label = "EXTRAS",
+    members = { "tilt", "zoom", "voidFill" } },
+}
+
+-- The top level's order, groups and singles alike.  Anything not named here
+-- (a mod's row, the touch rows) keeps its flat position after these.
+local ORDER = {
+  "group.speed", "group.video", "group.graphics", "group.audio",
+  "performance", "ruleset", "group.battle", "group.extras", "mods",
+}
+
+-- Each group replaced by one opener.
+local function groupRows(game, rows)
+  local owner, picked = {}, {}
+  for _, group in ipairs(GROUPS) do
+    for _, id in ipairs(group.members) do owner[id] = group end
+    picked[group.id] = {}
+  end
+  for _, row in ipairs(rows) do
+    local group = row.id and owner[row.id]
+    if group then picked[group.id][#picked[group.id] + 1] = row end
+  end
+  local made = {}
+  for _, group in ipairs(GROUPS) do
+    local members = picked[group.id]
+    if #members > 0 then
+      made[group.id] = {
+        id = group.id, label = Strings(group.label), group = true,
+        value = function() return Strings("%d OPTIONS", #members) end,
+        -- No onCancel: BACK out of a page returns here, it does not close
+        -- OPTIONS, so the caller's close callback must not fire.
+        activate = function(g)
+          g.stack:push(OptionsMenu.new(g, { rows = members }))
+        end,
+      }
+    end
+  end
+  local byId, view, taken = {}, {}, {}
+  for _, row in ipairs(rows) do
+    if row.id and not owner[row.id] then byId[row.id] = row end
+  end
+  for _, id in ipairs(ORDER) do
+    local row = made[id] or byId[id]
+    if row then
+      view[#view + 1] = row
+      taken[id] = true
+    end
+  end
+  -- Whatever ORDER does not name, in the order the flat list had it: a mod's
+  -- own rows, and the platform rows that come and go.
+  for _, row in ipairs(rows) do
+    local id = row.id
+    if not (id and (owner[id] or taken[id])) then view[#view + 1] = row end
+  end
+  return view
+end
+
+-- opts.rows makes a submenu: a fixed row list, no hook and no regrouping, so
+-- a group's page is this same screen driving the rows it was handed.
+function OptionsMenu.new(game, opts)
+  opts = opts or {}
+  if opts.rows then
+    return setmetatable({ game = game, rows = opts.rows, view = opts.rows,
+                          index = 1, scroll = 0, sub = true,
+                          onCancel = opts.onCancel }, OptionsMenu)
+  end
+  local rows = buildRows(game)
+  local hooked = Runtime.call("ui.options.rows", sameRows, game, rows)
+  if type(hooked) == "table" then
+    rows = hooked
+  else
+    Logger.error("ui.options.rows returned %s; keeping the vanilla rows",
+                 type(hooked))
+  end
+  local self = setmetatable({ game = game, rows = rows, index = 1, scroll = 0,
+                              onCancel = opts.onCancel }, OptionsMenu)
+  self.view = groupRows(game, rows)
+  return self
+end
+
+-- Cursor onto a row by id, opening its group page first if it lives in one.
+-- Returns the screen the row ended up on, so a caller can keep driving it.
+function OptionsMenu:focusRow(id)
+  local rows = self.view or self.rows
+  for i, row in ipairs(rows) do
+    if row.id == id then
+      self.index = i
+      self.scroll = OptionRows.clampScroll(i, self.scroll or 0, #rows, #rows + 1)
+      return self
+    end
+  end
+  for i, row in ipairs(rows) do
+    if row.group and row.activate then
+      local group
+      for _, g in ipairs(GROUPS) do if g.id == row.id then group = g end end
+      for _, member in ipairs(group and group.members or {}) do
+        if member == id then
+          self.index = i
+          row.activate(self.game)
+          local sub = self.game.stack:top()
+          return sub.focusRow and sub:focusRow(id) or sub
+        end
+      end
+    end
+  end
+  return nil
+end
+
+function OptionsMenu:update(dt)
+  local input = self.game.input
+  local rows = self.view or self.rows
+  -- BACK sits below the hook-built rows so a mod cannot orphan the exit
+  local cancelRow = #rows + 1
+  local changed = false
+  if input:wasPressed("up") then
+    self.index = self.index > 1 and self.index - 1 or cancelRow
+  elseif input:wasPressed("down") then
+    self.index = self.index < cancelRow and self.index + 1 or 1
+  elseif input:wasPressed("left") or input:wasPressed("right")
+      or input:wasPressed("a") then
+    local dir = input:wasPressed("left") and -1 or 1
+    local row = rows[self.index]
+    if row and row.activate then
+      if input:wasPressed("a") then row.activate(self.game) end
+    elseif row and row.step then
+      changed = row.step(self.game, dir) and true or false
+    elseif input:wasPressed("a") then -- CANCEL
+      -- DisplayOptionMenu .exitMenu (engine/menus/main_menu.asm) is the
+      -- only spot in this menu that plays SFX_PRESS_AB: A on a setting row
+      -- and the Left/Right toggles stay silent (#570).  game.data is nil
+      -- under the stub games the UI harnesses drive.
+      if self.game.data then
+        require("src.core.Sound").play(self.game.data, "Press_AB")
+      end
+      self.game.stack:pop()
+      if self.onCancel then self.onCancel() end
+    end
+  elseif input:wasPressed("b") or input:wasPressed("start") then
+    -- .exitMenu again: B and START leave the same way, sound and all
+    if self.game.data then
+      require("src.core.Sound").play(self.game.data, "Press_AB")
+    end
+    self.game.stack:pop()
+    if self.onCancel then self.onCancel() end
+  end
+  if changed and self.game.writeOptions then
+    self.game:writeOptions()
+  end
+  self.scroll = OptionRows.clampScroll(self.index, self.scroll or 0,
+                                       #rows, cancelRow)
+end
+
+function OptionsMenu:draw()
+  -- Through Strings, like every other label on this menu.  BACK is
+  -- appended AFTER the rows hook (see the header), which is what keeps a mod
+  -- from orphaning the exit -- but it also means a translation mod never sees
+  -- this string, and cannot: there is no row for it to rewrite.  So the one
+  -- word a Spanish player could not read on a fully translated OPTIONS menu
+  -- was the way out of it.
+  local rows = self.view or self.rows
+  OptionRows.draw(self.game, rows, self.index, self.scroll or 0,
+                  Strings("BACK"), #rows + 1)
+end
+
+return OptionsMenu

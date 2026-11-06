@@ -1,0 +1,182 @@
+-- ChipAudio synthesis worker (love.thread).  Runs the Game Boy audio synth
+-- (src/core/ChipSynth.lua) off the main thread so a map/battle song change
+-- never stutters the render thread: filling the ~6s playback queue from
+-- scratch is ~200ms of Lua synthesis, and this is where it now happens.
+--
+-- Protocol -- main thread pushes command tables onto the "chipaudio_cmd"
+-- channel and drains produced buffers off "chipaudio_out":
+--   cmd = "play"  { gen, header, allowLoops, audio,
+--                   channelVolumes?, channelPitches?, stereo?, stereoEpoch? }
+--   cmd = "stop"                                       halt production
+--   cmd = "channelMix" { volumes, pitches, stereo?, stereoEpoch? }
+--                   stereoEpoch present: live SOUND toggle; drop lookahead
+--   cmd = "invalidate"                                 drop the bank cache
+--   cmd = "effect" { key, epoch, header, options, audio, channelVolumes,
+--                    channelPitches, stereo, sampleRate }
+--                   prewarm one SFX/cry (ChipSynth.renderEffectData); the
+--                   result goes to "chipaudio_fx" as
+--                   { key, epoch, sd = SoundData|nil } or { key, epoch, error }
+--   cmd = "quit"                                        end the thread
+-- out buffers are tagged with the play's `gen` so the main thread can
+-- discard anything left over from a superseded song:
+--   { gen, sd = SoundData }   one rendered buffer
+--   { gen, done = true }      the song ended (non-looping jingle finished)
+--   { gen, error = msg }      build/synth failed; main logs and gives up
+
+require("love.thread")
+require("love.timer")
+require("love.sound")
+require("love.filesystem")
+
+local jitEnabled = false
+if os.getenv("POKEPORT_AUDIO_JIT") == "1" and jit and jit.on then
+  pcall(jit.on)
+  jitEnabled = (jit.status and jit.status()) == true
+end
+
+-- Load the synth explicitly via love.filesystem (a fresh thread Lua state does
+-- not necessarily carry the package searcher that resolves "src.core..."):
+package.loaded["src.core.WorkerFs"] = package.loaded["src.core.WorkerFs"]
+  or assert(love.filesystem.load("src/core/WorkerFs.lua"))()
+local ChipSynth = assert(love.filesystem.load("src/core/ChipSynth.lua"))()
+
+local cmdCh = love.thread.getChannel("chipaudio_cmd")
+local outCh = love.thread.getChannel("chipaudio_out")
+local fxCh = love.thread.getChannel("chipaudio_fx")
+
+local BUF = ChipSynth.MUSIC_BUFFER_SAMPLES
+local BUF_SECONDS = BUF / ChipSynth.SAMPLE_RATE
+-- how many finished buffers may sit in the hand-off channel before the worker
+-- pauses.  The deep (~6s) playback depth lives in the main-thread Source; this
+-- only bounds the worker's look-ahead (and its memory) between drains.
+local LOOKAHEAD = 8
+
+local gen = nil        -- active song generation, or nil when stopped
+local engine = nil     -- the ChipSynth engine producing the current song
+local finished = false -- the current song ran out (non-looping)
+local data = nil       -- { audio = <slim audio tables> } for ROM bank/wave reads
+local stereoEpoch = 0  -- matches ChipAudio; stale pan buffers are dropped
+local effects = {}     -- queued "effect" prewarm requests, oldest first
+local produced = 0     -- buffers rendered for the current song so far
+
+-- a song start outranks a prewarm: the first MUSIC_PREROLL buffers gate when
+-- the song is heard, a prewarmed cry only has to be done before its play
+local PREROLL = 4
+
+local function renderEffect(req)
+  if req.sampleRate ~= nil then
+    BUF_SECONDS = BUF / ChipSynth.setSampleRate(req.sampleRate)
+  end
+  if req.channelVolumes ~= nil then
+    ChipSynth.setChannelVolumes(req.channelVolumes)
+  end
+  if req.channelPitches ~= nil then
+    ChipSynth.setChannelPitches(req.channelPitches)
+  end
+  if req.stereo ~= nil then ChipSynth.setStereo(req.stereo) end
+  local ok, sd = pcall(ChipSynth.renderEffectData, { audio = req.audio },
+                       req.header, req.options or {})
+  if ok then
+    fxCh:push({ key = req.key, epoch = req.epoch, sd = sd or nil })
+  else
+    fxCh:push({ key = req.key, epoch = req.epoch, error = tostring(sd) })
+  end
+end
+
+local function handle(cmd)
+  if cmd.cmd == "play" then
+    gen = cmd.gen
+    produced = 0
+    finished = false
+    engine = nil
+    outCh:clear() -- drop any buffers left from the previous song
+    data = { audio = cmd.audio }
+    if cmd.sampleRate ~= nil then
+      BUF_SECONDS = BUF / ChipSynth.setSampleRate(cmd.sampleRate)
+    end
+    if cmd.channelVolumes ~= nil then
+      ChipSynth.setChannelVolumes(cmd.channelVolumes)
+    end
+    if cmd.channelPitches ~= nil then
+      ChipSynth.setChannelPitches(cmd.channelPitches)
+    end
+    if cmd.stereo ~= nil then
+      ChipSynth.setStereo(cmd.stereo)
+    end
+    if cmd.stereoEpoch ~= nil then stereoEpoch = cmd.stereoEpoch end
+    local ok, eng = pcall(ChipSynth.newEngine, data, cmd.header,
+                          { allowLoops = cmd.allowLoops })
+    if ok then
+      engine = eng
+    else
+      outCh:push({ gen = gen, error = tostring(eng) })
+      finished = true
+    end
+  elseif cmd.cmd == "stop" then
+    gen = nil
+    engine = nil
+    finished = false
+    outCh:clear()
+  elseif cmd.cmd == "channelMix" then
+    if cmd.volumes ~= nil then ChipSynth.setChannelVolumes(cmd.volumes) end
+    if cmd.pitches ~= nil then ChipSynth.setChannelPitches(cmd.pitches) end
+    if cmd.stereo ~= nil then ChipSynth.setStereo(cmd.stereo) end
+    if engine and cmd.stereo ~= nil then ChipSynth.applyStereo(engine) end
+    if cmd.stereoEpoch ~= nil then
+      stereoEpoch = cmd.stereoEpoch
+      outCh:clear()
+    end
+  elseif cmd.cmd == "invalidate" then
+    ChipSynth.invalidateBanks()
+    effects = {}
+  elseif cmd.cmd == "effect" then
+    effects[#effects + 1] = cmd
+  elseif cmd.cmd == "quit" then
+    return true
+  end
+  return false
+end
+
+local idleWait = false
+
+while true do
+  -- drain every pending command first, so a stop/new-play is seen promptly
+  local quit = false
+  local cmd = idleWait and cmdCh:demand(0.05) or cmdCh:pop()
+  while cmd do
+    if handle(cmd) then quit = true end
+    cmd = cmdCh:pop()
+  end
+  if quit then break end
+
+  local musicWants = engine and not finished and gen
+    and outCh:getCount() < LOOKAHEAD
+  if #effects > 0 and not (musicWants and produced < PREROLL) then
+    idleWait = false
+    renderEffect(table.remove(effects, 1))
+  elseif musicWants then
+    idleWait = false
+    local activeGen = gen
+    local began = love.timer.getTime()
+    local ok, sd = pcall(ChipSynth.soundData, engine, BUF, 2)
+    if not ok then
+      outCh:push({ gen = activeGen, error = tostring(sd),
+                   stereoEpoch = stereoEpoch, jit = jitEnabled })
+      finished = true
+    else
+      produced = produced + 1
+      outCh:push({ gen = activeGen, sd = sd, stereoEpoch = stereoEpoch,
+                   jit = jitEnabled,
+                   xrt = (love.timer.getTime() - began) / BUF_SECONDS })
+      if engine:finished() then
+        outCh:push({ gen = activeGen, done = true, stereoEpoch = stereoEpoch })
+        finished = true
+      end
+    end
+  elseif engine and not finished and gen then
+    idleWait = false
+    love.timer.sleep(0.005)
+  else
+    idleWait = true
+  end
+end
