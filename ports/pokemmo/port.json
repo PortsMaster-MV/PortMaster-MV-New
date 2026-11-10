@@ -3,8 +3,6 @@
   "name": "pokemmo.zip",
   "items": [
     "PokeMMO.sh",
-    "PokeMMO small.sh",
-    "PokeMMO Android.sh",
     "pokemmo"
   ],
   "items_opt": [],
@@ -15,7 +13,7 @@
     ],
     "desc": "Unofficial port of PokeMMO for PortMaster-compatible devices. PokeMMO is a fan-made multiplayer online game that brings together various Pokémon generations in a single MMO experience.",
     "desc_md": null,
-    "inst": "Download the portable version of the PokeMMO client from https://pokemmo.com/en/downloads/portable. Extract the ZIP and copy both the PokeMMO.exe file and the data folder into /roms/ports/pokemmo.",
+    "inst": "Launch the port and select 'PokeMMO Update' in its menu to download the official PokeMMO client (internet required). See the README for ROM setup.",
     "inst_md": null,
     "genres": [
       "adventure",
@@ -27,7 +25,8 @@
     "runtime": [
       "mesa_pkg_0.1.squashfs",
       "weston_pkg_0.2.squashfs",
-      "zulu17.54.21-ca-jre17.0.13-linux.squashfs"
+      "zulu17.48.15-ca-jdk17.0.10-linux.squashfs",
+      "python_3.11.squashfs"
     ],
     "store": [],
     "availability": "free",
