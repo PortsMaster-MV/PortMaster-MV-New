@@ -4,6 +4,10 @@
 
 PokeMMO is a fan-made multiplayer online game that brings together multiple generations of Pokémon in a single MMO experience.
 
+[!["Buy Me A Coffee"](https://raw.githubusercontent.com/lowlevel-1989/pokemmo-port/refs/heads/master/docs/coffee.png)](https://ko-fi.com/lowlevel1989)
+
+If you'd like to see updates and active support for this port continue as quickly as possible, consider supporting the project — you can buy me a coffee ☕ to help keep things running!
+
 ---
 
 ## 🛠 Installation Instructions
@@ -18,6 +22,21 @@ PokeMMO is a fan-made multiplayer online game that brings together multiple gene
 | Global trade link                     | No      | Yes (small, android)    | Yes (small, android)    | Yes                |
 | PC                     | No      | Yes (small, android)    | Yes (small, android)    | Yes                |
 
+### ⚠️ Unsupported Devices
+
+Certain devices, such as the **R36S** and other handheld consoles based on the **RK3326** chipset, are not compatible with the latest version of the **PokeMMO Port**. These devices lack the necessary processing power to deliver a smooth gameplay experience, especially in areas with high player density, where performance issues become critical.
+
+🔒 **These devices are not officially supported.**
+
+### ⚠️ Android Theme Mode Warning
+
+> The **Android UI theme mode** is **highly resource-intensive** and is **not recommended for clone handhelds using the same chipset as the K36S**, especially when running **ArkOS**.  
+>  
+> These devices often **lack the necessary resources** to handle the Android-style UI, which can lead to **black screens, crashes, or unresponsive behavior**.  
+>  
+> 🔧 If you experience issues, use the **"PokeMMO Restore"** option available from the **PokeMMO Port Launcher** to reset the theme and restore default settings.  
+> This will switch back to the classic theme optimized for low-spec devices.
+
 ~~~
 - [x] AmberELEC
 - [x] ArkOS
@@ -26,9 +45,18 @@ PokeMMO is a fan-made multiplayer online game that brings together multiple gene
     -> [x] Libmali
 - [x] MuOS
 - [x] Knulli
-- [x] spruceOS (advanced user, tutorial coming soon)
-    -> You only need to manually install PortMaster via ssh
+- [x] spruceOS 4.0 or higher works automatically — below 4.0, manual SSH install needed.
+
 ~~~
+
+### PortMaster
+#### Runtime
+ - [mesa_pkg_0.1.squashfs](https://github.com/PortsMaster/PortMaster-New/releases/download/2025-02-11_0956/mesa_pkg_0.1.squashfs)
+ - [weston_pkg_0.2.squashfs](https://github.com/PortsMaster/PortMaster-New/releases/download/2025-04-11_0650/weston_pkg_0.2.squashfs)
+ - [zulu17.48.15-ca-jdk17.0.10-linux.aarch64.squashfs](https://github.com/PortsMaster/PortMaster-New/releases/download/2024-05-02_0733/zulu17.48.15-ca-jdk17.0.10-linux.aarch64.squashfs)
+ - [python_3.11.squashfs](https://github.com/PortsMaster/PortMaster-New/releases/download/2025-05-12_1513/python_3.11.squashfs)
+#### GamePad TO Key Board v2
+ - [gptokeyb2](https://github.com/PortsMaster/gptokeyb2)
 
 ### How do I enter the `security code` in PokeMMO?
 
@@ -37,36 +65,19 @@ PokeMMO is a fan-made multiplayer online game that brings together multiple gene
 - Dpad Up/Down to select value,  A to add, B to remove.
 - Start to disable virtual keyboard.
 
-### What is `hack.jar`?
-
-`hack.jar` is a Java package that allows loading optimized shaders into memory for the following custom firmware (CFW).  
-If a `credentials.txt` file exists, it will use the username and password specified there, but only during application startup.
-
-The source code can be found here:  
-👉 [PokeMMO/src](https://github.com/lowlevel-1989/pokemmo-port/pokemmo/src)
-
-| Operating System       | Requires `hack.jar`? | Known Issues Without `hack.jar`                                                   |
-|------------------------|----------------------|------------------------------------------------------------------------------------|
-| **ArkOS**              | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
-| **Rocknix (Panfrost)** | ❌ No                | - Works fine without `hack.jar`                                                   |
-| **Rocknix (Libmali)**  | ✅ Yes               | - Same issues as ArkOS                                                             |
-| **MuOS**               | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
-| **Knulli**             | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
-| **spruceOS**           | ✅ Yes               | - Screen freezes when flying<br>- Starter Pokémon selection in NDS<br>- Freeze in Johto |
-
-### 🎮 Experiencing FPS Drops?
+### Experiencing FPS Drops?
 
 The default configuration included with this port is optimized and tested for **low-end devices**, prioritizing compatibility and performance in **power-saving mode**.
 
-#### ⚙️ If You're Experiencing Lag:
+#### If You're Experiencing Lag:
 - The most common reason for FPS drops is **changing the default FPS or render settings**. These defaults are intentionally conservative to ensure stable performance on less powerful hardware.
 - If you have a more capable device, feel free to adjust these settings — but keep in mind that doing so **may cause instability or performance issues**, especially if you're on low-spec hardware.
 
-#### 📝 About `main.properties`:
+#### About `main.properties`:
 - This configuration file is tuned specifically for **very low-resource devices**.
 - **Some areas may take longer to load**, especially the more demanding ones, but this is expected and **should not be frequent or break gameplay**.
 
-✅ If performance issues persist even with the default settings, let us know — improvements and tweaks are always ongoing.
+If performance issues persist even with the default settings, let us know — improvements and tweaks are always ongoing.
 
 ### Assigning Panfrost in Rocknix
 
@@ -82,9 +93,9 @@ To switch to the Panfrost driver:
 Download pokemmo.zip Place the `.zip` into:  
 `/PortMaster/autoinstall`
 
-Launch **PortMaster**. It will automatically install the port.
+Launch **PortMaster**. It will automatically install/update the port.
 
-#### 📂 Autoinstall Folder Locations
+#### Autoinstall Folder Locations
 
 Here are the paths for the `autoinstall` folder for each CFW supported by PortMaster:
 
@@ -97,7 +108,7 @@ Here are the paths for the `autoinstall` folder for each CFW supported by PortMa
 
 ---
 
-#### 📦 Manual Installation (Alternative)
+#### Manual Installation (Alternative)
 
 If the `autoinstall` folder method doesn't work, you can manually unzip the port contents into the appropriate `ports` folders.  
 **Note:** This may break the port and prevent it from launching properly.
@@ -114,7 +125,9 @@ If the `autoinstall` folder method doesn't work, you can manually unzip the port
 
 ### 2. Add Official PokeMMO Client Files
 
-Go to the official PokeMMO website:  
+The easiest way: launch the port and select **PokeMMO Update** in the menu. It downloads the official client (internet required).
+
+Manual alternative: go to the official PokeMMO website:  
 [https://pokemmo.com/en/downloads/portable](https://pokemmo.com/en/downloads/portable)
 
 Download the **portable version**, extract it, and copy these into:  
@@ -130,7 +143,7 @@ Replacing them may negatively impact performance on low-end devices.
 
 ### 3. Add Required and Optional ROMs
 
-To add the ROMs, place them inside the PokeMMO/roms folder and set the following values in `main.properties`:
+To add the ROMs, place them inside the pokemmo/roms folder and set the following values in `main.properties`:
 ~~~
 client.roms.nds=roms/pokemon_black.nds  
 client.roms.em=roms/pokemon_emerald.gba  
@@ -150,20 +163,13 @@ client.roms.nds3=roms/pokemon_heartgold.nds
 
 ---
 
+### Login Without Keyboard Input
 
-### 🎮 Login Without Keyboard Input
-
-If your device does not have a keyboard, you can try one of the following methods to log in:
-
-#### 🔧 Option 1: PokeMMO/credentials.txt
-
-Edit the file PokeMMO/credentials.txt with your login credentials.
-
-#### 🔧 Option 2: Connect a Keyboard for First Login
+#### Option 1: Connect a Keyboard for First Login
 
 Temporarily connect a physical keyboard (USB or Bluetooth), log in as usual, and make sure to check the **"Remember Me"** option.
 
-#### 📝 Option 3: Type Password in Username Field (thanks ddrsoul)
+#### Option 2: Type Password in Username Field (thanks ddrsoul)
 
 Type your password in the **username** field, then **copy and paste** it into the password field. This allows you to use system copy/paste functions even without a keyboard.
 
@@ -209,6 +215,24 @@ The game will now automatically log in when launched on PortMaster-compatible de
 |down | next character |
 |select| toggle number/letter  |
 
+---
+
+### Third-Party Themes
+
+The following community-created themes are compatible with the **PokeMMO Port**. These themes are developed and maintained by third parties and are not officially supported.
+
+- [**Animated Theme by CodesNL**](https://github.com/CodesNL/pokemmo-port-themes) – A custom theme featuring animated UI elements.
+
+> ⚠️ Use third-party themes at your own risk. Compatibility and performance may vary depending on the device and game version.
+
+### Validated Mods
+
+The following mods have been personally tested and validated for compatibility with PokeMMO Port. These mods meet my quality and stability standards.
+
+- [**Mystery Dungeon Follower Sprites**](https://forums.pokemmo.com/index.php?/topic/177129-mystery-dungeon-follower-sprites-sparkling-shiny-option-updated-15022025/) – This mod aims to change the ingame follower sprites with the sprites of Mystery Dungeon.
+- [**Generation II Follower Sprites**](https://forums.pokemmo.com/index.php?/topic/183138-generation-ii-follower-sprites/) – This mod redesigns follower Pokémon to be in line with the Gen II sprites.
+- [**PokeMoeGirls Animated**](https://forums.pokemmo.com/index.php?/topic/184263-pokemoegirls-animated-v111-added-version-with-all-changed/) – Changes all female pokemon in the game to their waifu version.
+- [**Cute Chibi Sprites Mod**](https://forums.pokemmo.com/index.php?/topic/189710-%CB%9A%CA%9A%E2%99%A1%C9%9E%CB%9A-cute-chibi-sprites-mod-%CB%9A%CA%9A%E2%99%A1%C9%9E%CB%9A/)
 
 ---
 
@@ -221,6 +245,7 @@ The game will now automatically log in when launched on PortMaster-compatible de
 
 ## Thanks
 
+- The [PokeMMO team](https://pokemmo.com), for creating the game
 - [Jeod](https://github.com/JeodC/)
 - [BinaryCounter](https://github.com/binarycounter)
 - ddrsoul
@@ -234,6 +259,9 @@ The game will now automatically log in when launched on PortMaster-compatible de
 - Brobba
 - [noe](https://steamcommunity.com/id/itsnoe73)
 - [Revela](https://www.youtube.com/watch?v=WtAtlXwQsZw)
+- [Den](https://github.com/CodesNL)
+- [Manlibear](https://github.com/Manlibear)
+- giatsirobis
 
 ## Refs
 

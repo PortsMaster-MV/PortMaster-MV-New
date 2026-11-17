@@ -1,0 +1,1 @@
+Place your Pokemon ROMs here and set their paths in main_config.properties (see README).
