@@ -5,11 +5,10 @@
     "Ship of Harkinian.sh",
     "soh"
   ],
-  "items_opt": [],
+  "items_opt": null,
   "attr": {
     "title": "Ship of Harkinian",
     "porter": [
-      "Jeod",
       "beniamino",
       "monkeyx-net"
     ],
@@ -21,7 +20,7 @@
       "action",
       "adventure"
     ],
-    "image": null,
+    "image": {},
     "rtr": false,
     "exp": false,
     "runtime": [],

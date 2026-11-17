@@ -17,6 +17,21 @@ Ship of Harkinian has built-in controller navigation for the imgui menu. Press `
 ## Default Gameplay Controls
 The port uses SDL controller mapping and controls can be remapped from the imgui menu. For devices without a right analog stick, the gptk file allows for the `HOTKEY + ABXY` button combo to use the C-Buttons.
 
+## Controls
+
+| Button | Action |
+|--|--|
+| A | A |
+| B | B |
+| X | C-Up (Hotkey+X) |
+| Y | C-Left (Hotkey+Y) |
+| L1 | L |
+| L2 | Z-Target |
+| R1 | R |
+| R2 | Z-Target |
+| Select | Menu |
+| Start | Start |
+
 ## Suggested Mods
 You can find a ton of mods at [GameBanana](https://gamebanana.com/mods/games/16121?_aFilters%5BGeneric_Name%5D=contains%2C3ds&_sSort=Generic_MostDownloaded).  
 
@@ -38,11 +53,8 @@ I prefer the OoT 3DS look along with a studio ghibli style skybox:
 ## Thanks
 - Nintendo for the game
 - beniamino for the updated build steps for develop to work on more devices
+- Monkeyx for taking over the ports from Jeod
 - Testers and Devs from the PortMaster Discord
 - HarbourMasters for the native pc port
 - AkerHasReawakened for the cover art
-- IanSantos for the ghibli skybox mod 
-
-
-
-
+- IanSantos for the ghibli skybox mod
