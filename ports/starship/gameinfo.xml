@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gameList>
+  <game>
+    <path>./Starship.sh</path>
+    <name>Starship</name>
+    <desc>Starship is the HarbourMasters PC port of Star Fox 64, built from the decompilation, with enhancements such as higher frame rates, widescreen support and mod support.</desc>
+    <releasedate>20241222T000000</releasedate>
+    <developer>Nintendo</developer>
+    <publisher>HarbourMasters</publisher>
+    <genre>Action</genre>
+    <image>./starship/cover.png</image>
+  </game>
+</gameList>
