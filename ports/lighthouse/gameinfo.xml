@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gameList>
+  <game>
+    <path>./Lighthouse.sh</path>
+    <name>Lighthouse</name>
+    <desc>Lighthouse is the HarbourMasters PC port of Banjo-Kazooie, built from the decompilation, with Anchor online co-op, romhack and multi-language support, and a built-in randomizer.</desc>
+    <releasedate>20260731T000000</releasedate>
+    <developer>Rare</developer>
+    <publisher>HarbourMasters</publisher>
+    <genre>Platform</genre>
+    <image>./lighthouse/cover.png</image>
+  </game>
+</gameList>
