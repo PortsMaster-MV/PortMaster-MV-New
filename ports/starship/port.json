@@ -1,0 +1,34 @@
+{
+  "version": 4,
+  "name": "starship.zip",
+  "items": [
+    "Starship.sh",
+    "starship"
+  ],
+  "items_opt": null,
+  "attr": {
+    "title": "Starship",
+    "porter": [
+      "monkeyx-net"
+    ],
+    "desc": "Starship is the HarbourMasters PC port of Star Fox 64, built from the decompilation, with enhancements such as higher frame rates, widescreen support and mod support.",
+    "desc_md": null,
+    "inst": "Copy your Star Fox 64 US v1.0 or v1.1 .z64 rom to ports/starship/baseroms. JP, EU and CN roms are optional and add voice packs. The rom is converted to sf64.o2r on first launch, which can take a few minutes.",
+    "inst_md": null,
+    "genres": [
+      "action"
+    ],
+    "image": {},
+    "rtr": false,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "paid",
+    "reqs": [],
+    "arch": [
+      "aarch64",
+      "x86_64"
+    ],
+    "min_glibc": "2.29"
+  }
+}

@@ -1,0 +1,26 @@
+{
+    "CVars": {
+        "gControllers": {
+        },
+		"gControlNav": 1,
+        "gEnhancements": {
+            "Mods": {
+                "AlternateAssets": 1
+            }
+        },
+        "gForceCursorVisibility": 0,
+        "gInterpolationFPS": 30,
+        "gMainMusicVolume": 0.9900000095367432,
+        "gNotifications": 1,
+        "gOpenMenuBar": 1,
+        "gSFXMusicVolume": 0.9900000095367432,
+        "gVoiceVolume": 0.9900000095367432
+    },
+    "Window": {
+        "AudioBackend": "sdl",
+        "Backend": {
+            "Id": 1,
+            "Name": "OpenGL"
+        }
+    }
+}
