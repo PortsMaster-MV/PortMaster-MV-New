@@ -1,5 +1,18 @@
 ## Notes
 
+### Version 1.2
+
+- Fixed vertical seams in clouds when steering by correcting per-scanline
+  background scrolling.
+- Restored stage-result tally sounds, bonus-credit feedback and the BONUS
+  display; scores and extra credits are recorded exactly once.
+- Fixed render-worker error handling so failures are reported after all active
+  workers finish.
+
+Tested on an Anbernic RG40XX H running KNULLI, including serial/parallel video
+and audio comparisons and the original-game ending and restart regressions.
+
+
 Thanks to KandoWontU for [Star Fox Enhanced](https://github.com/kandowontu2/starfox-enhanced),
 the open-source native runtime this port packages, and to Team SFEX
 (Star Fox EX) and SunlitSpace542 (UltraStarFox) for the community projects it
@@ -49,14 +62,14 @@ menu can remap them.
 
 The binary is built from source by `scripts/build-arm64.sh` in
 [mtoensing/sternenfuchs](https://github.com/mtoensing/sternenfuchs) (branch
-`prototype/rg40xx`). It targets aarch64 and needs glibc 2.35 or older at
+`main`). It targets aarch64 and needs glibc 2.35 or older at
 runtime, so build on Ubuntu 22.04 arm64 (CI uses `ubuntu:22.04` on
 `ubuntu-24.04-arm`).
 
 ```bash
 apt-get install -y ca-certificates git curl cmake ninja-build build-essential \
   python3 zip file binutils pkg-config
-git clone -b prototype/rg40xx https://github.com/mtoensing/sternenfuchs.git
+git clone -b main https://github.com/mtoensing/sternenfuchs.git
 cd sternenfuchs
 ./scripts/build-arm64.sh
 ```
@@ -69,8 +82,8 @@ The script:
    contains the commit, set `STARFOX_REPO` to its URL or path.
 2. Builds the pinned `bmdhacks/SDL` SDL3-to-SDL2 shim (`libSDL3.so.0`) and
    installs it into a private prefix. Vulkan is off.
-3. Applies `patches/0001-system-sdl3.patch` and
-   `patches/0002-software-renderer-fallback.patch` to the game source.
+3. Applies all patches in `patches/` (0001–0016), including the ARM64
+   performance optimizations and selected upstream fixes.
 4. Builds `starfox_pc` with `-mcpu=cortex-a53`, LTO and the committed
    profile-guided optimization data in `pgo-data/`.
 5. Packages `dist/sternenfuchs.zip` (sideload layout) and
